@@ -1,27 +1,16 @@
 #ifndef __PROGRAM_H__
-#define __PROGRAM___
+#define __PROGRAM_H__
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
-#define TEXTURE_WIDTH 320.0
-#define TEXTURE_HEIGHT 200.0
+#include "pixelUtils/graphics.h"
 
 typedef struct
 {
-    unsigned char r, g, b;
-} Color;
-
-typedef struct
-{
-    GLFWwindow *window;
-    unsigned int textureId;
-    unsigned int shaderProgram;
-    unsigned int VAO;
-    Color *textureData;
+    Graphics graphics;
 } Program;
 
 Program programCreate();
-void programMainLoop(Program program);
-void programDestroy(Program program);
+void programMainLoop(Program this);
+void programDestroy(Program this);
 
 #endif
