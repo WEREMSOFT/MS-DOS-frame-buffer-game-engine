@@ -27,4 +27,7 @@ void graphicsPutPixel(Graphics this, int x, int y, Color color);
 void graphicsDrawCircle(Graphics this, double x, double y, double radious, Color color);
 void graphicsDrawSquare(Graphics this, double x, double y, double width, double height, Color color);
 void graphicsClear(Graphics this);
+void graphicsDrawCharacter(Graphics this, double x, double y, unsigned int letter, Color color);
+void graphicsPrintFontTest(Graphics this);
+void graphicsPrintString(Graphics this, int x, int y, char *string, Color color);
 #endif

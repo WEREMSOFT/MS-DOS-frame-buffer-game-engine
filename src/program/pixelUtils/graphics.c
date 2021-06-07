@@ -6,6 +6,9 @@
 #include <math.h>
 #include <memory.h>
 #include "../shader/shader.h"
+
+extern char fonts[][5];
+
 static void textureCreate(Graphics *this)
 {
 
@@ -237,4 +240,41 @@ void drawSquareFill(Graphics this, double x, double y, double width, double heig
 void graphicsClear(Graphics this)
 {
     memset(this.textureData, 0, this.textureWidth * this.textureHeight * sizeof(Color));
+}
+
+void graphicsDrawCharacter(Graphics this, double x, double y, unsigned int letter, Color color)
+{
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j <= 8; j++)
+        {
+            if (fonts[letter][i] & (0b1000000 >> j))
+                graphicsPutPixel(this, x + j, y + i, color);
+        }
+    }
+}
+
+void graphicsPrintFontTest(Graphics this)
+{
+    for (int i = 0; i < 38; i++)
+    {
+        graphicsDrawCharacter(this, 0 + i * 6, 100, i, (Color){0xff, 0xff, 0xff});
+    }
+}
+
+void graphicsPrintString(Graphics this, int x, int y, char *string, Color color)
+{
+    unsigned int stringLen = strlen(string);
+    for (int i = 0; i < stringLen; i++)
+    {
+        if (string[i] >= '0' && string[i] <= '9')
+        {
+            graphicsDrawCharacter(this, x + i * 6, y, string[i] - '0', color);
+        }
+        else if (string[i] >= 'a' && string[i] <= 'z')
+        {
+            int charOffset = string[i] - 'a' + 10;
+            graphicsDrawCharacter(this, x + i * 6, y, charOffset, color);
+        }
+    }
 }

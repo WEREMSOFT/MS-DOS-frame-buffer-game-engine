@@ -19,14 +19,27 @@ typedef struct
     double x, y, z;
 } Star;
 
+void printFPS(Graphics this)
+{
+    static double lastUpdate;
+    static double currentFPS;
+
+    currentFPS = (currentFPS + 1 / (glfwGetTime() - lastUpdate)) / 2;
+    char text[1000] = {0};
+    snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
+    graphicsPrintString(this, 0, 0, text, (Color){0, 0xff, 0xff});
+    lastUpdate = glfwGetTime();
+}
+
 void programMainLoop(Program this)
 {
-    double lastUpdate = glfwGetTime();
-    double currentFPS = 0;
+
     Graphics graphics = this.graphics;
 
-#define STAR_COUNT 10000
+#define STAR_COUNT 400000
     Star stars[STAR_COUNT] = {0};
+
+    Sprite background = spriteCreate("assets/320x200.png");
 
     for (int i = 0; i < STAR_COUNT; i++)
     {
@@ -37,6 +50,7 @@ void programMainLoop(Program this)
 
     double lastTime = glfwGetTime();
     float speed = 100.f;
+
     while (!glfwWindowShouldClose(this.graphics.window))
     {
         double deltaTime = glfwGetTime() - lastTime;
@@ -57,6 +71,8 @@ void programMainLoop(Program this)
             speed = -100.f;
         }
 
+        spriteDraw(background, graphics);
+
         for (int i = 0; i < STAR_COUNT; i++)
         {
             stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
@@ -65,13 +81,13 @@ void programMainLoop(Program this)
             graphicsPutPixel(graphics, stars[i].x, stars[i].y, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
         }
 
+        graphicsPrintFontTest(graphics);
+        graphicsPrintString(graphics, 100, 150, "hello world 123", (Color){0xff, 0, 0});
+
+        printFPS(graphics);
+
         graphicsSwapBuffers(graphics);
         glfwPollEvents();
-        currentFPS = 1 / (glfwGetTime() - lastUpdate);
-        char windowTitle[1000] = {0};
-        snprintf(windowTitle, 1000, "\r fps: %f", floor(currentFPS));
-        glfwSetWindowTitle(graphics.window, windowTitle);
-        lastUpdate = glfwGetTime();
     }
 }
 
