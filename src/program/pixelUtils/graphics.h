@@ -26,5 +26,5 @@ void graphicsDestroy(Graphics this);
 void graphicsPutPixel(Graphics this, int x, int y, Color color);
 void graphicsDrawCircle(Graphics this, double x, double y, double radious, Color color);
 void graphicsDrawSquare(Graphics this, double x, double y, double width, double height, Color color);
-void textureDataClear(Graphics this);
+void graphicsClear(Graphics this);
 #endif

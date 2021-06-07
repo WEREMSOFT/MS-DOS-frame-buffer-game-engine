@@ -14,85 +14,55 @@ Program programCreate()
     return this;
 }
 
-int x = 100;
-int y = 100;
-
-enum ShapeType
+typedef struct
 {
-    CIRCLE,
-    SQUARE,
-    POINT,
-    SHAPE_TYPE_COUNT
-};
+    double x, y, z;
+} Star;
 
-int shapeType = CIRCLE;
-bool shouldClear = false;
 void programMainLoop(Program this)
 {
     double lastUpdate = glfwGetTime();
     double currentFPS = 0;
     Graphics graphics = this.graphics;
 
-    Sprite ship = spriteCreate("assets/sprite.png");
+#define STAR_COUNT 10000
+    Star stars[STAR_COUNT] = {0};
 
+    for (int i = 0; i < STAR_COUNT; i++)
+    {
+        stars[i].x = (random() % (graphics.textureWidth));
+        stars[i].y = (random() % (graphics.textureHeight));
+        stars[i].z = (double)random() / (double)RAND_MAX;
+    }
+
+    double lastTime = glfwGetTime();
+    float speed = 100.f;
     while (!glfwWindowShouldClose(this.graphics.window))
     {
+        double deltaTime = glfwGetTime() - lastTime;
+        lastTime = glfwGetTime();
+        graphicsClear(this.graphics);
 
         if (glfwGetKey(graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(graphics.window, true);
         }
-
-        if (glfwGetKey(graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-        {
-            y--;
-        }
-
-        if (glfwGetKey(graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        {
-            y++;
-        }
-
         if (glfwGetKey(graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
-            x--;
+            speed = 100.f;
         }
 
         if (glfwGetKey(graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            x++;
+            speed = -100.f;
         }
 
-        if (glfwGetKey(graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        for (int i = 0; i < STAR_COUNT; i++)
         {
-            shapeType = (shapeType + 1) % (SHAPE_TYPE_COUNT);
-        }
+            stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
+            stars[i].x = fmod((fmod(stars[i].x, graphics.textureWidth) + graphics.textureWidth), graphics.textureWidth);
 
-        if (glfwGetKey(graphics.window, GLFW_KEY_C) == GLFW_PRESS)
-        {
-            shouldClear = !shouldClear;
-        }
-
-        x = fmax(0, fmin(x, graphics.textureWidth - 1));
-        y = fmax(0, fmin(y, graphics.textureHeight - 1));
-
-        if (shouldClear)
-            textureDataClear(this.graphics);
-
-        ship.x = x;
-        ship.y = y;
-        spriteDraw(ship, this.graphics);
-
-        switch (shapeType)
-        {
-        case POINT:
-            graphicsPutPixel(graphics, x, y, (Color){255, 0, 0});
-            break;
-        case SQUARE:
-            graphicsDrawSquare(graphics, x, y, 50, 50, (Color){random() % 255, random() % 255, 0});
-            break;
-        case CIRCLE:
-            graphicsDrawCircle(graphics, x, y, 50, (Color){random() % 255, random() % 255, 0});
+            graphicsPutPixel(graphics, stars[i].x, stars[i].y, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
         }
 
         graphicsSwapBuffers(graphics);

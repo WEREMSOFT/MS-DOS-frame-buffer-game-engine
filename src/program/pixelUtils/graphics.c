@@ -11,7 +11,7 @@ static void textureCreate(Graphics *this)
 
     glGenTextures(1, &this->textureId);
     glBindTexture(GL_TEXTURE_2D, this->textureId);
-
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -144,14 +144,26 @@ Graphics graphicsCreate()
 
 void graphicsSwapBuffers(Graphics this)
 {
+    static Color *lastPointer = NULL;
+
+    if (!lastPointer)
+        lastPointer = this.textureData;
+
+    if (lastPointer != this.textureData)
+    {
+        fprintf(stderr, "pointers are different!!\n");
+        exit(-1);
+    }
     glClearColor(0, 0, 0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Update texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this.textureWidth, this.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
+    glBindTexture(GL_TEXTURE_2D, this.textureId);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this.textureWidth, this.textureHeight, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
 
     // bind textures on corresponding texture units
-    glBindTexture(GL_TEXTURE_2D, this.textureId);
+    // glBindTexture(GL_TEXTURE_2D, this.textureId);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this.textureWidth, this.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
 
     // render container
     glBindVertexArray(this.VAO);
@@ -169,6 +181,8 @@ void graphicsDestroy(Graphics this)
 
 void graphicsPutPixel(Graphics this, int x, int y, Color color)
 {
+    if (x < 0 || y < 0)
+        return;
     int position = (x + y * this.textureWidth);
     this.textureData[position] = color;
 }
@@ -220,7 +234,7 @@ void drawSquareFill(Graphics this, double x, double y, double width, double heig
     }
 }
 
-void textureDataClear(Graphics this)
+void graphicsClear(Graphics this)
 {
     memset(this.textureData, 0, this.textureWidth * this.textureHeight * sizeof(Color));
 }
