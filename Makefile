@@ -1,7 +1,7 @@
 SRC_F := $(shell find src -name *.c)
 SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 
-FLAGS := -g -Wall -Ilibs/include 
+FLAGS := -g -O0 -Wall -Ilibs/include 
 LIBS := -lpthread -lm -lglfw -lGLEW -lGL
 
 TARGET := bin/main.bin

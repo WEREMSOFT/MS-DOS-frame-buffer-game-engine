@@ -11,5 +11,6 @@ typedef struct
 
 Sprite spriteCreate(char *file);
 void spriteDraw(Sprite this, Graphics graphics);
+void spriteDrawTransparent(Sprite this, Graphics graphics);
 
 #endif

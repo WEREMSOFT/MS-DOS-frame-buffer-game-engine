@@ -25,10 +25,30 @@ void printFPS(Graphics this)
     static double currentFPS;
 
     currentFPS = (currentFPS + 1 / (glfwGetTime() - lastUpdate)) / 2;
-    char text[1000] = {0};
-    snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
-    graphicsPrintString(this, 0, 0, text, (Color){0, 0xff, 0xff});
+    {
+        char text[1000] = {0};
+        snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
+        graphicsPrintString(this, 100, 0, text, (Color){0, 0xff, 0xff});
+    }
+    {
+        graphicsUpdateMouseCoordinates(&this);
+        graphicsDrawCircle(this, this.mouseX, this.mouseY, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
+        graphicsPutPixel(this, this.mouseX, this.mouseY, (Color){255, 255, 255});
+    }
     lastUpdate = glfwGetTime();
+}
+
+#define STAR_COUNT 1000
+
+void drawStars(Graphics graphics, Star *stars, double speed, double deltaTime)
+{
+    for (int i = 0; i < STAR_COUNT; i++)
+    {
+        stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
+        stars[i].x = fmod((fmod(stars[i].x, graphics.textureWidth) + graphics.textureWidth), graphics.textureWidth);
+
+        graphicsPutPixel(graphics, stars[i].x, stars[i].y, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
+    }
 }
 
 void programMainLoop(Program this)
@@ -36,8 +56,7 @@ void programMainLoop(Program this)
 
     Graphics graphics = this.graphics;
 
-#define STAR_COUNT 400000
-    Star stars[STAR_COUNT] = {0};
+    Star *stars = (Star *)malloc(sizeof(Star) * STAR_COUNT);
 
     Sprite background = spriteCreate("assets/320x200.png");
 
@@ -73,22 +92,17 @@ void programMainLoop(Program this)
 
         spriteDraw(background, graphics);
 
-        for (int i = 0; i < STAR_COUNT; i++)
-        {
-            stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
-            stars[i].x = fmod((fmod(stars[i].x, graphics.textureWidth) + graphics.textureWidth), graphics.textureWidth);
-
-            graphicsPutPixel(graphics, stars[i].x, stars[i].y, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
-        }
+        drawStars(graphics, stars, speed, deltaTime);
 
         graphicsPrintFontTest(graphics);
-        graphicsPrintString(graphics, 100, 150, "hello world 123", (Color){0xff, 0, 0});
+        graphicsPrintString(graphics, graphics.mouseX, graphics.mouseY, "hello world 123", (Color){0xff, 0, 0});
 
         printFPS(graphics);
 
         graphicsSwapBuffers(graphics);
         glfwPollEvents();
     }
+    free(stars);
 }
 
 void programDestroy(Program this)

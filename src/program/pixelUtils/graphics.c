@@ -142,6 +142,8 @@ Graphics graphicsCreate()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
     return this;
 }
 
@@ -184,9 +186,7 @@ void graphicsDestroy(Graphics this)
 
 void graphicsPutPixel(Graphics this, int x, int y, Color color)
 {
-    if (x < 0 || y < 0)
-        return;
-    int position = (x + y * this.textureWidth);
+    int position = (x + y * this.textureWidth) % 64000;
     this.textureData[position] = color;
 }
 
@@ -277,4 +277,14 @@ void graphicsPrintString(Graphics this, int x, int y, char *string, Color color)
             graphicsDrawCharacter(this, x + i * 6, y, charOffset, color);
         }
     }
+}
+
+void graphicsUpdateMouseCoordinates(Graphics *this)
+{
+    int w, h;
+    glfwGetWindowSize(this->window, &w, &h);
+    glfwGetCursorPos(this->window, &this->mouseX, &this->mouseY);
+    this->mouseX *= this->textureWidth / (float)w;
+    this->mouseY *= this->textureHeight / (float)h;
+    this->mouseRightDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1);
 }

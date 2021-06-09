@@ -18,6 +18,18 @@ void spriteDraw(Sprite this, Graphics graphics)
         for (int j = 0; j < this.height; j++)
         {
             Color color = this.imageData[j * this.width + i];
+            graphicsPutPixel(graphics, this.x + i, this.y + j, color);
+        }
+    }
+}
+
+void spriteDrawTransparent(Sprite this, Graphics graphics)
+{
+    for (int i = 0; i <= this.width; i++)
+    {
+        for (int j = 0; j < this.height; j++)
+        {
+            Color color = this.imageData[j * this.width + i];
             if (color.r != 0xFF && color.b != 0xFF && color.g != 0)
                 graphicsPutPixel(graphics, this.x + i, this.y + j, color);
         }
