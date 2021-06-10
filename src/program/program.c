@@ -32,8 +32,9 @@ void printFPS(Graphics this)
     }
     {
         graphicsUpdateMouseCoordinates(&this);
-        graphicsDrawCircle(this, (Pointi){this.mouseX, this.mouseY}, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
-        graphicsPutPixel(this, (Pointi){this.mouseX, this.mouseY}, (Color){255, 255, 255});
+        graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
+        graphicsPutPixel(this, this.mousePosition, (Color){255, 255, 255});
+        graphicsDrawLine(this, (Pointi){0, 0}, this.mousePosition, (Color){0xff, 0, 0});
     }
     lastUpdate = glfwGetTime();
 }
@@ -89,12 +90,14 @@ void programMainLoop(Program this)
             speed = -100.f;
         }
 
+        graphicsDrawLine(graphics, (Pointi){0, 0}, graphics.mousePosition, (Color){0xff, 0, 0});
+
         spriteDraw(background, graphics);
 
         drawStars(graphics, stars, speed, deltaTime);
 
         graphicsPrintFontTest(graphics);
-        graphicsPrintString(graphics, (Pointi){graphics.mouseX, graphics.mouseY}, "hello world 123", (Color){0xff, 0, 0});
+        graphicsPrintString(graphics, (Pointi){graphics.mousePosition.x, graphics.mousePosition.y}, "hello world 123", (Color){0xff, 0, 0});
 
         printFPS(graphics);
 

@@ -278,9 +278,36 @@ void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Colo
 void graphicsUpdateMouseCoordinates(Graphics *this)
 {
     int w, h;
+    double mouseX, mouseY;
     glfwGetWindowSize(this->window, &w, &h);
-    glfwGetCursorPos(this->window, &this->mouseX, &this->mouseY);
-    this->mouseX *= this->textureWidth / (float)w;
-    this->mouseY *= this->textureHeight / (float)h;
+    glfwGetCursorPos(this->window, &mouseX, &mouseY);
+    this->mousePosition.x = mouseX + this->textureWidth / (float)w;
+    this->mousePosition.y = mouseY + this->textureHeight / (float)h;
     this->mouseRightDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1);
+}
+
+void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color)
+{
+
+    int dx = abs(pointB.x - pointA.x), sx = pointA.x < pointB.x ? 1 : -1;
+    int dy = abs(pointB.y - pointA.y), sy = pointA.y < pointB.y ? 1 : -1;
+    int err = (dx > dy ? dx : -dy) / 2, e2;
+
+    for (;;)
+    {
+        graphicsPutPixel(this, pointA, color);
+        if (pointA.x == pointB.x && pointA.y == pointB.y)
+            break;
+        e2 = err;
+        if (e2 > -dx)
+        {
+            err -= dy;
+            pointA.x += sx;
+        }
+        if (e2 < dy)
+        {
+            err += dx;
+            pointA.y += sy;
+        }
+    }
 }

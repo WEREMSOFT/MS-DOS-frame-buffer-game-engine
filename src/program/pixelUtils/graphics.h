@@ -11,20 +11,6 @@ typedef struct
 
 typedef struct
 {
-    unsigned int textureId;
-    unsigned int textureWidth;
-    unsigned int textureHeight;
-    unsigned int VAO;
-    unsigned int shaderProgram;
-    double mouseX;
-    double mouseY;
-    bool mouseRightDown;
-    GLFWwindow *window;
-    Color *textureData;
-} Graphics;
-
-typedef struct
-{
     int x;
     int y;
 } Pointi;
@@ -34,6 +20,19 @@ typedef struct
     double x;
     double y;
 } Pointf;
+
+typedef struct
+{
+    unsigned int textureId;
+    unsigned int textureWidth;
+    unsigned int textureHeight;
+    unsigned int VAO;
+    unsigned int shaderProgram;
+    Pointi mousePosition;
+    bool mouseRightDown;
+    GLFWwindow *window;
+    Color *textureData;
+} Graphics;
 
 Graphics graphicsCreate();
 void graphicsSwapBuffers(Graphics this);
