@@ -23,15 +23,29 @@ typedef struct
     Color *textureData;
 } Graphics;
 
+typedef struct
+{
+    int x;
+    int y;
+} Pointi;
+
+typedef struct
+{
+    double x;
+    double y;
+} Pointf;
+
 Graphics graphicsCreate();
 void graphicsSwapBuffers(Graphics this);
 void graphicsDestroy(Graphics this);
 void graphicsUpdateMouseCoordinates(Graphics *this);
-void graphicsPutPixel(Graphics this, int x, int y, Color color);
-void graphicsDrawCircle(Graphics this, double x, double y, double radious, Color color);
-void graphicsDrawSquare(Graphics this, double x, double y, double width, double height, Color color);
+void graphicsPutPixel(Graphics this, Pointi point, Color color);
+void graphicsDrawCircle(Graphics this, Pointi center, double radious, Color color);
+void graphicsDrawCircleFill(Graphics this, Pointi center, double radious, Color color);
+void graphicsDrawSquare(Graphics this, Pointi topLeftCorner, Pointi size, Color color);
 void graphicsClear(Graphics this);
-void graphicsDrawCharacter(Graphics this, double x, double y, unsigned int letter, Color color);
+void graphicsDrawCharacter(Graphics this, Pointi topLeftCorner, unsigned int letter, Color color);
 void graphicsPrintFontTest(Graphics this);
-void graphicsPrintString(Graphics this, int x, int y, char *string, Color color);
+void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Color color);
+void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color);
 #endif

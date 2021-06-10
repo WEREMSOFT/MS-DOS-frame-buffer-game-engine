@@ -166,10 +166,6 @@ void graphicsSwapBuffers(Graphics this)
     glBindTexture(GL_TEXTURE_2D, this.textureId);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this.textureWidth, this.textureHeight, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
 
-    // bind textures on corresponding texture units
-    // glBindTexture(GL_TEXTURE_2D, this.textureId);
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this.textureWidth, this.textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
-
     // render container
     glBindVertexArray(this.VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -184,55 +180,55 @@ void graphicsDestroy(Graphics this)
     glfwTerminate();
 }
 
-void graphicsPutPixel(Graphics this, int x, int y, Color color)
+void graphicsPutPixel(Graphics this, Pointi point, Color color)
 {
-    int position = (x + y * this.textureWidth) % 64000;
+    int position = (point.x + point.y * this.textureWidth) % 64000;
     this.textureData[position] = color;
 }
 
-void graphicsDrawCircle(Graphics this, double x, double y, double radious, Color color)
+void graphicsDrawCircle(Graphics this, Pointi center, double radious, Color color)
 {
-    for (int i = x - radious; i <= x + radious; i++)
+    for (int i = center.x - radious; i <= center.x + radious; i++)
     {
-        for (int j = y - radious; j <= y + radious; j++)
+        for (int j = center.y - radious; j <= center.y + radious; j++)
         {
-            if (floor(sqrt(pow(x - i, 2) + pow(y - j, 2))) == radious)
-                graphicsPutPixel(this, i, j, color);
+            if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
+                graphicsPutPixel(this, (Pointi){i, j}, color);
         }
     }
 }
 
-void graphicsDrawSquare(Graphics this, double x, double y, double width, double height, Color color)
+void graphicsDrawSquare(Graphics this, Pointi topLeftCorner, Pointi size, Color color)
 {
-    for (int i = x; i <= x + width; i++)
+    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
-        for (int j = y; j <= y + height; j++)
+        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
         {
-            if (j == y || j == y + height || i == x || i == x + width)
-                graphicsPutPixel(this, i, j, color);
+            if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
+                graphicsPutPixel(this, (Pointi){i, j}, color);
         }
     }
 }
 
-void drawCircleFill(Graphics this, double x, double y, double radious, Color color)
+void graphicsDrawCircleFill(Graphics this, Pointi center, double radious, Color color)
 {
-    for (int i = x - radious; i <= x + radious; i++)
+    for (int i = center.x - radious; i <= center.x + radious; i++)
     {
-        for (int j = y - radious; j <= y + radious; j++)
+        for (int j = center.y - radious; j <= center.y + radious; j++)
         {
-            if (floor(sqrt(pow(x - i, 2) + pow(y - j, 2))) == radious)
-                graphicsPutPixel(this, i, j, color);
+            if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
+                graphicsPutPixel(this, (Pointi){i, j}, color);
         }
     }
 }
 
-void drawSquareFill(Graphics this, double x, double y, double width, double height, Color color)
+void graphicsDrawSquareFill(Graphics this, Pointi topLeftCorner, Pointi size, Color color)
 {
-    for (int i = x; i <= x + width; i++)
+    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
-        for (int j = y; j <= y + height; j++)
+        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
         {
-            graphicsPutPixel(this, i, j, color);
+            graphicsPutPixel(this, (Pointi){i, j}, color);
         }
     }
 }
@@ -242,14 +238,14 @@ void graphicsClear(Graphics this)
     memset(this.textureData, 0, this.textureWidth * this.textureHeight * sizeof(Color));
 }
 
-void graphicsDrawCharacter(Graphics this, double x, double y, unsigned int letter, Color color)
+void graphicsDrawCharacter(Graphics this, Pointi topLeftCorner, unsigned int letter, Color color)
 {
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j <= 8; j++)
         {
             if (fonts[letter][i] & (0b1000000 >> j))
-                graphicsPutPixel(this, x + j, y + i, color);
+                graphicsPutPixel(this, (Pointi){topLeftCorner.x + j, topLeftCorner.y + i}, color);
         }
     }
 }
@@ -258,23 +254,23 @@ void graphicsPrintFontTest(Graphics this)
 {
     for (int i = 0; i < 38; i++)
     {
-        graphicsDrawCharacter(this, 0 + i * 6, 100, i, (Color){0xff, 0xff, 0xff});
+        graphicsDrawCharacter(this, (Pointi){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
     }
 }
 
-void graphicsPrintString(Graphics this, int x, int y, char *string, Color color)
+void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Color color)
 {
     unsigned int stringLen = strlen(string);
     for (int i = 0; i < stringLen; i++)
     {
         if (string[i] >= '0' && string[i] <= '9')
         {
-            graphicsDrawCharacter(this, x + i * 6, y, string[i] - '0', color);
+            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
         }
         else if (string[i] >= 'a' && string[i] <= 'z')
         {
             int charOffset = string[i] - 'a' + 10;
-            graphicsDrawCharacter(this, x + i * 6, y, charOffset, color);
+            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
         }
     }
 }

@@ -5,7 +5,8 @@
 
 typedef struct
 {
-    int x, y, width, height;
+    Pointi position;
+    Pointi size;
     Color *imageData;
 } Sprite;
 

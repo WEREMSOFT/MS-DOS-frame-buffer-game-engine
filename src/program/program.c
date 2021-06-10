@@ -28,12 +28,12 @@ void printFPS(Graphics this)
     {
         char text[1000] = {0};
         snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
-        graphicsPrintString(this, 100, 0, text, (Color){0, 0xff, 0xff});
+        graphicsPrintString(this, (Pointi){100, 0}, text, (Color){0, 0xff, 0xff});
     }
     {
         graphicsUpdateMouseCoordinates(&this);
-        graphicsDrawCircle(this, this.mouseX, this.mouseY, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
-        graphicsPutPixel(this, this.mouseX, this.mouseY, (Color){255, 255, 255});
+        graphicsDrawCircle(this, (Pointi){this.mouseX, this.mouseY}, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
+        graphicsPutPixel(this, (Pointi){this.mouseX, this.mouseY}, (Color){255, 255, 255});
     }
     lastUpdate = glfwGetTime();
 }
@@ -47,7 +47,7 @@ void drawStars(Graphics graphics, Star *stars, double speed, double deltaTime)
         stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
         stars[i].x = fmod((fmod(stars[i].x, graphics.textureWidth) + graphics.textureWidth), graphics.textureWidth);
 
-        graphicsPutPixel(graphics, stars[i].x, stars[i].y, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
+        graphicsPutPixel(graphics, (Pointi){stars[i].x, stars[i].y}, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
     }
 }
 
@@ -84,7 +84,6 @@ void programMainLoop(Program this)
         {
             speed = 100.f;
         }
-
         if (glfwGetKey(graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             speed = -100.f;
@@ -95,7 +94,7 @@ void programMainLoop(Program this)
         drawStars(graphics, stars, speed, deltaTime);
 
         graphicsPrintFontTest(graphics);
-        graphicsPrintString(graphics, graphics.mouseX, graphics.mouseY, "hello world 123", (Color){0xff, 0, 0});
+        graphicsPrintString(graphics, (Pointi){graphics.mouseX, graphics.mouseY}, "hello world 123", (Color){0xff, 0, 0});
 
         printFPS(graphics);
 
