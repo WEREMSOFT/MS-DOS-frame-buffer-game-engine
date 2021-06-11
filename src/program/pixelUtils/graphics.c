@@ -144,6 +144,8 @@ Graphics graphicsCreate()
 
     glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
+    glfwSetCursorPos(this.window, 0, 0);
+
     return this;
 }
 
