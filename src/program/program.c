@@ -6,6 +6,7 @@
 #include <stb_image.h>
 #include <math.h>
 #include "pixelUtils/sprite.h"
+#include "input/input.h"
 
 Program programCreate()
 {
@@ -52,6 +53,8 @@ void drawStars(Graphics graphics, Star *stars, double speed, double deltaTime)
     }
 }
 
+static int value = 0;
+
 void programMainLoop(Program this)
 {
 
@@ -90,14 +93,27 @@ void programMainLoop(Program this)
             speed = -100.f;
         }
 
-        graphicsDrawLine(graphics, (Pointi){0, 0}, graphics.mousePosition, (Color){0xff, 0, 0});
+        if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
+        {
+            value++;
+        }
+
+        if (isMouseButtonJustPressed(graphics.window, GLFW_MOUSE_BUTTON_1))
+        {
+            value += 2;
+        }
 
         spriteDraw(background, graphics);
 
         drawStars(graphics, stars, speed, deltaTime);
 
+        char keyState[30] = {0};
+
+        snprintf(keyState, 30, "estado %d", value);
+
+        graphicsPrintString(graphics, (Pointi){160, 90}, keyState, (Color){0xff, 0, 0});
+
         graphicsPrintFontTest(graphics);
-        graphicsPrintString(graphics, (Pointi){graphics.mousePosition.x, graphics.mousePosition.y}, "hello world 123", (Color){0xff, 0, 0});
 
         printFPS(graphics);
 
