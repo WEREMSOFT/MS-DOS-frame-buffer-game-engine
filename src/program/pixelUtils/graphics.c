@@ -313,3 +313,8 @@ void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color)
         }
     }
 }
+
+Pointi pointScalei(Pointi p, float scale)
+{
+    Pointi this = {p.x * scale, p.y * scale};
+}

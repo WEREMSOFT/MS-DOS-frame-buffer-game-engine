@@ -47,4 +47,6 @@ void graphicsDrawCharacter(Graphics this, Pointi topLeftCorner, unsigned int let
 void graphicsPrintFontTest(Graphics this);
 void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Color color);
 void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color);
+
+Pointi pointScalei(Pointi p, float scale);
 #endif

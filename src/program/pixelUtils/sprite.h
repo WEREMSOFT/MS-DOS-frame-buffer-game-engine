@@ -1,7 +1,7 @@
 #ifndef __SPRITE_H__
 #define __SPRITE_H__
 
-#include "../program.h"
+#include "graphics.h"
 
 typedef struct
 {

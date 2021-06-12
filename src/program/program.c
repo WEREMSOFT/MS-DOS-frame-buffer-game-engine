@@ -5,20 +5,20 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <math.h>
-#include "pixelUtils/sprite.h"
 #include "input/input.h"
-
+#define __UNIVERSAL_ARRAY_IMPLEMENTATION__
+#include "array/array.h"
 Program programCreate()
 {
     Program this = {0};
     this.graphics = graphicsCreate();
+    this.isoTile = spriteCreate("assets/iso_tile.png");
+    this.background = spriteCreate("assets/320x200.png");
+
+    this.sprites = arrayCreate(10, sizeof(Sprite));
+
     return this;
 }
-
-typedef struct
-{
-    double x, y, z;
-} Star;
 
 void printFPS(Graphics this)
 {
@@ -32,95 +32,47 @@ void printFPS(Graphics this)
         graphicsPrintString(this, (Pointi){100, 0}, text, (Color){0, 0xff, 0xff});
     }
     {
-        graphicsUpdateMouseCoordinates(&this);
         graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
         graphicsPutPixel(this, this.mousePosition, (Color){255, 255, 255});
-        graphicsDrawLine(this, (Pointi){0, 0}, this.mousePosition, (Color){0xff, 0, 0});
     }
     lastUpdate = glfwGetTime();
 }
 
-#define STAR_COUNT 1000
-
-void drawStars(Graphics graphics, Star *stars, double speed, double deltaTime)
-{
-    for (int i = 0; i < STAR_COUNT; i++)
-    {
-        stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
-        stars[i].x = fmod((fmod(stars[i].x, graphics.textureWidth) + graphics.textureWidth), graphics.textureWidth);
-
-        graphicsPutPixel(graphics, (Pointi){stars[i].x, stars[i].y}, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
-    }
-}
-
-static int value = 0;
-
 void programMainLoop(Program this)
 {
-
     Graphics graphics = this.graphics;
-
-    Star *stars = (Star *)malloc(sizeof(Star) * STAR_COUNT);
-
-    Sprite background = spriteCreate("assets/320x200.png");
-
-    for (int i = 0; i < STAR_COUNT; i++)
-    {
-        stars[i].x = (random() % (graphics.textureWidth));
-        stars[i].y = (random() % (graphics.textureHeight));
-        stars[i].z = (double)random() / (double)RAND_MAX;
-    }
-
-    double lastTime = glfwGetTime();
-    float speed = 100.f;
 
     while (!glfwWindowShouldClose(this.graphics.window))
     {
-        double deltaTime = glfwGetTime() - lastTime;
-        lastTime = glfwGetTime();
+        graphicsUpdateMouseCoordinates(&graphics);
         graphicsClear(this.graphics);
 
         if (glfwGetKey(graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(graphics.window, true);
         }
-        if (glfwGetKey(graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        {
-            speed = 100.f;
-        }
-        if (glfwGetKey(graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        {
-            speed = -100.f;
-        }
-
-        if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
-        {
-            value++;
-        }
 
         if (isMouseButtonJustPressed(graphics.window, GLFW_MOUSE_BUTTON_1))
         {
-            value += 2;
+            arrayInsertElement(&this.sprites, &this.isoTile);
         }
 
-        spriteDraw(background, graphics);
+        spriteDraw(this.background, graphics);
+        this.isoTile.position = (Pointi){
+            (int)(graphics.mousePosition.x - graphics.mousePosition.x % (int)ceil(this.isoTile.size.x * 0.5)),
+            (int)(graphics.mousePosition.y - graphics.mousePosition.y % (int)ceil(this.isoTile.size.y * 0.5))};
+        spriteDrawTransparent(this.isoTile, graphics);
 
-        drawStars(graphics, stars, speed, deltaTime);
-
-        char keyState[30] = {0};
-
-        snprintf(keyState, 30, "estado %d", value);
-
-        graphicsPrintString(graphics, (Pointi){160, 90}, keyState, (Color){0xff, 0, 0});
-
-        graphicsPrintFontTest(graphics);
+        for (int i = 0; i < this.sprites->header.length; i++)
+        {
+            Sprite *sprite = arrayGetElementAt(this.sprites, i);
+            spriteDrawTransparent(*sprite, graphics);
+        }
 
         printFPS(graphics);
-
         graphicsSwapBuffers(graphics);
         glfwPollEvents();
     }
-    free(stars);
 }
 
 void programDestroy(Program this)

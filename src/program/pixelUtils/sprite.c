@@ -13,7 +13,7 @@ Sprite spriteCreate(char *file)
 
 void spriteDraw(Sprite this, Graphics graphics)
 {
-    for (int i = 0; i <= this.size.x; i++)
+    for (int i = 0; i < this.size.x; i++)
     {
         for (int j = 0; j < this.size.y; j++)
         {
@@ -25,7 +25,7 @@ void spriteDraw(Sprite this, Graphics graphics)
 
 void spriteDrawTransparent(Sprite this, Graphics graphics)
 {
-    for (int i = 0; i <= this.size.x; i++)
+    for (int i = 0; i < this.size.x; i++)
     {
         for (int j = 0; j < this.size.y; j++)
         {
