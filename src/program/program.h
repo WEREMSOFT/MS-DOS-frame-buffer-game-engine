@@ -9,9 +9,12 @@
 typedef struct
 {
     Graphics graphics;
-    Sprite isoTile;
     Sprite background;
+    Sprite selectedIsoTile;
+    Array *isoTiles;
     Array *sprites;
+    Pointi tileSize;
+    int selectedIsoTileIndex;
 } Program;
 
 Program programCreate();

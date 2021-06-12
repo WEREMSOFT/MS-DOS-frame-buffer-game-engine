@@ -3,7 +3,7 @@
 
 static int keys[255] = {0};
 
-bool isKeyJustPressed(GLFWwindow *window, unsigned char key)
+bool isKeyJustPressed(GLFWwindow *window, int key)
 {
     int actualKeyState = glfwGetKey(window, key);
 

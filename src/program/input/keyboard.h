@@ -4,6 +4,6 @@
 #include <stdbool.h>
 #include <GLFW/glfw3.h>
 
-bool isKeyJustPressed(GLFWwindow *window, unsigned char key);
+bool isKeyJustPressed(GLFWwindow *window, int key);
 
 #endif
