@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
+#include "../array/array.h"
 
 typedef struct
 {
@@ -46,5 +47,6 @@ void graphicsClear(Graphics this);
 void graphicsDrawCharacter(Graphics this, Pointi topLeftCorner, unsigned int letter, Color color);
 void graphicsPrintFontTest(Graphics this);
 void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Color color);
+void graphicsPrintArray(Graphics this, Pointi topLeftCorner, Array *array, Color color);
 void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color);
 #endif

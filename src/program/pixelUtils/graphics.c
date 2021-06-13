@@ -95,7 +95,7 @@ Graphics graphicsCreate()
 
     if (err != GLEW_OK)
     {
-        fprintf(stderr, "error initializing glew\n");
+        fprintf(stderr, "error initializing glew: %s\n", glewGetErrorString(err));
         exit(-1);
     }
 
@@ -257,6 +257,27 @@ void graphicsPrintFontTest(Graphics this)
     for (int i = 0; i < 38; i++)
     {
         graphicsDrawCharacter(this, (Pointi){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
+    }
+}
+
+void graphicsPrintArray(Graphics this, Pointi topLeftCorner, Array *array, Color color)
+{
+    for (int i = 0; i < array->header.length; i++)
+    {
+        if (array->data[i] >= '0' && array->data[i] <= '9')
+        {
+            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, array->data[i] - '0', color);
+        }
+        else if (array->data[i] >= 'a' && array->data[i] <= 'z')
+        {
+            int charOffset = array->data[i] - 'a' + 10;
+            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+        }
+        else if (array->data[i] >= 'A' && array->data[i] <= 'Z')
+        {
+            int charOffset = array->data[i] - 'A' + 10;
+            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+        }
     }
 }
 
