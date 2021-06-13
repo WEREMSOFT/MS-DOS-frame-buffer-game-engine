@@ -93,7 +93,7 @@ Graphics graphicsCreate()
 
     GLenum err = glewInit();
 
-    if (err != GLEW_OK)
+    if (err != GLEW_OK || err == 255) // the 255 part is because Wayland fails even if the initialization went right
     {
         fprintf(stderr, "error initializing glew: %s\n", glewGetErrorString(err));
         exit(-1);
