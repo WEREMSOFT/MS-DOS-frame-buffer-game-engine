@@ -95,7 +95,7 @@ Graphics graphicsCreate()
 
     if (err != GLEW_OK)
     {
-        fprintf(stderr, "error initializing glew\n");
+        fprintf(stderr, "error initializing glew: %s\n", glewGetErrorString(err));
         exit(-1);
     }
 
