@@ -30,7 +30,7 @@ void spriteDrawTransparent(Sprite this, Graphics graphics)
         for (int j = 0; j < this.size.y; j++)
         {
             Color color = this.imageData[j * this.size.x + i];
-            if (color.r != 0xFF && color.b != 0xFF && color.g != 0)
+            if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                 graphicsPutPixel(graphics, (Pointi){this.position.x + i, this.position.y + j}, color);
         }
     }
