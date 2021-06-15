@@ -12,23 +12,9 @@ Program programCreate()
 {
     Program this = {0};
     this.graphics = graphicsCreate();
-    this.sprites = arrayCreate(10, sizeof(Sprite));
-    this.isoTiles = arrayCreate(10, sizeof(Sprite));
-    {
-        Sprite tile = spriteCreate("assets/Ships/Blue-1.png");
-        this.tileSize = tile.size;
-        arrayInsertElement(&this.isoTiles, &tile);
 
-        tile = spriteCreate("assets/tiles/iso_tile_1.png");
-        arrayInsertElement(&this.isoTiles, &tile);
+    this.hero = spriteCreate("assets/Ships/Blue-1.png");
 
-        tile = spriteCreate("assets/tiles/iso_tile_2.png");
-        arrayInsertElement(&this.isoTiles, &tile);
-
-        tile = spriteCreate("assets/tiles/iso_tile_3.png");
-        arrayInsertElement(&this.isoTiles, &tile);
-    }
-    this.selectedIsoTile = *(Sprite *)arrayGetElementAt(this.isoTiles, this.selectedIsoTileIndex);
     this.background = spriteCreateCkeckerBoard(this.graphics, (PointI){800, 600}, 20, (Color){0xFE, 0xF0, 0xA5}, (Color){0x74, 0x81, 0x9D});
     return this;
 }
@@ -51,14 +37,33 @@ void printFPS(Graphics this)
     lastUpdate = glfwGetTime();
 }
 
-int x = 0;
+PointF positionUpdateIntoCircularMovenent()
+{
+    PointF this = {0};
+    this.x = sinf(glfwGetTime()) * 40.f - 40;
+    this.y = cosf(glfwGetTime()) * 40.f - 40;
+    return this;
+}
+
+PointF updatePositionBasedOnKeyboard(GLFWwindow *window, PointF this, double deltaTime, float speed)
+{
+    this.x += speed * deltaTime * (glfwGetKey(window, GLFW_KEY_RIGHT) - glfwGetKey(window, GLFW_KEY_LEFT));
+    this.y += speed * deltaTime * (glfwGetKey(window, GLFW_KEY_DOWN) - glfwGetKey(window, GLFW_KEY_UP));
+    return this;
+}
 
 void programMainLoop(Program this)
 {
     Graphics graphics = this.graphics;
 
+    double lastUpdate = glfwGetTime();
+    double deltaTime = 0;
+
     while (!glfwWindowShouldClose(this.graphics.window))
     {
+        deltaTime = glfwGetTime() - lastUpdate;
+        lastUpdate = glfwGetTime();
+
         graphicsUpdateMouseCoordinates(&graphics);
         graphicsClear(this.graphics);
 
@@ -67,39 +72,12 @@ void programMainLoop(Program this)
             glfwSetWindowShouldClose(graphics.window, true);
         }
 
-        if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
-        {
-            this.selectedIsoTileIndex++;
-            this.selectedIsoTileIndex %= this.isoTiles->header.length;
-            this.selectedIsoTile = *(Sprite *)arrayGetElementAt(this.isoTiles, this.selectedIsoTileIndex);
-        }
+        this.background.position = positionUpdateIntoCircularMovenent();
 
-        if (isMouseButtonJustPressed(graphics.window, GLFW_MOUSE_BUTTON_1))
-        {
-            arrayInsertElement(&this.sprites, &this.selectedIsoTile);
-        }
+        this.hero.position = updatePositionBasedOnKeyboard(graphics.window, this.hero.position, deltaTime, 100.0);
 
-        if (isKeyJustPressed(graphics.window, GLFW_KEY_RIGHT))
-        {
-            x++;
-        }
-        this.background.position.x = sinf(glfwGetTime()) * 40.f - 40;
-        this.background.position.y = cosf(glfwGetTime()) * 40.f - 40;
         spriteDrawClipped(this.background, graphics);
-        graphicsPutPixel(graphics, (PointI){x, 0}, (Color){0xff, 0, 0});
-
-        for (int i = 0; i < this.sprites->header.length; i++)
-        {
-            Sprite *sprite = arrayGetElementAt(this.sprites, i);
-            spriteDrawTransparent(*sprite, graphics);
-        }
-
-        this.selectedIsoTile.position = (PointF){
-            (int)(graphics.mousePosition.x - this.selectedIsoTile.size.x / 2),
-            (int)(graphics.mousePosition.y - this.selectedIsoTile.size.y / 2)};
-
-        this.selectedIsoTile.position.y -= this.selectedIsoTile.size.y - this.tileSize.y;
-        spriteDrawTransparentClipped(this.selectedIsoTile, graphics);
+        spriteDrawTransparentClipped(this.hero, graphics);
 
         printFPS(graphics);
         graphicsSwapBuffers(graphics);
