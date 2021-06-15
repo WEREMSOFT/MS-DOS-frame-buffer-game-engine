@@ -6,10 +6,18 @@
 #include "pixelUtils/sprite.h"
 #include "./array/array.h"
 
+enum ProjectilesEnum
+{
+    PROJECTILE_HERO,
+    PROJECTILE_COUNT
+};
+
 typedef struct
 {
     Graphics graphics;
     Sprite background;
+    Sprite projectiles[PROJECTILE_COUNT];
+    PointF heroBulletsPositions[10];
     Sprite hero;
 } Program;
 

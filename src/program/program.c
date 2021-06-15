@@ -15,29 +15,26 @@ Program programCreate()
 
     this.hero = spriteCreate("assets/Ships/Blue-1.png");
 
+    this.projectiles[PROJECTILE_HERO] = spriteCreate("assets/Projectiles/projectile03-4.png");
+
     this.background = spriteCreateCkeckerBoard(this.graphics, (PointI){800, 600}, 20, (Color){0xFE, 0xF0, 0xA5}, (Color){0x74, 0x81, 0x9D});
     return this;
 }
 
-void printFPS(Graphics this)
+static inline void printFPS(Graphics this, double deltaTime)
 {
-    static double lastUpdate;
+    // needed for rolling average
     static double currentFPS;
 
-    currentFPS = (currentFPS + 1 / (glfwGetTime() - lastUpdate)) / 2;
+    currentFPS = (currentFPS + 1 / deltaTime) / 2;
     {
         char text[1000] = {0};
         snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
         graphicsPrintString(this, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
     }
-    // {
-    //     graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
-    //     graphicsPutPixel(this, this.mousePosition, (Color){255, 255, 255});
-    // }
-    lastUpdate = glfwGetTime();
 }
 
-PointF positionUpdateIntoCircularMovenent()
+static inline PointF positionUpdateIntoCircularMovenent()
 {
     PointF this = {0};
     this.x = sinf(glfwGetTime()) * 40.f - 40;
@@ -45,11 +42,28 @@ PointF positionUpdateIntoCircularMovenent()
     return this;
 }
 
-PointF updatePositionBasedOnKeyboard(GLFWwindow *window, PointF this, double deltaTime, float speed)
+static inline PointF updatePositionBasedOnKeyboard(GLFWwindow *window, PointF this, double deltaTime, float speed)
 {
     this.x += speed * deltaTime * (glfwGetKey(window, GLFW_KEY_RIGHT) - glfwGetKey(window, GLFW_KEY_LEFT));
     this.y += speed * deltaTime * (glfwGetKey(window, GLFW_KEY_DOWN) - glfwGetKey(window, GLFW_KEY_UP));
     return this;
+}
+
+static inline void updateHeroProjectiles(Program *this, double deltaTime)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        this->heroBulletsPositions[i].x += 700.0 * deltaTime;
+    }
+}
+
+static inline void drawHeroProjectiles(Program this, Graphics graphics)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        this.projectiles[PROJECTILE_HERO].position = this.heroBulletsPositions[i];
+        spriteDrawTransparentClipped(this.projectiles[PROJECTILE_HERO], graphics);
+    }
 }
 
 void programMainLoop(Program this)
@@ -58,6 +72,8 @@ void programMainLoop(Program this)
 
     double lastUpdate = glfwGetTime();
     double deltaTime = 0;
+
+    int bulletIndex = 0;
 
     while (!glfwWindowShouldClose(this.graphics.window))
     {
@@ -78,8 +94,19 @@ void programMainLoop(Program this)
 
         spriteDrawClipped(this.background, graphics);
         spriteDrawTransparentClipped(this.hero, graphics);
+        if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
+        {
+            bulletIndex++;
+            bulletIndex %= 10;
+            this.heroBulletsPositions[bulletIndex].y = this.hero.position.y + this.hero.size.y * .5;
+            this.heroBulletsPositions[bulletIndex].x = this.hero.position.x + this.projectiles[PROJECTILE_HERO].size.x * 0.5;
+        }
 
-        printFPS(graphics);
+        updateHeroProjectiles(&this, deltaTime);
+
+        drawHeroProjectiles(this, graphics);
+
+        printFPS(graphics, deltaTime);
         graphicsSwapBuffers(graphics);
         glfwPollEvents();
     }
