@@ -79,18 +79,18 @@ void spriteDestroy(Sprite this)
     free(this.imageData);
 }
 
-Sprite spriteCreateCkeckerBoard(Graphics graphics, int width, Color color1, Color color2)
+Sprite spriteCreateCkeckerBoard(Graphics graphics, PointI size, int checkerWidth, Color color1, Color color2)
 {
     Sprite this = {0};
 
     Color currentColor = color1;
-    this.imageData = malloc(sizeof(Color) * graphics.textureHeight * graphics.textureWidth);
-    this.size = (PointI){graphics.textureWidth, graphics.textureHeight};
-    for (int y = 0; y < graphics.textureHeight; y++)
+    this.imageData = malloc(sizeof(Color) * size.x * size.y);
+    this.size = size;
+    for (int y = 0; y < this.size.y; y++)
     {
-        for (int x = 0; x < graphics.textureWidth; x++)
+        for (int x = 0; x < this.size.x; x++)
         {
-            if ((y / width + x / width) % 2)
+            if ((y / checkerWidth + x / checkerWidth) % 2)
             {
                 currentColor = color1;
             }
@@ -98,7 +98,7 @@ Sprite spriteCreateCkeckerBoard(Graphics graphics, int width, Color color1, Colo
             {
                 currentColor = color2;
             }
-            this.imageData[x + y * graphics.textureWidth] = currentColor;
+            this.imageData[x + y * size.x] = currentColor;
         }
     }
 

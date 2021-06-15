@@ -29,7 +29,7 @@ Program programCreate()
         arrayInsertElement(&this.isoTiles, &tile);
     }
     this.selectedIsoTile = *(Sprite *)arrayGetElementAt(this.isoTiles, this.selectedIsoTileIndex);
-    this.background = spriteCreateCkeckerBoard(this.graphics, 10, (Color){0xFE, 0xF0, 0xA5}, (Color){0x74, 0x81, 0x9D});
+    this.background = spriteCreateCkeckerBoard(this.graphics, (PointI){800, 600}, 20, (Color){0xFE, 0xF0, 0xA5}, (Color){0x74, 0x81, 0x9D});
     return this;
 }
 
@@ -83,8 +83,9 @@ void programMainLoop(Program this)
         {
             x++;
         }
-
-        spriteDraw(this.background, graphics);
+        this.background.position.x = sinf(glfwGetTime()) * 40.f - 40;
+        this.background.position.y = cosf(glfwGetTime()) * 40.f - 40;
+        spriteDrawClipped(this.background, graphics);
         graphicsPutPixel(graphics, (PointI){x, 0}, (Color){0xff, 0, 0});
 
         for (int i = 0; i < this.sprites->header.length; i++)
@@ -98,7 +99,7 @@ void programMainLoop(Program this)
             (int)(graphics.mousePosition.y - graphics.mousePosition.y % (int)ceil(this.tileSize.y * 0.5)) - 10};
 
         this.selectedIsoTile.position.y -= this.selectedIsoTile.size.y - this.tileSize.y;
-        spriteDrawClipped(this.selectedIsoTile, graphics);
+        spriteDrawTransparentClipped(this.selectedIsoTile, graphics);
 
         printFPS(graphics);
         graphicsSwapBuffers(graphics);
