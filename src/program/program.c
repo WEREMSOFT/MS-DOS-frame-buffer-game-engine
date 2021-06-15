@@ -42,7 +42,7 @@ void printFPS(Graphics this)
     {
         char text[1000] = {0};
         snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
-        graphicsPrintString(this, (Pointi){100, 0}, text, (Color){0, 0xff, 0xff});
+        graphicsPrintString(this, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
     }
     {
         graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
@@ -85,7 +85,7 @@ void programMainLoop(Program this)
         }
 
         spriteDraw(this.background, graphics);
-        graphicsPutPixel(graphics, (Pointi){x, 0}, (Color){0xff, 0, 0});
+        graphicsPutPixel(graphics, (PointI){x, 0}, (Color){0xff, 0, 0});
 
         for (int i = 0; i < this.sprites->header.length; i++)
         {
@@ -93,12 +93,12 @@ void programMainLoop(Program this)
             spriteDrawTransparent(*sprite, graphics);
         }
 
-        this.selectedIsoTile.position = (Pointi){
-            (int)(graphics.mousePosition.x - graphics.mousePosition.x % (int)ceil(this.tileSize.x * 0.5)),
-            (int)(graphics.mousePosition.y - graphics.mousePosition.y % (int)ceil(this.tileSize.y * 0.5))};
+        this.selectedIsoTile.position = (PointF){
+            (int)(graphics.mousePosition.x - graphics.mousePosition.x % (int)ceil(this.tileSize.x * 0.5)) - 10,
+            (int)(graphics.mousePosition.y - graphics.mousePosition.y % (int)ceil(this.tileSize.y * 0.5)) - 10};
 
         this.selectedIsoTile.position.y -= this.selectedIsoTile.size.y - this.tileSize.y;
-        spriteDrawTransparent(this.selectedIsoTile, graphics);
+        spriteDrawClipped(this.selectedIsoTile, graphics);
 
         printFPS(graphics);
         graphicsSwapBuffers(graphics);

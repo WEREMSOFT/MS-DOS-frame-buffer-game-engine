@@ -182,55 +182,55 @@ void graphicsDestroy(Graphics this)
     glfwTerminate();
 }
 
-void graphicsPutPixel(Graphics this, Pointi point, Color color)
+void graphicsPutPixel(Graphics this, PointI point, Color color)
 {
     int position = (point.x + point.y * this.textureWidth) % 64000;
     this.textureData[position] = color;
 }
 
-void graphicsDrawCircle(Graphics this, Pointi center, double radious, Color color)
+void graphicsDrawCircle(Graphics this, PointI center, double radious, Color color)
 {
     for (int i = center.x - radious; i <= center.x + radious; i++)
     {
         for (int j = center.y - radious; j <= center.y + radious; j++)
         {
             if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-                graphicsPutPixel(this, (Pointi){i, j}, color);
+                graphicsPutPixel(this, (PointI){i, j}, color);
         }
     }
 }
 
-void graphicsDrawSquare(Graphics this, Pointi topLeftCorner, Pointi size, Color color)
+void graphicsDrawSquare(Graphics this, PointI topLeftCorner, PointI size, Color color)
 {
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
         for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
         {
             if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
-                graphicsPutPixel(this, (Pointi){i, j}, color);
+                graphicsPutPixel(this, (PointI){i, j}, color);
         }
     }
 }
 
-void graphicsDrawCircleFill(Graphics this, Pointi center, double radious, Color color)
+void graphicsDrawCircleFill(Graphics this, PointI center, double radious, Color color)
 {
     for (int i = center.x - radious; i <= center.x + radious; i++)
     {
         for (int j = center.y - radious; j <= center.y + radious; j++)
         {
             if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-                graphicsPutPixel(this, (Pointi){i, j}, color);
+                graphicsPutPixel(this, (PointI){i, j}, color);
         }
     }
 }
 
-void graphicsDrawSquareFill(Graphics this, Pointi topLeftCorner, Pointi size, Color color)
+void graphicsDrawSquareFill(Graphics this, PointI topLeftCorner, PointI size, Color color)
 {
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
         for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
         {
-            graphicsPutPixel(this, (Pointi){i, j}, color);
+            graphicsPutPixel(this, (PointI){i, j}, color);
         }
     }
 }
@@ -240,14 +240,14 @@ void graphicsClear(Graphics this)
     memset(this.textureData, 0, this.textureWidth * this.textureHeight * sizeof(Color));
 }
 
-void graphicsDrawCharacter(Graphics this, Pointi topLeftCorner, unsigned int letter, Color color)
+void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int letter, Color color)
 {
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j <= 8; j++)
         {
             if (fonts[letter][i] & (0b1000000 >> j))
-                graphicsPutPixel(this, (Pointi){topLeftCorner.x + j, topLeftCorner.y + i}, color);
+                graphicsPutPixel(this, (PointI){topLeftCorner.x + j, topLeftCorner.y + i}, color);
         }
     }
 }
@@ -256,23 +256,23 @@ void graphicsPrintFontTest(Graphics this)
 {
     for (int i = 0; i < 38; i++)
     {
-        graphicsDrawCharacter(this, (Pointi){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
+        graphicsDrawCharacter(this, (PointI){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
     }
 }
 
-void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Color color)
+void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color)
 {
     unsigned int stringLen = strlen(string);
     for (int i = 0; i < stringLen; i++)
     {
         if (string[i] >= '0' && string[i] <= '9')
         {
-            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
+            graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
         }
         else if (string[i] >= 'a' && string[i] <= 'z')
         {
             int charOffset = string[i] - 'a' + 10;
-            graphicsDrawCharacter(this, (Pointi){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+            graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
         }
     }
 }
@@ -288,7 +288,7 @@ void graphicsUpdateMouseCoordinates(Graphics *this)
     this->mouseRightDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1);
 }
 
-void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color)
+void graphicsDrawLine(Graphics this, PointI pointA, PointI pointB, Color color)
 {
 
     int dx = abs(pointB.x - pointA.x), sx = pointA.x < pointB.x ? 1 : -1;

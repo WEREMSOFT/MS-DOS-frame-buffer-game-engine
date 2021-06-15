@@ -13,13 +13,13 @@ typedef struct
 {
     int x;
     int y;
-} Pointi;
+} PointI;
 
 typedef struct
 {
     double x;
     double y;
-} Pointf;
+} PointF;
 
 typedef struct
 {
@@ -28,7 +28,7 @@ typedef struct
     unsigned int textureHeight;
     unsigned int VAO;
     unsigned int shaderProgram;
-    Pointi mousePosition;
+    PointI mousePosition;
     bool mouseRightDown;
     GLFWwindow *window;
     Color *textureData;
@@ -38,13 +38,13 @@ Graphics graphicsCreate();
 void graphicsSwapBuffers(Graphics this);
 void graphicsDestroy(Graphics this);
 void graphicsUpdateMouseCoordinates(Graphics *this);
-void graphicsPutPixel(Graphics this, Pointi point, Color color);
-void graphicsDrawCircle(Graphics this, Pointi center, double radious, Color color);
-void graphicsDrawCircleFill(Graphics this, Pointi center, double radious, Color color);
-void graphicsDrawSquare(Graphics this, Pointi topLeftCorner, Pointi size, Color color);
+void graphicsPutPixel(Graphics this, PointI point, Color color);
+void graphicsDrawCircle(Graphics this, PointI center, double radious, Color color);
+void graphicsDrawCircleFill(Graphics this, PointI center, double radious, Color color);
+void graphicsDrawSquare(Graphics this, PointI topLeftCorner, PointI size, Color color);
 void graphicsClear(Graphics this);
-void graphicsDrawCharacter(Graphics this, Pointi topLeftCorner, unsigned int letter, Color color);
+void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int letter, Color color);
 void graphicsPrintFontTest(Graphics this);
-void graphicsPrintString(Graphics this, Pointi topLeftCorner, char *string, Color color);
-void graphicsDrawLine(Graphics this, Pointi pointA, Pointi pointB, Color color);
+void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color);
+void graphicsDrawLine(Graphics this, PointI pointA, PointI pointB, Color color);
 #endif

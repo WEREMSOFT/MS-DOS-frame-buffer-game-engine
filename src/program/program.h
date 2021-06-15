@@ -13,7 +13,7 @@ typedef struct
     Sprite selectedIsoTile;
     Array *isoTiles;
     Array *sprites;
-    Pointi tileSize;
+    PointI tileSize;
     int selectedIsoTileIndex;
 } Program;
 
