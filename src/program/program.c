@@ -15,7 +15,7 @@ Program programCreate()
     this.sprites = arrayCreate(10, sizeof(Sprite));
     this.isoTiles = arrayCreate(10, sizeof(Sprite));
     {
-        Sprite tile = spriteCreate("assets/tiles/iso_tile_0.png");
+        Sprite tile = spriteCreate("assets/Ships/Blue-1.png");
         this.tileSize = tile.size;
         arrayInsertElement(&this.isoTiles, &tile);
 
@@ -44,10 +44,10 @@ void printFPS(Graphics this)
         snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
         graphicsPrintString(this, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
     }
-    {
-        graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
-        graphicsPutPixel(this, this.mousePosition, (Color){255, 255, 255});
-    }
+    // {
+    //     graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
+    //     graphicsPutPixel(this, this.mousePosition, (Color){255, 255, 255});
+    // }
     lastUpdate = glfwGetTime();
 }
 
@@ -95,8 +95,8 @@ void programMainLoop(Program this)
         }
 
         this.selectedIsoTile.position = (PointF){
-            (int)(graphics.mousePosition.x - graphics.mousePosition.x % (int)ceil(this.tileSize.x * 0.5)) - 10,
-            (int)(graphics.mousePosition.y - graphics.mousePosition.y % (int)ceil(this.tileSize.y * 0.5)) - 10};
+            (int)(graphics.mousePosition.x - this.selectedIsoTile.size.x / 2),
+            (int)(graphics.mousePosition.y - this.selectedIsoTile.size.y / 2)};
 
         this.selectedIsoTile.position.y -= this.selectedIsoTile.size.y - this.tileSize.y;
         spriteDrawTransparentClipped(this.selectedIsoTile, graphics);
