@@ -1,11 +1,12 @@
 #include "graphics.h"
-#include <stb_image.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
 #include <memory.h>
 #include "../shader/shader.h"
+#include "../stackAllocator/staticAlloc.h"
+#include <stb_image.h>
 
 extern char fonts[][5];
 
@@ -18,7 +19,7 @@ static void textureCreate(Graphics *this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    this->textureData = malloc(this->textureWidth * this->textureHeight * sizeof(Color));
+    this->textureData = allocStatic(this->textureWidth * this->textureHeight * sizeof(Color));
     printf("%p\n", this->textureData);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->textureWidth, this->textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, this->textureData);
@@ -177,7 +178,7 @@ void graphicsSwapBuffers(Graphics this)
 
 void graphicsDestroy(Graphics this)
 {
-    free(this.textureData);
+    freeStatic(this.textureData);
     glfwDestroyWindow(this.window);
     glfwTerminate();
 }

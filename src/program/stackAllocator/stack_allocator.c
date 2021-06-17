@@ -40,7 +40,7 @@ void stackAllocatorReset(StackAllocator *this)
 void stackAllocatorFree(StackAllocator *this)
 {
     this->header.allocationCount--;
-    if (this->header.allocationCount == 0)
+    if (this->header.allocationCount <= 0)
     {
         stackAllocatorReset(this);
     }

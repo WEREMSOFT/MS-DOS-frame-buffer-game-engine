@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-typedef struct ArrayHeader {
+typedef struct ArrayHeader
+{
     int capacity;
     int length;
     int elementSize;

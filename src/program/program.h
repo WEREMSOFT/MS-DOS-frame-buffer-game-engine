@@ -4,7 +4,8 @@
 #include <GLFW/glfw3.h>
 #include "pixelUtils/graphics.h"
 #include "pixelUtils/sprite.h"
-#include "./array/array.h"
+
+#define MAX_HERO_BULLETS_ON_SCREEN 10
 
 enum ProjectilesEnum
 {
@@ -17,7 +18,7 @@ typedef struct
     Graphics graphics;
     Sprite background;
     Sprite projectiles[PROJECTILE_COUNT];
-    PointF heroBulletsPositions[10];
+    PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
     Sprite hero;
 } Program;
 

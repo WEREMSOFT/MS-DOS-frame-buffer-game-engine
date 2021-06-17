@@ -19,13 +19,21 @@ void arrayConcatenate(Array **this, Array *source);
 void *arrayGetElementAt(Array *this, int index);
 #endif
 
+#ifndef ARRAY_MALLOC
+#define ARRAY_MALLOC malloc
+#endif
+
+#ifndef ARRAY_REALLOC
+#define ARRAY_REALLOC realloc
+#endif
+
 #ifdef __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #undef __UNIVERSAL_ARRAY_IMPLEMENTATION__
 // recomended initial capacity 10
 Array *arrayCreate(int initialCapacity, size_t elementSize)
 {
     size_t size = elementSize * initialCapacity + sizeof(ArrayHeader);
-    Array *array = (Array *)malloc(size);
+    Array *array = (Array *)ARRAY_MALLOC(size);
 
     if (!array)
     {
@@ -54,7 +62,7 @@ void arrayInsertElement(Array **this, void *element)
     if ((*this)->header.length + 1 == (*this)->header.capacity)
     {
         int size = (*this)->header.capacity * (*this)->header.elementSize * 2 + sizeof(ArrayHeader);
-        Array *newPointer = realloc(*this, size);
+        Array *newPointer = ARRAY_REALLOC(*this, size);
         if (*this == NULL)
         {
             printf("Error reallocating array\n");

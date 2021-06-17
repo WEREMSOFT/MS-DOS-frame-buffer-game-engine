@@ -2,7 +2,7 @@ SRC_F := $(shell find src -name *.c)
 SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 
 LIBS := -lpthread -lm -lglfw -lGLEW -lGL
-FLAGS := -O2 -Wall -Ilibs/include
+FLAGS := -g -O0 -Wall -Ilibs/include
 
 TARGET := bin/main.bin
 .PONY: clean

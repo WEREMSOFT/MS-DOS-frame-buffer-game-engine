@@ -2,14 +2,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 #include <math.h>
 #include "input/input.h"
+
+#define __STATIC_ALLOC_IMPLEMENTATION__
+#include "stackAllocator/staticAlloc.h"
+
+#define ARRAY_MALLOC allocStatic
+#define ARRAY_REALLOC reallocStatic
 #define __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #include "array/array.h"
+
+#define STBI_MALLOC(sz) allocStatic(sz)
+#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
+#define STBI_FREE(p) freeStatic(p)
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 Program programCreate()
 {
+    staticAllocatorInit();
     Program this = {0};
     this.graphics = graphicsCreate();
 
@@ -51,7 +64,7 @@ static inline PointF updatePositionBasedOnKeyboard(GLFWwindow *window, PointF th
 
 static inline void updateHeroProjectiles(Program *this, double deltaTime)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < MAX_HERO_BULLETS_ON_SCREEN; i++)
     {
         this->heroBulletsPositions[i].x += 700.0 * deltaTime;
     }
@@ -59,7 +72,7 @@ static inline void updateHeroProjectiles(Program *this, double deltaTime)
 
 static inline void drawHeroProjectiles(Program this, Graphics graphics)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < MAX_HERO_BULLETS_ON_SCREEN; i++)
     {
         this.projectiles[PROJECTILE_HERO].position = this.heroBulletsPositions[i];
         spriteDrawTransparentClipped(this.projectiles[PROJECTILE_HERO], graphics);
@@ -97,7 +110,7 @@ void programMainLoop(Program this)
         if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
         {
             bulletIndex++;
-            bulletIndex %= 10;
+            bulletIndex %= MAX_HERO_BULLETS_ON_SCREEN;
             this.heroBulletsPositions[bulletIndex].y = this.hero.position.y + this.hero.size.y * .5;
             this.heroBulletsPositions[bulletIndex].x = this.hero.position.x + this.projectiles[PROJECTILE_HERO].size.x * 0.5;
         }
@@ -115,4 +128,5 @@ void programMainLoop(Program this)
 void programDestroy(Program this)
 {
     graphicsDestroy(this.graphics);
+    free(stackAllocator);
 }

@@ -1,6 +1,7 @@
 #include "sprite.h"
-#include <stb_image.h>
 #include <math.h>
+#include "../stackAllocator/staticAlloc.h"
+#include <stb_image.h>
 
 Sprite spriteCreate(char *file)
 {
@@ -76,7 +77,7 @@ void spriteDrawTransparentClipped(Sprite this, Graphics graphics)
 
 void spriteDestroy(Sprite this)
 {
-    free(this.imageData);
+    freeStatic(this.imageData);
 }
 
 Sprite spriteCreateCkeckerBoard(Graphics graphics, PointI size, int checkerWidth, Color color1, Color color2)
@@ -84,7 +85,7 @@ Sprite spriteCreateCkeckerBoard(Graphics graphics, PointI size, int checkerWidth
     Sprite this = {0};
 
     Color currentColor = color1;
-    this.imageData = malloc(sizeof(Color) * size.x * size.y);
+    this.imageData = allocStatic(sizeof(Color) * size.x * size.y);
     this.size = size;
     for (int y = 0; y < this.size.y; y++)
     {
