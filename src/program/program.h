@@ -16,7 +16,6 @@ enum ProjectilesEnum
 typedef struct
 {
     Graphics graphics;
-    Sprite background;
     Sprite projectiles[PROJECTILE_COUNT];
     PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
     Sprite hero;

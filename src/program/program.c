@@ -8,6 +8,11 @@
 #include "utils/utils.h"
 #include "assetManager/assetManager.h"
 
+typedef struct
+{
+    double x, y, z;
+} Star;
+
 Program programCreate(Graphics graphics, Sprite *sprites)
 {
     Program this = {0};
@@ -17,7 +22,6 @@ Program programCreate(Graphics graphics, Sprite *sprites)
 
     this.projectiles[PROJECTILE_HERO] = sprites[ASSET_HERO_BULLET];
 
-    this.background = spriteCreateCkeckerBoard(this.graphics, (PointI){800, 600}, 20, (Color){0xFE, 0xF0, 0xA5}, (Color){0x74, 0x81, 0x9D});
     return this;
 }
 
@@ -50,8 +54,18 @@ void programMainLoop(Program this)
     Graphics graphics = this.graphics;
 
     double deltaTime = 0;
-
     int bulletIndex = 0;
+
+#define STAR_COUNT 1000
+    Star stars[STAR_COUNT] = {0};
+
+    for (int i = 0; i < STAR_COUNT; i++)
+    {
+        stars[i].x = (random() % (graphics.textureWidth));
+        stars[i].y = (random() % (graphics.textureHeight));
+        stars[i].z = (double)random() / (double)RAND_MAX;
+    }
+    float speed = -100.f;
 
     while (!glfwWindowShouldClose(this.graphics.window))
     {
@@ -64,11 +78,16 @@ void programMainLoop(Program this)
             glfwSetWindowShouldClose(graphics.window, true);
         }
 
-        this.background.position = positionUpdateIntoCircularMovenent();
+        for (int i = 0; i < STAR_COUNT; i++)
+        {
+            stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
+            stars[i].x = fmod((fmod(stars[i].x, graphics.textureWidth) + graphics.textureWidth), graphics.textureWidth);
+
+            graphicsPutPixel(graphics, (PointI){stars[i].x, stars[i].y}, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
+        }
 
         this.hero.position = updatePositionBasedOnKeyboard(graphics.window, this.hero.position, deltaTime, 100.0);
 
-        spriteDrawClipped(this.background, graphics);
         spriteDrawTransparentClipped(this.hero, graphics);
         if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
         {

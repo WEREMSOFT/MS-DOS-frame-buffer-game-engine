@@ -1,4 +1,5 @@
 #include "mainMenu.h"
+#include <stdlib.h>
 #include "../graphics/graphics.h"
 #include "../utils/utils.h"
 #include "../input/keyboard.h"
