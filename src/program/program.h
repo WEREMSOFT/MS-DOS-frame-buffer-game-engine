@@ -2,7 +2,7 @@
 #define __PROGRAM_H__
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "pixelUtils/graphics.h"
+#include "graphics/graphics.h"
 #include "pixelUtils/sprite.h"
 
 #define MAX_HERO_BULLETS_ON_SCREEN 10
@@ -22,7 +22,7 @@ typedef struct
     Sprite hero;
 } Program;
 
-Program programCreate();
+Program programCreate(Graphics graphics, Sprite *sprites);
 void programMainLoop(Program this);
 void programDestroy(Program this);
 

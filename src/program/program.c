@@ -1,57 +1,23 @@
 #include "program.h"
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "input/input.h"
+#include "utils/utils.h"
+#include "assetManager/assetManager.h"
 
-#define __STATIC_ALLOC_IMPLEMENTATION__
-#include "stackAllocator/staticAlloc.h"
-
-#define ARRAY_MALLOC allocStatic
-#define ARRAY_REALLOC reallocStatic
-#define __UNIVERSAL_ARRAY_IMPLEMENTATION__
-#include "array/array.h"
-
-#define STBI_MALLOC(sz) allocStatic(sz)
-#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
-#define STBI_FREE(p) freeStatic(p)
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-Program programCreate()
+Program programCreate(Graphics graphics, Sprite *sprites)
 {
-    staticAllocatorInit();
     Program this = {0};
-    this.graphics = graphicsCreate();
+    this.graphics = graphics;
 
-    this.hero = spriteCreate("assets/Ships/Blue-1.png");
+    this.hero = sprites[ASSET_SHIP_BLUE];
 
-    this.projectiles[PROJECTILE_HERO] = spriteCreate("assets/Projectiles/projectile03-4.png");
+    this.projectiles[PROJECTILE_HERO] = sprites[ASSET_HERO_BULLET];
 
     this.background = spriteCreateCkeckerBoard(this.graphics, (PointI){800, 600}, 20, (Color){0xFE, 0xF0, 0xA5}, (Color){0x74, 0x81, 0x9D});
-    return this;
-}
-
-static inline void printFPS(Graphics this, double deltaTime)
-{
-    // needed for rolling average
-    static double currentFPS;
-
-    currentFPS = (currentFPS + 1 / deltaTime) / 2;
-    {
-        char text[1000] = {0};
-        snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
-        graphicsPrintString(this, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
-    }
-}
-
-static inline PointF positionUpdateIntoCircularMovenent()
-{
-    PointF this = {0};
-    this.x = sinf(glfwGetTime()) * 40.f - 40;
-    this.y = cosf(glfwGetTime()) * 40.f - 40;
     return this;
 }
 
@@ -83,20 +49,17 @@ void programMainLoop(Program this)
 {
     Graphics graphics = this.graphics;
 
-    double lastUpdate = glfwGetTime();
     double deltaTime = 0;
 
     int bulletIndex = 0;
 
     while (!glfwWindowShouldClose(this.graphics.window))
     {
-        deltaTime = glfwGetTime() - lastUpdate;
-        lastUpdate = glfwGetTime();
-
+        deltaTime = getDeltaTime();
         graphicsUpdateMouseCoordinates(&graphics);
         graphicsClear(this.graphics);
 
-        if (glfwGetKey(graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if (isKeyJustPressed(graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(graphics.window, true);
         }
@@ -127,6 +90,4 @@ void programMainLoop(Program this)
 
 void programDestroy(Program this)
 {
-    graphicsDestroy(this.graphics);
-    free(stackAllocator);
 }

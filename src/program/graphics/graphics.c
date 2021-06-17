@@ -178,6 +178,7 @@ void graphicsSwapBuffers(Graphics this)
 
 void graphicsDestroy(Graphics this)
 {
+    glfwSetWindowShouldClose(this.window, true);
     freeStatic(this.textureData);
     glfwDestroyWindow(this.window);
     glfwTerminate();
