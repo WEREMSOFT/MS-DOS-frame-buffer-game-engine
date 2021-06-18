@@ -27,13 +27,8 @@ void levelMainLoop(Level this)
 
     for (int i = 0; i < STAR_COUNT; i++)
     {
-<<<<<<< HEAD
         stars[i].x = (random() % (graphics.screenSize.x));
         stars[i].y = (random() % (graphics.screenSize.y));
-=======
-        stars[i].x = (random() % (graphics.textureWidth));
-        stars[i].y = (random() % (graphics.textureHeight));
->>>>>>> 9e25ad67f9da27d84bde277bba1892e3e82d33be
         stars[i].z = (double)random() / (double)RAND_MAX;
     }
     float speed = -100.f;
