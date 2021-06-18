@@ -1,4 +1,5 @@
 SRC_F := $(shell find src -name *.c)
+OBJ_FOR_CLEAN_F := $(shell find src -name *.o)
 SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 
 LIBS := -lpthread -lm -lglfw -lGLEW -lGL
@@ -20,7 +21,7 @@ run_main_release: all
 	gcc -c $(FLAGS) $^ -o $@
 
 clean:
-	rm -rf $(SRC_O)
+	rm -rf $(OBJ_FOR_CLEAN_F)
 	rm -rf $(TARGET)
 	rm -rf bin/assets
 

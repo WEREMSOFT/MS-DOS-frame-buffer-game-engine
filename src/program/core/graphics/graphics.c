@@ -19,10 +19,10 @@ static void textureCreate(Graphics *this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    this->textureData = allocStatic(this->textureWidth * this->textureHeight * sizeof(Color));
+    this->textureData = allocStatic(this->screenSize.x * this->screenSize.y * sizeof(Color));
     printf("%p\n", this->textureData);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->textureWidth, this->textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, this->textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->screenSize.x, this->screenSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, this->textureData);
 }
 
 void textureCreateFromImage(Graphics *this, char *fileName)
@@ -71,8 +71,8 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 Graphics graphicsCreate()
 {
     Graphics this = {0};
-    this.textureWidth = 320;
-    this.textureHeight = 200;
+    this.screenSize.x = 320;
+    this.screenSize.y = 200;
 
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -100,7 +100,7 @@ Graphics graphicsCreate()
         exit(-1);
     }
 
-    double ratioX = ((float)this.textureWidth / (float)this.textureHeight) / ((float)mode->width / (float)mode->height);
+    double ratioX = ((float)this.screenSize.x / (float)this.screenSize.y) / ((float)mode->width / (float)mode->height);
     double ratioY = 1.0;
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -167,7 +167,7 @@ void graphicsSwapBuffers(Graphics this)
 
     // Update texture
     glBindTexture(GL_TEXTURE_2D, this.textureId);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this.textureWidth, this.textureHeight, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this.screenSize.x, this.screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
 
     // render container
     glBindVertexArray(this.VAO);
@@ -186,7 +186,7 @@ void graphicsDestroy(Graphics this)
 
 void graphicsPutPixel(Graphics this, PointI point, Color color)
 {
-    int position = (point.x + point.y * this.textureWidth) % 64000;
+    int position = (point.x + point.y * this.screenSize.x) % 64000;
     this.textureData[position] = color;
 }
 
@@ -239,7 +239,7 @@ void graphicsDrawSquareFill(Graphics this, PointI topLeftCorner, PointI size, Co
 
 void graphicsClear(Graphics this)
 {
-    memset(this.textureData, 0, this.textureWidth * this.textureHeight * sizeof(Color));
+    memset(this.textureData, 0, this.screenSize.x * this.screenSize.y * sizeof(Color));
 }
 
 void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int letter, Color color)
@@ -285,8 +285,8 @@ void graphicsUpdateMouseCoordinates(Graphics *this)
     double mouseX, mouseY;
     glfwGetWindowSize(this->window, &w, &h);
     glfwGetCursorPos(this->window, &mouseX, &mouseY);
-    this->mousePosition.x = mouseX + this->textureWidth / (float)w;
-    this->mousePosition.y = mouseY + this->textureHeight / (float)h;
+    this->mousePosition.x = mouseX + this->screenSize.x / (float)w;
+    this->mousePosition.y = mouseY + this->screenSize.y / (float)h;
     this->mouseRightDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1);
 }
 

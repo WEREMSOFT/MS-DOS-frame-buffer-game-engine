@@ -24,8 +24,7 @@ typedef struct
 typedef struct
 {
     unsigned int textureId;
-    unsigned int textureWidth;
-    unsigned int textureHeight;
+    PointI screenSize;
     unsigned int VAO;
     unsigned int shaderProgram;
     PointI mousePosition;

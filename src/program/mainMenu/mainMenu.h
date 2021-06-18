@@ -1,14 +1,15 @@
 #ifndef __MAIN_MENU_H__
 #define __MAIN_MENU_H__
 
-#include "../graphics/graphics.h"
-#include "../pixelUtils/sprite.h"
+#include "../core/graphics/graphics.h"
+#include "../core/sprite/sprite.h"
 
 typedef struct
 {
     Graphics graphics;
     Sprite background;
     Sprite selectionIndicator;
+    Sprite *sprites;
     int selectedShip;
 } MainMenu;
 

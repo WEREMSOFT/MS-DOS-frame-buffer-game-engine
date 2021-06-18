@@ -27,8 +27,8 @@ void spriteDraw(Sprite this, Graphics graphics)
 
 void spriteDrawClipped(Sprite this, Graphics graphics)
 {
-    int clippedWidth = fmin(this.size.x, fmax(0, this.size.x - (this.size.x + this.position.x - graphics.textureWidth)));
-    int clippedHeight = fmin(this.size.y, fmax(0, this.size.y - (this.size.y + this.position.y - graphics.textureHeight)));
+    int clippedWidth = fmin(this.size.x, fmax(0, this.size.x - (this.size.x + this.position.x - graphics.screenSize.x)));
+    int clippedHeight = fmin(this.size.y, fmax(0, this.size.y - (this.size.y + this.position.y - graphics.screenSize.y)));
 
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;
@@ -58,8 +58,8 @@ void spriteDrawTransparent(Sprite this, Graphics graphics)
 
 void spriteDrawTransparentClipped(Sprite this, Graphics graphics)
 {
-    int clippedWidth = fmin(this.size.x, fmax(0, this.size.x - (this.size.x + this.position.x - graphics.textureWidth)));
-    int clippedHeight = fmin(this.size.y, fmax(0, this.size.y - (this.size.y + this.position.y - graphics.textureHeight)));
+    int clippedWidth = fmin(this.size.x, fmax(0, this.size.x - (this.size.x + this.position.x - graphics.screenSize.x)));
+    int clippedHeight = fmin(this.size.y, fmax(0, this.size.y - (this.size.y + this.position.y - graphics.screenSize.y)));
 
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;

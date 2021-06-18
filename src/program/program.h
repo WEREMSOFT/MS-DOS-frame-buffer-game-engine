@@ -2,26 +2,21 @@
 #define __PROGRAM_H__
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "graphics/graphics.h"
-#include "pixelUtils/sprite.h"
-
-#define MAX_HERO_BULLETS_ON_SCREEN 10
-
-enum ProjectilesEnum
-{
-    PROJECTILE_HERO,
-    PROJECTILE_COUNT
-};
+#include "core/graphics/graphics.h"
+#include "core/sprite/sprite.h"
+#include "level/level.h"
+#include "mainMenu/mainMenu.h"
+#include "assetManager/assetManager.h"
 
 typedef struct
 {
     Graphics graphics;
-    Sprite projectiles[PROJECTILE_COUNT];
-    PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
-    Sprite hero;
+    Level level;
+    MainMenu mainMenu;
+    Sprite sprites[ASSET_COUNT];
 } Program;
 
-Program programCreate(Graphics graphics, Sprite *sprites);
+Program programCreate();
 void programMainLoop(Program this);
 void programDestroy(Program this);
 
