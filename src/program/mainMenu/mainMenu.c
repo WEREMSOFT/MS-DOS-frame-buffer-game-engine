@@ -1,9 +1,9 @@
 #include "mainMenu.h"
 #include <stdlib.h>
-#include "../graphics/graphics.h"
+#include "../core/graphics/graphics.h"
 #include "../utils/utils.h"
-#include "../input/keyboard.h"
-#include "../pixelUtils/sprite.h"
+#include "../core/input/keyboard.h"
+#include "../core/sprite/sprite.h"
 #include "../assetManager/assetManager.h"
 
 MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites)
