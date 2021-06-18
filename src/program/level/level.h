@@ -23,10 +23,10 @@ typedef struct
     Sprite projectiles[PROJECTILE_COUNT];
     PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
     Sprite hero;
+    bool shouldQuit;
 } Level;
 
 Level levelCreate(Graphics graphics, Sprite *sprites);
-void levelMainLoop(Level this);
-void levelDestroy(Level this);
+Level levelMainLoop(Level this);
 
 #endif

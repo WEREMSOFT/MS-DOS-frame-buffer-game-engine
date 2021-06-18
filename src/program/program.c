@@ -39,10 +39,18 @@ Program programCreate()
 
 void programMainLoop(Program this)
 {
-    mainMenuUpdate(this.mainMenu);
-    levelMainLoop(this.level);
+    while (!this.level.shouldQuit)
+    {
+        this.mainMenu = mainMenuUpdate(this.mainMenu);
+        if (this.mainMenu.shouldQuit)
+            return;
+        this.level.hero = this.mainMenu.ships[this.mainMenu.selectedShip];
+        this.level = levelMainLoop(this.level);
+    }
 }
 
 void programDestroy(Program this)
 {
+    graphicsDestroy(this.graphics);
+    staticAllocatorDestroy();
 }

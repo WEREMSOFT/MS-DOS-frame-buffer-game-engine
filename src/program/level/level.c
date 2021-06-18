@@ -12,10 +12,11 @@ Level levelCreate(Graphics graphics, Sprite *sprites)
     this.graphics = graphics;
     this.hero = sprites[ASSET_SHIP_BLUE];
     this.projectiles[PROJECTILE_HERO] = sprites[ASSET_HERO_BULLET];
+    this.shouldQuit = false;
     return this;
 }
 
-void levelMainLoop(Level this)
+Level levelMainLoop(Level this)
 {
     Graphics graphics = this.graphics;
 
@@ -31,9 +32,9 @@ void levelMainLoop(Level this)
         stars[i].y = (random() % (graphics.screenSize.y));
         stars[i].z = (double)random() / (double)RAND_MAX;
     }
-    float speed = -100.f;
-
-    while (!glfwWindowShouldClose(this.graphics.window))
+    float speed = -160.f;
+    bool shouldExit = false;
+    while (!(shouldExit || this.shouldQuit))
     {
         deltaTime = getDeltaTime();
         graphicsUpdateMouseCoordinates(&graphics);
@@ -41,7 +42,12 @@ void levelMainLoop(Level this)
 
         if (isKeyJustPressed(graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
-            glfwSetWindowShouldClose(graphics.window, true);
+            this.shouldQuit = true;
+        }
+
+        if (isKeyJustPressed(graphics.window, GLFW_KEY_BACKSPACE) == GLFW_PRESS)
+        {
+            shouldExit = true;
         }
 
         for (int i = 0; i < STAR_COUNT; i++)
@@ -71,8 +77,5 @@ void levelMainLoop(Level this)
         graphicsSwapBuffers(graphics);
         glfwPollEvents();
     }
-}
-
-void levelDestroy(Level this)
-{
+    return this;
 }

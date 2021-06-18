@@ -7,6 +7,7 @@ enum Assets
     ASSET_SHIP_BLUE,
     ASSET_SHIP_RED,
     ASSET_HERO_BULLET,
+    ASSET_LOGO,
     ASSET_COUNT
 };
 

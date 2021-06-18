@@ -19,7 +19,8 @@ static void textureCreate(Graphics *this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    this->textureData = allocStatic(this->screenSize.x * this->screenSize.y * sizeof(Color));
+    this->bufferSize = this->screenSize.x * this->screenSize.y * sizeof(Color);
+    this->textureData = allocStatic(this->bufferSize);
     printf("%p\n", this->textureData);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->screenSize.x, this->screenSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, this->textureData);
@@ -72,7 +73,7 @@ Graphics graphicsCreate()
 {
     Graphics this = {0};
     this.screenSize.x = 320;
-    this.screenSize.y = 200;
+    this.screenSize.y = 240;
 
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -186,7 +187,7 @@ void graphicsDestroy(Graphics this)
 
 void graphicsPutPixel(Graphics this, PointI point, Color color)
 {
-    int position = (point.x + point.y * this.screenSize.x) % 64000;
+    int position = (point.x + point.y * this.screenSize.x) % this.bufferSize;
     this.textureData[position] = color;
 }
 
@@ -239,7 +240,7 @@ void graphicsDrawSquareFill(Graphics this, PointI topLeftCorner, PointI size, Co
 
 void graphicsClear(Graphics this)
 {
-    memset(this.textureData, 0, this.screenSize.x * this.screenSize.y * sizeof(Color));
+    memset(this.textureData, 0, this.bufferSize);
 }
 
 void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int letter, Color color)
