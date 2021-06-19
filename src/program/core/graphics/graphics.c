@@ -91,6 +91,7 @@ Graphics graphicsCreate()
 
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
     glfwMakeContextCurrent(this.window);
+    glfwSwapInterval(0);
     glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
 
     GLenum err = glewInit();
