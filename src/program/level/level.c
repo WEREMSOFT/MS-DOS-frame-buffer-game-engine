@@ -5,6 +5,7 @@
 #include "../core/input/keyboard.h"
 
 #include <stdlib.h>
+#include <soloud_c.h>
 
 Level levelCreate(Graphics graphics, Sprite *sprites)
 {
@@ -18,6 +19,19 @@ Level levelCreate(Graphics graphics, Sprite *sprites)
 
 Level levelMainLoop(Level this)
 {
+    Soloud *soloud = Soloud_create();
+    Speech *speech = Speech_create();
+    Sfxr *sfxr = Sfxr_create();
+
+    Speech_setText(speech, "piu");
+
+    Sfxr_loadPreset(sfxr, SFXR_LASER, 3247);
+
+    Soloud_initEx(soloud, SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
+                  SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
+
+    Soloud_setGlobalVolume(soloud, 4);
+
     Graphics graphics = this.graphics;
 
     double deltaTime = 0;
@@ -63,6 +77,7 @@ Level levelMainLoop(Level this)
         spriteDrawTransparentClipped(this.hero, graphics);
         if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
         {
+            Soloud_play(soloud, sfxr);
             bulletIndex++;
             bulletIndex %= MAX_HERO_BULLETS_ON_SCREEN;
             this.heroBulletsPositions[bulletIndex].y = this.hero.position.y + this.hero.size.y * .5;
@@ -77,5 +92,9 @@ Level levelMainLoop(Level this)
         graphicsSwapBuffers(graphics);
         glfwPollEvents();
     }
+
+    Sfxr_destroy(sfxr);
+    Soloud_deinit(soloud);
+    Soloud_destroy(soloud);
     return this;
 }
