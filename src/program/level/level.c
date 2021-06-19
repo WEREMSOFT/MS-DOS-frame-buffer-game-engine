@@ -20,10 +20,7 @@ Level levelCreate(Graphics graphics, Sprite *sprites)
 Level levelMainLoop(Level this)
 {
     Soloud *soloud = Soloud_create();
-    Speech *speech = Speech_create();
     Sfxr *sfxr = Sfxr_create();
-
-    Speech_setText(speech, "piu");
 
     Sfxr_loadPreset(sfxr, SFXR_LASER, 3247);
 

@@ -41,14 +41,12 @@ MainMenu mainMenuUpdate(MainMenu this)
 {
     Soloud *soloud = Soloud_create();
     Speech *speechSelectYourShip = Speech_create();
-    Speech *speechRed = Speech_create();
-    Speech *speechBlue = Speech_create();
-    Speech *speechGreen = Speech_create();
+    Sfxr *sfxr = Sfxr_create();
+    Sfxr *selectionSound = Sfxr_create();
 
-    Speech_setText(speechSelectYourShip, "waarr falcons select your ship");
-    Speech_setText(speechRed, "red");
-    Speech_setText(speechGreen, "greenn");
-    Speech_setText(speechBlue, "blue");
+    Speech_setText(speechSelectYourShip, "select your ship");
+    Sfxr_loadPreset(sfxr, SFXR_BLIP, 3247);
+    Sfxr_loadPreset(selectionSound, SFXR_POWERUP, 3247);
 
     Soloud_initEx(soloud, SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
                   SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
@@ -62,28 +60,21 @@ MainMenu mainMenuUpdate(MainMenu this)
     while (shouldContinue && !this.shouldQuit)
     {
         graphicsClear(this.graphics);
-        shouldContinue = !isKeyJustPressed(this.graphics.window, GLFW_KEY_ENTER);
+        if (isKeyJustPressed(this.graphics.window, GLFW_KEY_ENTER))
+        {
+            shouldContinue = false;
+            Soloud_play(soloud, selectionSound);
+        }
         this.shouldQuit = isKeyJustPressed(this.graphics.window, GLFW_KEY_ESCAPE);
 
         this.selectedShip += isKeyJustPressed(this.graphics.window, GLFW_KEY_RIGHT);
         this.selectedShip -= isKeyJustPressed(this.graphics.window, GLFW_KEY_LEFT);
 
-        this.selectedShip = fmax(0, fmin(this.selectedShip, SHIP_COUNT - 1));
+        this.selectedShip = (SHIP_COUNT + this.selectedShip) % SHIP_COUNT;
 
         if (this.selectedShip != lastSelectedShip)
         {
-            switch (this.selectedShip)
-            {
-            case SHIP_GREEN:
-                Soloud_play(soloud, speechGreen);
-                break;
-            case SHIP_BLUE:
-                Soloud_play(soloud, speechBlue);
-                break;
-            case SHIP_RED:
-                Soloud_play(soloud, speechRed);
-                break;
-            }
+            Soloud_play(soloud, sfxr);
         }
 
         lastSelectedShip = this.selectedShip;
@@ -107,11 +98,10 @@ MainMenu mainMenuUpdate(MainMenu this)
         glfwPollEvents();
     }
 
+    Sfxr_destroy(selectionSound);
+    Sfxr_destroy(sfxr);
     Soloud_deinit(soloud);
     Speech_destroy(speechSelectYourShip);
-    Speech_destroy(speechRed);
-    Speech_destroy(speechBlue);
-    Speech_destroy(speechGreen);
     Soloud_destroy(soloud);
     return this;
 }
