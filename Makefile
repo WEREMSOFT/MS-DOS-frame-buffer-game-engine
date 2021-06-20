@@ -5,7 +5,7 @@ SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound 
-FLAGS := -g -O0 -Wall -Ilibs/include -Ilibs/soloud/include
+FLAGS := -Os -Wall -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin
 .PONY: clean
