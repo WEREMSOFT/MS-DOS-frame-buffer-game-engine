@@ -7,6 +7,7 @@
 #include "level/level.h"
 #include "mainMenu/mainMenu.h"
 #include "assetManager/assetManager.h"
+#include "sound/sound.h"
 
 typedef struct
 {
@@ -14,6 +15,7 @@ typedef struct
     Level level;
     MainMenu mainMenu;
     Sprite sprites[ASSET_COUNT];
+    Sound sound;
 } Program;
 
 Program programCreate();

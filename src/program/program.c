@@ -29,10 +29,11 @@ Program programCreate()
     Program this = {0};
     this.graphics = graphicsCreate();
 
+    this.sound = soundCreate();
     spritesLoad(this.sprites);
 
-    this.level = levelCreate(this.graphics, this.sprites);
-    this.mainMenu = mainMenuCreate(this.graphics, this.sprites);
+    this.level = levelCreate(this.graphics, this.sprites, this.sound);
+    this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
 
     return this;
 }

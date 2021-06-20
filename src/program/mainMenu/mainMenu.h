@@ -3,6 +3,7 @@
 
 #include "../core/graphics/graphics.h"
 #include "../core/sprite/sprite.h"
+#include "../sound/sound.h"
 
 typedef enum
 {
@@ -21,10 +22,11 @@ typedef struct
     Sprite logo;
     int selectedShip;
     PointI textPosition;
+    Sound sound;
     bool shouldQuit;
 } MainMenu;
 
-MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites);
+MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound);
 MainMenu mainMenuUpdate(MainMenu this);
 
 #endif

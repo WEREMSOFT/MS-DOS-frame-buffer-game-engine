@@ -5,11 +5,11 @@
 #include "../core/input/keyboard.h"
 #include "../core/sprite/sprite.h"
 #include "../assetManager/assetManager.h"
-#include <soloud_c.h>
 
-MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites)
+MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
 {
     MainMenu this = {0};
+    this.sound = sound;
     this.graphics = graphics;
     this.logo = sprites[ASSET_LOGO];
     this.logo.position.x = (this.graphics.screenSize.x - this.logo.size.x) * 0.5;
@@ -39,21 +39,7 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites)
 }
 MainMenu mainMenuUpdate(MainMenu this)
 {
-    Soloud *soloud = Soloud_create();
-    Speech *speechSelectYourShip = Speech_create();
-    Sfxr *sfxr = Sfxr_create();
-    Sfxr *selectionSound = Sfxr_create();
-
-    Speech_setText(speechSelectYourShip, "select your ship");
-    Sfxr_loadPreset(sfxr, SFXR_BLIP, 3247);
-    Sfxr_loadPreset(selectionSound, SFXR_POWERUP, 3247);
-
-    Soloud_initEx(soloud, SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
-                  SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
-
-    Soloud_setGlobalVolume(soloud, 4);
-
-    Soloud_setRelativePlaySpeed(soloud, Soloud_play(soloud, speechSelectYourShip), 1.0);
+    soundPlaySpeech(this.sound, SPEECH_SELECT_SHIP);
 
     bool shouldContinue = true;
     int lastSelectedShip = this.selectedShip;
@@ -63,7 +49,7 @@ MainMenu mainMenuUpdate(MainMenu this)
         if (isKeyJustPressed(this.graphics.window, GLFW_KEY_ENTER))
         {
             shouldContinue = false;
-            Soloud_play(soloud, selectionSound);
+            soundPlaySfx(this.sound, SFX_SELECT);
         }
         this.shouldQuit = isKeyJustPressed(this.graphics.window, GLFW_KEY_ESCAPE);
 
@@ -74,7 +60,7 @@ MainMenu mainMenuUpdate(MainMenu this)
 
         if (this.selectedShip != lastSelectedShip)
         {
-            Soloud_play(soloud, sfxr);
+            soundPlaySfx(this.sound, SFX_BLIP);
         }
 
         lastSelectedShip = this.selectedShip;
@@ -98,10 +84,5 @@ MainMenu mainMenuUpdate(MainMenu this)
         glfwPollEvents();
     }
 
-    Sfxr_destroy(selectionSound);
-    Sfxr_destroy(sfxr);
-    Soloud_deinit(soloud);
-    Speech_destroy(speechSelectYourShip);
-    Soloud_destroy(soloud);
     return this;
 }
