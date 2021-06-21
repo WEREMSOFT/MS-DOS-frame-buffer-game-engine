@@ -35,7 +35,11 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
         goto error_handler;
     }
 
-    fread(shaderCode, sizeof(char), fileSize, fp);
+    if (fread(shaderCode, sizeof(char), fileSize, fp) != fileSize)
+    {
+        fprintf(stderr, "Error opening shader %s\n", fileName);
+        exit(-1);
+    }
 
     glShaderSource(*vertexShader, 1, (const char **)&shaderCode, NULL);
 

@@ -42,7 +42,7 @@ void textureCreateFromImage(Graphics *this, char *fileName)
     if (this->textureData)
     {
 
-        GLenum format;
+        GLenum format = 0;
         if (nrChannels == 1)
             format = GL_RED;
         else if (nrChannels == 3)
@@ -72,8 +72,8 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 Graphics graphicsCreate()
 {
     Graphics this = {0};
-    this.screenSize.x = 320;
-    this.screenSize.y = 240;
+    this.screenSize.x = 640;
+    this.screenSize.y = 480;
 
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();

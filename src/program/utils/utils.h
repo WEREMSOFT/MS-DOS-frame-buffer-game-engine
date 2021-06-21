@@ -12,13 +12,24 @@ static inline PointF positionUpdateIntoCircularMovenent()
 
 static inline void printFPS(Graphics this, double deltaTime)
 {
-    // needed for rolling average
-    static double currentFPS;
+#define FPS_HISTORY 10
+    static double fpsHistory[FPS_HISTORY] = {0};
+    static int counter = 1;
+    counter++;
+    counter %= FPS_HISTORY;
+    fpsHistory[counter] = (1 / deltaTime);
 
-    currentFPS = (currentFPS + 1 / deltaTime) / 2;
+    int sum = 0;
+    for (int i = 0; i < FPS_HISTORY; i++)
+    {
+        sum += fpsHistory[i];
+    }
+
+    float avg = sum / FPS_HISTORY;
+
     {
         char text[1000] = {0};
-        snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
+        snprintf(text, 1000, "fps: %d", (int)floor(avg));
         graphicsPrintString(this, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
     }
 }
