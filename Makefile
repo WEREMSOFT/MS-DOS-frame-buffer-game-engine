@@ -5,27 +5,25 @@ SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound 
-FLAGS := -g -O0 -Wall -Ilibs/include -Ilibs/soloud/include
-FLAGS_RELEASE := -O2 -Wall -Ilibs/include -Ilibs/soloud/include
 
+FLAGS_DEBUG := -g -O0 
+FLAGS_RELEASE := -O3 -fdata-sections -ffunction-sections
+FLAGS := -Wall -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin
 .PONY: clean
 
 all: $(SRC_O) $(SRC_CPP_O) copy_assets
-	gcc $(FLAGS) $(SRC_O) $(SRC_CPP_O) -o $(TARGET) $(LIBS)
+	gcc $(FLAGS_DEBUG) $(FLAGS) $(SRC_O) $(SRC_CPP_O) -o $(TARGET) $(LIBS)
 
 run_main: all
 	$(TARGET)
 
-run_main_release: all
-	$(TARGET)
-
 %.o: %.c
-	gcc -c $(FLAGS) $^ -o $@
+	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
 %.o: %.cpp
-	gcc -c $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
 
 clean:
 	rm -rf $(OBJ_FOR_CLEAN_F)
