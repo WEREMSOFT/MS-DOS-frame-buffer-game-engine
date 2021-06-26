@@ -14,6 +14,7 @@ Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
     this.sound = sound;
     this.hero = sprites[ASSET_SHIP_BLUE];
     this.projectiles[PROJECTILE_HERO] = sprites[ASSET_HERO_BULLET];
+    this.thrusters = sprites[ASSET_SHIP_THRUSTERS];
     this.shouldQuit = false;
     return this;
 }
@@ -34,8 +35,10 @@ Level levelMainLoop(Level this)
         stars[i].y = (random() % (graphics.screenSize.y));
         stars[i].z = (double)random() / (double)RAND_MAX;
     }
+
     float speed = -160.f;
     bool shouldExit = false;
+
     while (!(shouldExit || this.shouldQuit))
     {
         deltaTime = getDeltaTime();
@@ -55,14 +58,22 @@ Level levelMainLoop(Level this)
         for (int i = 0; i < STAR_COUNT; i++)
         {
             stars[i].x = stars[i].x + speed * deltaTime * stars[i].z;
-            stars[i].x = fmod((fmod(stars[i].x, graphics.screenSize.x) + graphics.screenSize.x), graphics.screenSize.x);
-
-            graphicsPutPixel(graphics, (PointI){stars[i].x, stars[i].y}, (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
+            stars[i].x = fmod((fmod(stars[i].x, graphics.screenSize.x) +
+                               graphics.screenSize.x),
+                              graphics.screenSize.x);
+            graphicsPutPixel(graphics, (PointI){stars[i].x, stars[i].y},
+                             (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
         }
 
-        this.hero.position = updatePositionBasedOnKeyboard(graphics.window, this.hero.position, deltaTime, 100.0);
-
+        this.hero.position = updatePositionBasedOnKeyboard(graphics.window,
+                                                           this.hero.position, deltaTime, 100.0);
         spriteDrawTransparentClipped(this.hero, graphics);
+
+        this.thrusters.position.y = this.hero.position.y + 6;
+        this.thrusters.position.x = this.hero.position.x - 14;
+
+        spriteDrawTransparentAnimatedClipped(&this.thrusters, graphics, deltaTime);
+
         if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
         {
             soundPlaySfx(this.sound, SFX_SHOOT_HERO);

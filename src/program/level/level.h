@@ -24,6 +24,7 @@ typedef struct
     Sprite projectiles[PROJECTILE_COUNT];
     PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
     Sprite hero;
+    Sprite thrusters;
     Sound sound;
     bool shouldQuit;
 } Level;

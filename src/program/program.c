@@ -28,10 +28,9 @@ Program programCreate()
     staticAllocatorInit();
     Program this = {0};
     this.graphics = graphicsCreate();
-
     this.sound = soundCreate();
     spritesLoad(this.sprites);
-
+    Soloud_setGlobalVolume(this.sound.soloud, 0);
     this.level = levelCreate(this.graphics, this.sprites, this.sound);
     this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
 
