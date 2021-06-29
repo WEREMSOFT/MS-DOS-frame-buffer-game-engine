@@ -15,6 +15,7 @@ Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
     this.hero = sprites[ASSET_SHIP_BLUE];
     this.projectiles[PROJECTILE_HERO] = sprites[ASSET_HERO_BULLET];
     this.thrusters = sprites[ASSET_SHIP_THRUSTERS];
+    this.enemies[ENEMY_SHOOTING_EGG] = enemyFlyingEggCreate(sprites[ASSET_ENEMY_SHOOTING_EGG]);
     this.shouldQuit = false;
     return this;
 }
@@ -73,6 +74,10 @@ Level levelMainLoop(Level this)
         this.thrusters.position.x = this.hero.position.x - 14;
 
         spriteDrawTransparentAnimatedClipped(&this.thrusters, graphics, deltaTime);
+
+        this.enemies[ENEMY_TYPE_FLYING_EGG] = enemyFlyingEggUpdateState(this.enemies[ENEMY_TYPE_FLYING_EGG], deltaTime);
+
+        spriteDrawTransparentClipped(this.enemies[ENEMY_SHOOTING_EGG].sprite, graphics);
 
         if (isKeyJustPressed(graphics.window, GLFW_KEY_SPACE))
         {

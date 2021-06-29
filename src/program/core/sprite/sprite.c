@@ -60,7 +60,6 @@ void spriteDrawTransparentClipped(Sprite this, Graphics graphics)
                              fmax(0, this.size.y - (this.size.y + this.position.y - graphics.screenSize.y)));
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;
-    unsigned int transparent = 0xFF00FF;
     for (int i = clippedX; i < clippedWidth; i++)
     {
         for (int j = clippedY; j < clippedHeight; j++)
@@ -77,7 +76,7 @@ void spriteDestroy(Sprite this)
     freeStatic(this.imageData);
 }
 
-Sprite spriteCreateCkeckerBoard(Graphics graphics, PointI size, int checkerWidth, Color color1, Color color2)
+Sprite spriteCreateCkeckerBoard(PointI size, int checkerWidth, Color color1, Color color2)
 {
     Sprite this = {0};
     Color currentColor = color1;

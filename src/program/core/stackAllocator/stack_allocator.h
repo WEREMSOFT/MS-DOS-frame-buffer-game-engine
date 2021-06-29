@@ -26,8 +26,8 @@
 
 typedef struct
 {
-    int capacity;
-    int length;
+    size_t capacity;
+    size_t length;
     int allocationCount;
 } StackAllocatorHeader;
 

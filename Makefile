@@ -8,7 +8,7 @@ LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound
 
 FLAGS_DEBUG := -g -O0 
 FLAGS_RELEASE := -O3 -fdata-sections -ffunction-sections
-FLAGS := -Wall -Ilibs/include -Ilibs/soloud/include
+FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin
 .PONY: clean

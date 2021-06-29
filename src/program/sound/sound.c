@@ -33,7 +33,7 @@ void soundPlaySfx(Sound this, GaneSfx id)
     Soloud_play(this.soloud, this.sfx[id]);
 }
 
-void soundPlaySpeech(Sound this, GaneSfx id)
+void soundPlaySpeech(Sound this, GameSpeech id)
 {
     Soloud_play(this.soloud, this.speechs[id]);
 }

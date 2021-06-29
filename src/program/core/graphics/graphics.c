@@ -266,8 +266,8 @@ void graphicsPrintFontTest(Graphics this)
 
 void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color)
 {
-    unsigned int stringLen = strlen(string);
-    for (int i = 0; i < stringLen; i++)
+    size_t stringLen = strlen(string);
+    for (size_t i = 0; i < stringLen; i++)
     {
         if (string[i] >= '0' && string[i] <= '9')
         {

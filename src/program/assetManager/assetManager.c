@@ -9,6 +9,7 @@ void spritesLoad(Sprite *this)
     this[ASSET_HERO_BULLET] = spriteCreate("assets/Projectiles/projectile03-4.png");
     this[ASSET_LOGO] = spriteCreate("assets/Decoration/mainMenuLogo01.png");
     this[ASSET_SHIP_THRUSTERS] = spriteCreate("assets/EngineThrusters/thrusters.png");
+    this[ASSET_ENEMY_SHOOTING_EGG] = spriteCreate("assets/Ships/Enemies/Enemies-3.png");
 
     this[ASSET_SHIP_THRUSTERS].animated = true;
     this[ASSET_SHIP_THRUSTERS].animation.frameCount = 4;

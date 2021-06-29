@@ -32,7 +32,7 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
 
     this.textPosition.x = this.graphics.screenSize.x / 2 - 32;
     this.textPosition.y = this.logo.position.y + this.logo.size.y + 10;
-    this.background = spriteCreateCkeckerBoard(this.graphics, (PointI){800, 600}, 20, (Color){159, 194, 214}, (Color){103, 146, 171});
+    this.background = spriteCreateCkeckerBoard((PointI){800, 600}, 20, (Color){159, 194, 214}, (Color){103, 146, 171});
 
     this.shouldQuit = false;
     return this;

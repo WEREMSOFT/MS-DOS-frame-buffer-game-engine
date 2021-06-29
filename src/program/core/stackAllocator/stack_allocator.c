@@ -23,7 +23,7 @@ void *stackAllocatorAlloc(StackAllocator *this, size_t size)
         // TODO: realloc will invalidate all the pointers provided before.
         // For now, we just abort the program, in the future we should create
         // A handle table
-        printf("Allocator ran out of space.\nActual capacity %d\nRequired capacity %ld\n", this->header.capacity, this->header.capacity + size);
+        printf("Allocator ran out of space.\nActual capacity %ld\nRequired capacity %ld\n", this->header.capacity, this->header.capacity + size);
         return NULL;
     }
     void *returnValue = &this->data[this->header.length];

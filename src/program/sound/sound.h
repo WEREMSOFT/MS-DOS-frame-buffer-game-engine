@@ -28,6 +28,6 @@ typedef struct
 Sound soundCreate();
 void soundDestroy(Sound this);
 void soundPlaySfx(Sound this, GaneSfx id);
-void soundPlaySpeech(Sound this, GaneSfx id);
+void soundPlaySpeech(Sound this, GameSpeech id);
 
 #endif

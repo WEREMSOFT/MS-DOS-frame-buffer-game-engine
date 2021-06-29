@@ -4,7 +4,7 @@
 static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader, int shaderType)
 {
     int returnValue = 0;
-    long fileSize = 0;
+    size_t fileSize = 0;
     char *shaderCode = NULL;
     *vertexShader = glCreateShader(shaderType);
 
