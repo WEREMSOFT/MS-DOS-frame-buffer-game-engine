@@ -4,12 +4,13 @@
 
 typedef enum
 {
-    ENEMY_FEGG_STATE_IDLE,
-    ENEMY_FEGG_STATE_MOVING_FORWARD,
-    ENEMY_FEGG_STATE_SHOOTING,
-    ENEMY_FEGG_STATE_MOVING_BACK,
-    ENEMY_FEGG_STATES_COUNT
-} EnemyFlyingEggStates;
+    ENEMY_STATE_IDLE,
+    ENEMY_STATE_MOVING_FORWARD,
+    ENEMY_STATE_MOVING_CIRCLE,
+    ENEMY_STATE_SHOOTING,
+    ENEMY_STATE_MOVING_BACKWARDS,
+    ENEMY_STATES_COUNT
+} EnemyStates;
 
 typedef enum
 {
@@ -19,9 +20,20 @@ typedef enum
 
 typedef struct
 {
+    double phase;
+    double elapsedTime;
+    double speed;
+    double radialSpeed;
+    double radious;
+    PointF center;
+} MovementDefinition;
+
+typedef struct
+{
     EnemyTypes type;
-    unsigned int State;
+    EnemyStates state;
     Sprite sprite;
+    MovementDefinition movementDef;
 } Enemy;
 
 Enemy enemyFlyingEggCreate(Sprite sprite);
