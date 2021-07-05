@@ -11,22 +11,22 @@ Sprite spriteCreate(char *file)
     return this;
 }
 
-void spriteDraw(Sprite this, Graphics graphics)
+void spriteDraw(Sprite this, ImageData imageData)
 {
     for (int i = 0; i < this.size.x; i++)
     {
         for (int j = 0; j < this.size.y; j++)
         {
             Color color = this.imageData[j * this.size.x + i];
-            graphicsPutPixel(graphics, (PointI){this.position.x + i, this.position.y + j}, color);
+            graphicsPutPixel(imageData, (PointI){this.position.x + i, this.position.y + j}, color);
         }
     }
 }
 
-void spriteDrawClipped(Sprite this, Graphics graphics)
+void spriteDrawClipped(Sprite this, ImageData imageData)
 {
-    int clippedWidth = fmin(this.size.x, fmax(0, this.size.x - (this.size.x + this.position.x - graphics.screenSize.x)));
-    int clippedHeight = fmin(this.size.y, fmax(0, this.size.y - (this.size.y + this.position.y - graphics.screenSize.y)));
+    int clippedWidth = fmin(this.size.x, fmax(0, this.size.x - (this.size.x + this.position.x - imageData.size.x)));
+    int clippedHeight = fmin(this.size.y, fmax(0, this.size.y - (this.size.y + this.position.y - imageData.size.y)));
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;
     for (int i = clippedX; i < clippedWidth; i++)
@@ -34,12 +34,12 @@ void spriteDrawClipped(Sprite this, Graphics graphics)
         for (int j = clippedY; j < clippedHeight; j++)
         {
             Color color = this.imageData[j * this.size.x + i];
-            graphicsPutPixel(graphics, (PointI){this.position.x + i, this.position.y + j}, color);
+            graphicsPutPixel(imageData, (PointI){this.position.x + i, this.position.y + j}, color);
         }
     }
 }
 
-void spriteDrawTransparent(Sprite this, Graphics graphics)
+void spriteDrawTransparent(Sprite this, ImageData imageData)
 {
     for (int i = 0; i < this.size.x; i++)
     {
@@ -47,17 +47,17 @@ void spriteDrawTransparent(Sprite this, Graphics graphics)
         {
             Color color = this.imageData[j * this.size.x + i];
             if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                graphicsPutPixel(graphics, (PointI){this.position.x + i, this.position.y + j}, color);
+                graphicsPutPixel(imageData, (PointI){this.position.x + i, this.position.y + j}, color);
         }
     }
 }
 
-void spriteDrawTransparentClipped(Sprite this, Graphics graphics)
+void spriteDrawTransparentClipped(Sprite this, ImageData imageData)
 {
     int clippedWidth = fmin(this.size.x,
-                            fmax(0, this.size.x - (this.size.x + this.position.x - graphics.screenSize.x)));
+                            fmax(0, this.size.x - (this.size.x + this.position.x - imageData.size.x)));
     int clippedHeight = fmin(this.size.y,
-                             fmax(0, this.size.y - (this.size.y + this.position.y - graphics.screenSize.y)));
+                             fmax(0, this.size.y - (this.size.y + this.position.y - imageData.size.y)));
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;
     for (int i = clippedX; i < clippedWidth; i++)
@@ -66,7 +66,7 @@ void spriteDrawTransparentClipped(Sprite this, Graphics graphics)
         {
             Color color = this.imageData[j * this.size.x + i];
             if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                graphicsPutPixel(graphics, (PointI){this.position.x + i, this.position.y + j}, color);
+                graphicsPutPixel(imageData, (PointI){this.position.x + i, this.position.y + j}, color);
         }
     }
 }
@@ -100,16 +100,16 @@ Sprite spriteCreateCkeckerBoard(PointI size, int checkerWidth, Color color1, Col
     return this;
 }
 
-void spriteDrawTransparentAnimatedClipped(Sprite *thisP, Graphics graphics, double deltaTime)
+void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, double deltaTime)
 {
     Sprite this = *thisP;
 
     int clippedWidth = fmin(this.animation.frameWidth,
                             fmax(0, this.animation.frameWidth - (this.animation.frameWidth + this.position.x -
-                                                                 graphics.screenSize.x)));
+                                                                 imageData.size.x)));
     int clippedHeight = fmin(this.size.y,
                              fmax(0, this.size.y - (this.size.y + this.position.y -
-                                                    graphics.screenSize.y)));
+                                                    imageData.size.y)));
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;
 
@@ -124,7 +124,7 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, Graphics graphics, doub
             Color color = this.imageData[j * this.size.x + i +
                                          this.animation.currentFrame * this.animation.frameWidth];
             if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                graphicsPutPixel(graphics,
+                graphicsPutPixel(imageData,
                                  (PointI){this.position.x + i, this.position.y + j},
                                  color);
         }

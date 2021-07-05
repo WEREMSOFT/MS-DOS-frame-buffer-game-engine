@@ -12,7 +12,7 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
     this.sound = sound;
     this.graphics = graphics;
     this.logo = sprites[ASSET_LOGO];
-    this.logo.position.x = (this.graphics.screenSize.x - this.logo.size.x) * 0.5;
+    this.logo.position.x = (this.graphics.imageData.size.x - this.logo.size.x) * 0.5;
     this.logo.position.y = 20;
 
     this.ships[SHIP_BLUE] = sprites[ASSET_SHIP_BLUE];
@@ -21,7 +21,7 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
 
     int gap = 10;
 
-    this.ships[SHIP_RED].position.x = this.graphics.screenSize.x * 0.5 - (this.ships[SHIP_RED].size.x + this.ships[SHIP_GREEN].size.x + this.ships[SHIP_BLUE].size.x + gap * 2) * 0.5;
+    this.ships[SHIP_RED].position.x = this.graphics.imageData.size.x * 0.5 - (this.ships[SHIP_RED].size.x + this.ships[SHIP_GREEN].size.x + this.ships[SHIP_BLUE].size.x + gap * 2) * 0.5;
     this.ships[SHIP_RED].position.y = this.logo.position.y + this.logo.size.y + 30;
 
     this.ships[SHIP_GREEN].position.x = this.ships[SHIP_RED].position.x + this.ships[SHIP_RED].size.x + gap;
@@ -30,7 +30,7 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
     this.ships[SHIP_BLUE].position.x = this.ships[SHIP_GREEN].position.x + this.ships[SHIP_GREEN].size.x + gap;
     this.ships[SHIP_BLUE].position.y = this.logo.position.y + this.logo.size.y + 30;
 
-    this.textPosition.x = this.graphics.screenSize.x / 2 - 32;
+    this.textPosition.x = this.graphics.imageData.size.x / 2 - 32;
     this.textPosition.y = this.logo.position.y + this.logo.size.y + 10;
     this.background = spriteCreateCkeckerBoard((PointI){800, 600}, 20, (Color){159, 194, 214}, (Color){103, 146, 171});
 
@@ -45,7 +45,7 @@ MainMenu mainMenuUpdate(MainMenu this)
     int lastSelectedShip = this.selectedShip;
     while (shouldContinue && !this.shouldQuit)
     {
-        graphicsClear(this.graphics);
+        graphicsClear(this.graphics.imageData);
         if (isKeyJustPressed(this.graphics.window, GLFW_KEY_ENTER))
         {
             shouldContinue = false;
@@ -66,18 +66,18 @@ MainMenu mainMenuUpdate(MainMenu this)
         lastSelectedShip = this.selectedShip;
 
         this.background.position = positionUpdateIntoCircularMovenent();
-        spriteDrawClipped(this.background, this.graphics);
-        spriteDrawTransparent(this.logo, this.graphics);
+        spriteDrawClipped(this.background, this.graphics.imageData);
+        spriteDrawTransparent(this.logo, this.graphics.imageData);
 
         Color selectionColor = (Color){random() % 255, random() % 255, random() % 255};
 
         for (int i = 0; i < SHIP_COUNT; i++)
         {
-            spriteDrawTransparent(this.ships[i], this.graphics);
+            spriteDrawTransparent(this.ships[i], this.graphics.imageData);
         }
 
-        graphicsDrawSquare(this.graphics, (PointI){this.ships[this.selectedShip].position.x, this.ships[this.selectedShip].position.y}, this.ships[this.selectedShip].size, selectionColor);
-        graphicsPrintString(this.graphics, this.textPosition, "select ship", selectionColor);
+        graphicsDrawSquare(this.graphics.imageData, (PointI){this.ships[this.selectedShip].position.x, this.ships[this.selectedShip].position.y}, this.ships[this.selectedShip].size, selectionColor);
+        graphicsPrintString(this.graphics.imageData, this.textPosition, "select ship", selectionColor);
 
         printFPS(this.graphics, getDeltaTime());
         graphicsSwapBuffers(this.graphics);

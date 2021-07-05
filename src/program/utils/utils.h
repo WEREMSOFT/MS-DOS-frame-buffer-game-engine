@@ -30,7 +30,7 @@ static inline void printFPS(Graphics this, double deltaTime)
     {
         char text[1000] = {0};
         snprintf(text, 1000, "fps: %d", (int)floor(avg));
-        graphicsPrintString(this, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
+        graphicsPrintString(this.imageData, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
     }
 }
 

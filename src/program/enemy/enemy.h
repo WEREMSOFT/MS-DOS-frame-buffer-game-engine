@@ -5,10 +5,11 @@
 typedef enum
 {
     ENEMY_STATE_IDLE,
-    ENEMY_STATE_MOVING_FORWARD,
-    ENEMY_STATE_MOVING_CIRCLE,
+    ENEMY_STATE_MOVING_LEFT,
+    ENEMY_STATE_MOVING_RIGHT,
+    ENEMY_STATE_MOVING_UP,
+    ENEMY_STATE_MOVING_DOWN,
     ENEMY_STATE_SHOOTING,
-    ENEMY_STATE_MOVING_BACKWARDS,
     ENEMY_STATES_COUNT
 } EnemyStates;
 
@@ -26,6 +27,7 @@ typedef struct
     double radialSpeed;
     double radious;
     PointF center;
+    PointF position;
 } MovementDefinition;
 
 typedef struct

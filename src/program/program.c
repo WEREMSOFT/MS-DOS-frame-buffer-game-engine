@@ -25,7 +25,7 @@
 
 Program programCreate()
 {
-    staticAllocatorInit();
+    staticAllocatorInit(100092024);
     Program this = {0};
     this.graphics = graphicsCreate();
     this.sound = soundCreate();

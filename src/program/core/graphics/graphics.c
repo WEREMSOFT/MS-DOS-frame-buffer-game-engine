@@ -19,11 +19,11 @@ static void textureCreate(Graphics *this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    this->bufferSize = this->screenSize.x * this->screenSize.y * sizeof(Color);
-    this->textureData = allocStatic(this->bufferSize);
-    printf("%p\n", this->textureData);
+    this->imageData.bufferSize = this->imageData.size.x * this->imageData.size.y * sizeof(Color);
+    this->imageData.data = allocStatic(this->imageData.bufferSize);
+    printf("%p\n", this->imageData.data);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->screenSize.x, this->screenSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, this->textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->imageData.size.x, this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, this->imageData.data);
 }
 
 void textureCreateFromImage(Graphics *this, char *fileName)
@@ -37,9 +37,9 @@ void textureCreateFromImage(Graphics *this, char *fileName)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     stbi_set_flip_vertically_on_load(false);
-    this->textureData = (Color *)stbi_load(fileName, &width, &height, &nrChannels, 0);
+    this->imageData.data = (Color *)stbi_load(fileName, &width, &height, &nrChannels, 0);
 
-    if (this->textureData)
+    if (this->imageData.data)
     {
 
         GLenum format = 0;
@@ -50,7 +50,7 @@ void textureCreateFromImage(Graphics *this, char *fileName)
         else if (nrChannels == 4)
             format = GL_RGBA;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, this->textureData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, this->imageData.data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -72,8 +72,8 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 Graphics graphicsCreate()
 {
     Graphics this = {0};
-    this.screenSize.x = 640;
-    this.screenSize.y = 480;
+    this.imageData.size.x = 640;
+    this.imageData.size.y = 480;
 
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -91,7 +91,8 @@ Graphics graphicsCreate()
 
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
     glfwMakeContextCurrent(this.window);
-    glfwSwapInterval(0);
+    // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.
+    // glfwSwapInterval(2);
     glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
 
     GLenum err = glewInit();
@@ -102,7 +103,7 @@ Graphics graphicsCreate()
         exit(-1);
     }
 
-    double ratioX = ((float)this.screenSize.x / (float)this.screenSize.y) / ((float)mode->width / (float)mode->height);
+    double ratioX = ((float)this.imageData.size.x / (float)this.imageData.size.y) / ((float)mode->width / (float)mode->height);
     double ratioY = 1.0;
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -157,9 +158,9 @@ void graphicsSwapBuffers(Graphics this)
     static Color *lastPointer = NULL;
 
     if (!lastPointer)
-        lastPointer = this.textureData;
+        lastPointer = this.imageData.data;
 
-    if (lastPointer != this.textureData)
+    if (lastPointer != this.imageData.data)
     {
         fprintf(stderr, "pointers are different!!\n");
         exit(-1);
@@ -169,7 +170,7 @@ void graphicsSwapBuffers(Graphics this)
 
     // Update texture
     glBindTexture(GL_TEXTURE_2D, this.textureId);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this.screenSize.x, this.screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, this.textureData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, this.imageData.size.x, this.imageData.size.y, GL_RGB, GL_UNSIGNED_BYTE, this.imageData.data);
 
     // render container
     glBindVertexArray(this.VAO);
@@ -181,18 +182,24 @@ void graphicsSwapBuffers(Graphics this)
 void graphicsDestroy(Graphics this)
 {
     glfwSetWindowShouldClose(this.window, true);
-    freeStatic(this.textureData);
+    freeStatic(this.imageData.data);
     glfwDestroyWindow(this.window);
     glfwTerminate();
 }
 
-void graphicsPutPixel(Graphics this, PointI point, Color color)
+void graphicsPutPixel(ImageData this, PointI point, Color color)
 {
-    int position = (point.x + point.y * this.screenSize.x) % this.bufferSize;
-    this.textureData[position] = color;
+    int position = (point.x + point.y * this.size.x) % this.bufferSize;
+    this.data[position] = color;
 }
 
-void graphicsDrawCircle(Graphics this, PointI center, double radious, Color color)
+inline Color graphicsGetPixel(ImageData this, PointI point)
+{
+    int position = (point.x + point.y * this.size.x) % this.bufferSize;
+    return this.data[position];
+}
+
+void graphicsDrawCircle(ImageData this, PointI center, double radious, Color color)
 {
     for (int i = center.x - radious; i <= center.x + radious; i++)
     {
@@ -204,7 +211,7 @@ void graphicsDrawCircle(Graphics this, PointI center, double radious, Color colo
     }
 }
 
-void graphicsDrawSquare(Graphics this, PointI topLeftCorner, PointI size, Color color)
+void graphicsDrawSquare(ImageData this, PointI topLeftCorner, PointI size, Color color)
 {
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
@@ -216,7 +223,7 @@ void graphicsDrawSquare(Graphics this, PointI topLeftCorner, PointI size, Color 
     }
 }
 
-void graphicsDrawCircleFill(Graphics this, PointI center, double radious, Color color)
+void graphicsDrawCircleFill(ImageData this, PointI center, double radious, Color color)
 {
     for (int i = center.x - radious; i <= center.x + radious; i++)
     {
@@ -228,7 +235,7 @@ void graphicsDrawCircleFill(Graphics this, PointI center, double radious, Color 
     }
 }
 
-void graphicsDrawSquareFill(Graphics this, PointI topLeftCorner, PointI size, Color color)
+void graphicsDrawSquareFill(ImageData this, PointI topLeftCorner, PointI size, Color color)
 {
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
@@ -239,12 +246,12 @@ void graphicsDrawSquareFill(Graphics this, PointI topLeftCorner, PointI size, Co
     }
 }
 
-void graphicsClear(Graphics this)
+void graphicsClear(ImageData this)
 {
-    memset(this.textureData, 0, this.bufferSize);
+    memset(this.data, 0, this.bufferSize);
 }
 
-void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int letter, Color color)
+void graphicsDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, Color color)
 {
     for (int i = 0; i < 5; i++)
     {
@@ -256,7 +263,7 @@ void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int let
     }
 }
 
-void graphicsPrintFontTest(Graphics this)
+void graphicsPrintFontTest(ImageData this)
 {
     for (int i = 0; i < 38; i++)
     {
@@ -264,7 +271,7 @@ void graphicsPrintFontTest(Graphics this)
     }
 }
 
-void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color)
+void graphicsPrintString(ImageData this, PointI topLeftCorner, char *string, Color color)
 {
     size_t stringLen = strlen(string);
     for (size_t i = 0; i < stringLen; i++)
@@ -287,12 +294,12 @@ void graphicsUpdateMouseCoordinates(Graphics *this)
     double mouseX, mouseY;
     glfwGetWindowSize(this->window, &w, &h);
     glfwGetCursorPos(this->window, &mouseX, &mouseY);
-    this->mousePosition.x = mouseX + this->screenSize.x / (float)w;
-    this->mousePosition.y = mouseY + this->screenSize.y / (float)h;
+    this->mousePosition.x = mouseX + this->imageData.size.x / (float)w;
+    this->mousePosition.y = mouseY + this->imageData.size.y / (float)h;
     this->mouseRightDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1);
 }
 
-void graphicsDrawLine(Graphics this, PointI pointA, PointI pointB, Color color)
+void graphicsDrawLine(ImageData this, PointI pointA, PointI pointB, Color color)
 {
 
     int dx = abs(pointB.x - pointA.x), sx = pointA.x < pointB.x ? 1 : -1;
@@ -316,4 +323,8 @@ void graphicsDrawLine(Graphics this, PointI pointA, PointI pointB, Color color)
             pointA.y += sy;
         }
     }
+}
+inline PointI pointFToPointI(PointF source)
+{
+    return (PointI){(int)source.x, (int)source.y};
 }

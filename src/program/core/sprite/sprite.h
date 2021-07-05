@@ -23,11 +23,11 @@ typedef struct
 } Sprite;
 
 Sprite spriteCreate(char *file);
-void spriteDraw(Sprite this, Graphics graphics);
-void spriteDrawClipped(Sprite this, Graphics graphics);
-void spriteDrawTransparent(Sprite this, Graphics graphics);
-void spriteDrawTransparentClipped(Sprite this, Graphics graphics);
-void spriteDrawTransparentAnimatedClipped(Sprite *thisP, Graphics graphics, double deltaTime);
+void spriteDraw(Sprite this, ImageData imageData);
+void spriteDrawClipped(Sprite this, ImageData imageData);
+void spriteDrawTransparent(Sprite this, ImageData ImageData);
+void spriteDrawTransparentClipped(Sprite this, ImageData imageData);
+void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, double deltaTime);
 void spriteDestroy(Sprite this);
 Sprite spriteCreateCkeckerBoard(PointI size, int checkerWidth, Color color1, Color color2);
 

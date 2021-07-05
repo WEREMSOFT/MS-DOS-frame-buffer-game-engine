@@ -24,7 +24,7 @@ static inline void drawHeroProjectiles(Level this, Graphics graphics)
     for (int i = 0; i < MAX_HERO_BULLETS_ON_SCREEN; i++)
     {
         this.projectiles[PROJECTILE_HERO].position = this.heroBulletsPositions[i];
-        spriteDrawTransparentClipped(this.projectiles[PROJECTILE_HERO], graphics);
+        spriteDrawTransparentClipped(this.projectiles[PROJECTILE_HERO], graphics.imageData);
     }
 }
 

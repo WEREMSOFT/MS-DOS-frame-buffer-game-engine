@@ -23,28 +23,35 @@ typedef struct
 
 typedef struct
 {
-    unsigned int textureId;
-    PointI screenSize;
+    PointI size;
     int bufferSize;
+    Color *data;
+} ImageData;
+
+typedef struct
+{
+    unsigned int textureId;
     unsigned int VAO;
     unsigned int shaderProgram;
     PointI mousePosition;
     bool mouseRightDown;
     GLFWwindow *window;
-    Color *textureData;
+    ImageData imageData;
 } Graphics;
 
 Graphics graphicsCreate();
 void graphicsSwapBuffers(Graphics this);
 void graphicsDestroy(Graphics this);
 void graphicsUpdateMouseCoordinates(Graphics *this);
-void graphicsPutPixel(Graphics this, PointI point, Color color);
-void graphicsDrawCircle(Graphics this, PointI center, double radious, Color color);
-void graphicsDrawCircleFill(Graphics this, PointI center, double radious, Color color);
-void graphicsDrawSquare(Graphics this, PointI topLeftCorner, PointI size, Color color);
-void graphicsClear(Graphics this);
-void graphicsDrawCharacter(Graphics this, PointI topLeftCorner, unsigned int letter, Color color);
-void graphicsPrintFontTest(Graphics this);
-void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color);
-void graphicsDrawLine(Graphics this, PointI pointA, PointI pointB, Color color);
+void graphicsPutPixel(ImageData this, PointI point, Color color);
+void graphicsDrawCircle(ImageData this, PointI center, double radious, Color color);
+void graphicsDrawCircleFill(ImageData this, PointI center, double radious, Color color);
+void graphicsDrawSquare(ImageData this, PointI topLeftCorner, PointI size, Color color);
+void graphicsClear(ImageData this);
+void graphicsDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, Color color);
+void graphicsPrintFontTest(ImageData this);
+void graphicsPrintString(ImageData this, PointI topLeftCorner, char *string, Color color);
+void graphicsDrawLine(ImageData this, PointI pointA, PointI pointB, Color color);
+Color graphicsGetPixel(ImageData this, PointI point);
+PointI pointFToPointI(PointF);
 #endif

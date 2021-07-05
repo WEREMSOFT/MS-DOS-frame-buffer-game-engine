@@ -7,7 +7,7 @@ SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound 
 
 FLAGS_DEBUG := -g -O0 
-FLAGS_RELEASE := -O3 -fdata-sections -ffunction-sections
+FLAGS__DEBUG := -O3 -fdata-sections -ffunction-sections
 FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin

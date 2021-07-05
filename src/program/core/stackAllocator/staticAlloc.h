@@ -14,9 +14,9 @@ void staticAllocatorDestroy();
 
 static StackAllocator *stackAllocator;
 
-void staticAllocatorInit()
+void staticAllocatorInit(long int capacity)
 {
-    stackAllocator = stackAllocatorCreate(4384000);
+    stackAllocator = stackAllocatorCreate(capacity);
 }
 
 void *allocStatic(size_t size)

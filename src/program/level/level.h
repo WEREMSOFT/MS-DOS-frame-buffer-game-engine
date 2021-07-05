@@ -32,7 +32,7 @@ typedef struct
     PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
     Sprite hero;
     Sprite thrusters;
-    Enemy enemies[ENEMY_COUNT];
+    Sprite enemy;
     Sound sound;
     bool shouldQuit;
 } Level;
