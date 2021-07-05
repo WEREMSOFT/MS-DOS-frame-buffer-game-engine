@@ -5,8 +5,6 @@
 static Enemy processStateIdle(Enemy this, double deltaTime);
 static Enemy processStateMovingLeft(Enemy this, double deltaTime);
 static Enemy processStateMovingRight(Enemy this, double deltaTime);
-static Enemy processStateMovingCircle(Enemy this, double deltaTime);
-static Enemy passToStateMovingCircle(Enemy this);
 static Enemy passToStateMovingRight(Enemy this);
 static Enemy passToStateMovingLeft(Enemy this);
 

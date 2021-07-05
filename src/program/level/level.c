@@ -5,15 +5,19 @@
 #include "../utils/utils.h"
 #include "../core/input/keyboard.h"
 #include "../core/array/array.h"
+#include "../core/stackAllocator/staticAlloc.h"
 #include <stdlib.h>
 #include <soloud_c.h>
 
-#define PTHREAD_COUNT 7
+#define PTHREAD_COUNT 1
 
 Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
 {
     Level this = {0};
     this.graphics = graphics;
+    this.enemyLayer = graphics.imageData;
+    this.enemyLayer.data = allocStatic(graphics.imageData.bufferSize);
+    imClearTransparent(this.enemyLayer);
     this.sound = sound;
     this.hero = sprites[ASSET_SHIP_BLUE];
     this.projectiles[PROJECTILE_HERO] = sprites[ASSET_HERO_BULLET];
@@ -26,7 +30,7 @@ Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
 typedef struct
 {
     Array *enemiesArray;
-    Graphics graphics;
+    ImageData layer;
     bool shouldQuit;
     int from;
     int to;
@@ -44,7 +48,6 @@ void *updateEnemies(void *params)
     double deltaTime = 0;
 
     Array *enemiesArray = this->enemiesArray;
-    Graphics graphics = this->graphics;
     while (!this->shouldQuit)
     {
         if (*this->mainThreadBussy)
@@ -57,7 +60,7 @@ void *updateEnemies(void *params)
             Enemy *enemy = (Enemy *)arrayGetElementAt(enemiesArray, i);
             *enemy = enemyFlyingEggUpdateState(*enemy, deltaTime);
             enemy->sprite.position = enemy->movementDef.position;
-            spriteDrawTransparentClipped(enemy->sprite, graphics.imageData);
+            spriteDrawTransparentClipped(enemy->sprite, this->layer);
         }
     }
 
@@ -76,7 +79,7 @@ Level levelMainLoop(Level this)
 
     for (int i = 0; i < PTHREAD_COUNT; i++)
     {
-        pthreadInfo[i].graphics = this.graphics;
+        pthreadInfo[i].layer = this.graphics.imageData;
         pthreadInfo[i].lock = &lock;
         pthreadInfo[i].mainThreadBussy = &mainThreadBussy;
     }
@@ -141,7 +144,7 @@ Level levelMainLoop(Level this)
             shouldExit = true;
         }
         mainThreadBussy = true;
-        graphicsClear(this.graphics.imageData);
+        imClear(this.graphics.imageData);
 
         for (int i = 0; i < STAR_COUNT; i++)
         {
@@ -149,8 +152,8 @@ Level levelMainLoop(Level this)
             stars[i].x = fmod((fmod(stars[i].x, graphics.imageData.size.x) +
                                graphics.imageData.size.x),
                               graphics.imageData.size.x);
-            graphicsPutPixel(graphics.imageData, (PointI){stars[i].x, stars[i].y},
-                             (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
+            imPutPixel(graphics.imageData, (PointI){stars[i].x, stars[i].y},
+                       (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
         }
 #ifndef PTHREAD_COUNT
         for (int i = 0; i < enemiesArray->header.length; i++)
@@ -176,8 +179,8 @@ Level levelMainLoop(Level this)
             soundPlaySfx(this.sound, SFX_SHOOT_HERO);
             bulletIndex++;
             bulletIndex %= MAX_HERO_BULLETS_ON_SCREEN;
-            this.heroBulletsPositions[bulletIndex].y = this.hero.position.y + this.hero.size.y * .5;
-            this.heroBulletsPositions[bulletIndex].x = this.hero.position.x + this.projectiles[PROJECTILE_HERO].size.x * 0.5;
+            this.heroBulletsPositions[bulletIndex].y = this.hero.position.y + this.hero.imageData.size.y * .5;
+            this.heroBulletsPositions[bulletIndex].x = this.hero.position.x + this.projectiles[PROJECTILE_HERO].imageData.size.x * 0.5;
         }
 
         updateHeroProjectiles(&this, deltaTime);

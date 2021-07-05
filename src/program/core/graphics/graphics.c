@@ -8,8 +8,6 @@
 #include "../stackAllocator/staticAlloc.h"
 #include <stb_image.h>
 
-extern char fonts[][5];
-
 static void textureCreate(Graphics *this)
 {
 
@@ -21,7 +19,6 @@ static void textureCreate(Graphics *this)
 
     this->imageData.bufferSize = this->imageData.size.x * this->imageData.size.y * sizeof(Color);
     this->imageData.data = allocStatic(this->imageData.bufferSize);
-    printf("%p\n", this->imageData.data);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->imageData.size.x, this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, this->imageData.data);
 }
@@ -155,16 +152,6 @@ Graphics graphicsCreate()
 
 void graphicsSwapBuffers(Graphics this)
 {
-    static Color *lastPointer = NULL;
-
-    if (!lastPointer)
-        lastPointer = this.imageData.data;
-
-    if (lastPointer != this.imageData.data)
-    {
-        fprintf(stderr, "pointers are different!!\n");
-        exit(-1);
-    }
     glClearColor(0, 0, 0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -187,107 +174,6 @@ void graphicsDestroy(Graphics this)
     glfwTerminate();
 }
 
-void graphicsPutPixel(ImageData this, PointI point, Color color)
-{
-    int position = (point.x + point.y * this.size.x) % this.bufferSize;
-    this.data[position] = color;
-}
-
-inline Color graphicsGetPixel(ImageData this, PointI point)
-{
-    int position = (point.x + point.y * this.size.x) % this.bufferSize;
-    return this.data[position];
-}
-
-void graphicsDrawCircle(ImageData this, PointI center, double radious, Color color)
-{
-    for (int i = center.x - radious; i <= center.x + radious; i++)
-    {
-        for (int j = center.y - radious; j <= center.y + radious; j++)
-        {
-            if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-                graphicsPutPixel(this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsDrawSquare(ImageData this, PointI topLeftCorner, PointI size, Color color)
-{
-    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
-    {
-        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
-        {
-            if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
-                graphicsPutPixel(this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsDrawCircleFill(ImageData this, PointI center, double radious, Color color)
-{
-    for (int i = center.x - radious; i <= center.x + radious; i++)
-    {
-        for (int j = center.y - radious; j <= center.y + radious; j++)
-        {
-            if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-                graphicsPutPixel(this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsDrawSquareFill(ImageData this, PointI topLeftCorner, PointI size, Color color)
-{
-    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
-    {
-        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
-        {
-            graphicsPutPixel(this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsClear(ImageData this)
-{
-    memset(this.data, 0, this.bufferSize);
-}
-
-void graphicsDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, Color color)
-{
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j <= 8; j++)
-        {
-            if (fonts[letter][i] & (0b1000000 >> j))
-                graphicsPutPixel(this, (PointI){topLeftCorner.x + j, topLeftCorner.y + i}, color);
-        }
-    }
-}
-
-void graphicsPrintFontTest(ImageData this)
-{
-    for (int i = 0; i < 38; i++)
-    {
-        graphicsDrawCharacter(this, (PointI){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
-    }
-}
-
-void graphicsPrintString(ImageData this, PointI topLeftCorner, char *string, Color color)
-{
-    size_t stringLen = strlen(string);
-    for (size_t i = 0; i < stringLen; i++)
-    {
-        if (string[i] >= '0' && string[i] <= '9')
-        {
-            graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
-        }
-        else if (string[i] >= 'a' && string[i] <= 'z')
-        {
-            int charOffset = string[i] - 'a' + 10;
-            graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-        }
-    }
-}
-
 void graphicsUpdateMouseCoordinates(Graphics *this)
 {
     int w, h;
@@ -297,34 +183,4 @@ void graphicsUpdateMouseCoordinates(Graphics *this)
     this->mousePosition.x = mouseX + this->imageData.size.x / (float)w;
     this->mousePosition.y = mouseY + this->imageData.size.y / (float)h;
     this->mouseRightDown = glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1);
-}
-
-void graphicsDrawLine(ImageData this, PointI pointA, PointI pointB, Color color)
-{
-
-    int dx = abs(pointB.x - pointA.x), sx = pointA.x < pointB.x ? 1 : -1;
-    int dy = abs(pointB.y - pointA.y), sy = pointA.y < pointB.y ? 1 : -1;
-    int err = (dx > dy ? dx : -dy) / 2, e2;
-
-    for (;;)
-    {
-        graphicsPutPixel(this, pointA, color);
-        if (pointA.x == pointB.x && pointA.y == pointB.y)
-            break;
-        e2 = err;
-        if (e2 > -dx)
-        {
-            err -= dy;
-            pointA.x += sx;
-        }
-        if (e2 < dy)
-        {
-            err += dx;
-            pointA.y += sy;
-        }
-    }
-}
-inline PointI pointFToPointI(PointF source)
-{
-    return (PointI){(int)source.x, (int)source.y};
 }

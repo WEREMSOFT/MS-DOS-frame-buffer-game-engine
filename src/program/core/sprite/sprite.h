@@ -1,7 +1,8 @@
 #ifndef __SPRITE_H__
 #define __SPRITE_H__
 
-#include "../graphics/graphics.h"
+#include "../graphics/imageData/imageData.h"
+#include <stdbool.h>
 
 typedef struct
 {
@@ -18,8 +19,7 @@ typedef struct
     bool animated;
     Animation animation;
     PointF position;
-    PointI size;
-    Color *imageData;
+    ImageData imageData;
 } Sprite;
 
 Sprite spriteCreate(char *file);

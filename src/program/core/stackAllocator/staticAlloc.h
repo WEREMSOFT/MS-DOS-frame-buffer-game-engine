@@ -22,6 +22,7 @@ void staticAllocatorInit(long int capacity)
 void *allocStatic(size_t size)
 {
     void *returnValue = stackAllocatorAlloc(stackAllocator, size);
+    printf("%ld bytes allocated. Remaining memory %ld\n", stackAllocator->header.length, stackAllocator->header.capacity - stackAllocator->header.length);
     return returnValue;
 }
 void *reallocStatic(void *this, size_t size)
@@ -39,6 +40,7 @@ void freeStatic(void *this)
 
 void staticAllocatorDestroy()
 {
+    printf("Total memory used %ld out of %ld\n", stackAllocator->header.length, stackAllocator->header.capacity);
     free(stackAllocator);
 }
 

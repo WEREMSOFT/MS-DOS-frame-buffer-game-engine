@@ -28,6 +28,7 @@ enum EnemiesEnum
 typedef struct
 {
     Graphics graphics;
+    ImageData enemyLayer;
     Sprite projectiles[PROJECTILE_COUNT];
     PointF heroBulletsPositions[MAX_HERO_BULLETS_ON_SCREEN];
     Sprite hero;
