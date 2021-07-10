@@ -20,4 +20,5 @@ Graphics graphicsCreate();
 void graphicsSwapBuffers(Graphics this);
 void graphicsDestroy(Graphics this);
 void graphicsUpdateMouseCoordinates(Graphics *this);
+void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color);
 #endif

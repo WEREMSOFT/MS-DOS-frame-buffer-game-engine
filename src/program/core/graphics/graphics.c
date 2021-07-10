@@ -136,8 +136,27 @@ Graphics graphicsCreate()
     glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     glfwSetCursorPos(this.window, 0, 0);
+    // next line when uncommented removes the fps cap
+    glfwSwapInterval(0);
 
     return this;
+}
+
+void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color)
+{
+    size_t stringLen = strlen(string);
+    for (size_t i = 0; i < stringLen; i++)
+    {
+        if (string[i] >= '0' && string[i] <= '9')
+        {
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
+        }
+        else if (string[i] >= 'a' && string[i] <= 'z')
+        {
+            int charOffset = string[i] - 'a' + 10;
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+        }
+    }
 }
 
 void graphicsSwapBuffers(Graphics this)

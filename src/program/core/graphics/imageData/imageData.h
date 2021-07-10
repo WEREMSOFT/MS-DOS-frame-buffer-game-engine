@@ -31,6 +31,7 @@ void imDrawCircleFill(ImageData this, PointI center, double radious, Color color
 void imDrawSquare(ImageData this, PointI topLeftCorner, PointI size, Color color);
 void imClear(ImageData this);
 void imClearTransparent(ImageData this);
+void imClearColor(ImageData this, Color color);
 void imDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, Color color);
 void imPrintFontTest(ImageData this);
 void imPrintString(ImageData this, PointI topLeftCorner, char *string, Color color);

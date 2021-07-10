@@ -67,6 +67,15 @@ void imClearTransparent(ImageData this)
     }
 }
 
+void imClearColor(ImageData this, Color color)
+{
+    const int limit = this.size.x * this.size.y;
+    for (int i = 0; i < limit; i++)
+    {
+        this.data[i] = color;
+    }
+}
+
 void imDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, Color color)
 {
     for (int i = 0; i < 5; i++)

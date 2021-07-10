@@ -6,7 +6,6 @@
 #include <math.h>
 #include "core/input/input.h"
 #include "utils/utils.h"
-#include "assetManager/assetManager.h"
 
 #define __STATIC_ALLOC_IMPLEMENTATION__
 #include "core/stackAllocator/staticAlloc.h"
@@ -40,29 +39,19 @@ programCreate()
     Program this = {0};
     this.graphics = graphicsCreate();
     this.sound = soundCreate();
-    spritesLoad(this.sprites);
     Soloud_setGlobalVolume(this.sound.soloud, 0);
-    this.level = levelCreate(this.graphics, this.sprites, this.sound);
-    this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
+    this.textEditor = textEditorCreate(this.graphics, this.sound);
 
     return this;
 }
 
 void programMainLoop(Program this)
 {
-    while (!this.level.shouldQuit)
-    {
-        this.mainMenu = mainMenuUpdate(this.mainMenu);
-        if (this.mainMenu.shouldQuit)
-            return;
-        this.level.hero = this.mainMenu.ships[this.mainMenu.selectedShip];
-        this.level = levelMainLoop(this.level);
-    }
+    textEditorUpdate(this.textEditor);
 }
 
 void programDestroy(Program this)
 {
-    levelDestroy(this.level);
     graphicsDestroy(this.graphics);
     staticAllocatorDestroy();
 }
