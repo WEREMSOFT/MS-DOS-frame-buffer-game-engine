@@ -1,6 +1,7 @@
 #include "imageData.h"
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 
 extern char fonts[][5];
 

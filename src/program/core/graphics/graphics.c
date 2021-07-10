@@ -89,7 +89,7 @@ Graphics graphicsCreate()
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
     glfwMakeContextCurrent(this.window);
     // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.
-    // glfwSwapInterval(2);
+    glfwSwapInterval(0);
     glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
 
     GLenum err = glewInit();

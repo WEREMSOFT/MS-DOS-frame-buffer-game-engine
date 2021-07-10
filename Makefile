@@ -4,10 +4,10 @@ OBJ_FOR_CLEAN_F := $(shell find ./src -name *.o)
 SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
-LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound 
+LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound
 
-FLAGS_DEBUG := -g -O0 
-FLAGS__DEBUG := -O3 -fdata-sections -ffunction-sections
+FLAGS__DEBUG := -g -O0 
+FLAGS_DEBUG := -O3 -fdata-sections -ffunction-sections
 FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin
