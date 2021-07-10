@@ -1,8 +1,7 @@
-#include <stdio.h>
 #include "program/program.h"
-
 int main(void)
 {
+
     Program this = programCreate();
     programMainLoop(this);
     programDestroy(this);

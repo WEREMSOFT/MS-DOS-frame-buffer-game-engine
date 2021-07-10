@@ -2,14 +2,20 @@
 #define __PROGRAM_H__
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "pixelUtils/graphics.h"
-#include "pixelUtils/sprite.h"
-#include "./array/array.h"
+#include "core/graphics/graphics.h"
+#include "core/sprite/sprite.h"
+#include "level/level.h"
+#include "mainMenu/mainMenu.h"
+#include "assetManager/assetManager.h"
+#include "sound/sound.h"
 
 typedef struct
 {
     Graphics graphics;
-    Array *string;
+    Level level;
+    MainMenu mainMenu;
+    Sprite sprites[ASSET_COUNT];
+    Sound sound;
 } Program;
 
 Program programCreate();

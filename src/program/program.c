@@ -1,79 +1,68 @@
 #include "program.h"
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include "core/input/input.h"
+#include "utils/utils.h"
+#include "assetManager/assetManager.h"
+
+#define __STATIC_ALLOC_IMPLEMENTATION__
+#include "core/stackAllocator/staticAlloc.h"
+
+#ifdef ARRAY_MALLOC
+#undef ARRAY_MALLOC
+#endif
+
+#ifdef ARRAY_REALLOC
+#undef ARRAY_REALLOC
+#endif
+
+#define ARRAY_MALLOC allocStatic
+
+#define ARRAY_REALLOC reallocStatic
+
+#define __UNIVERSAL_ARRAY_IMPLEMENTATION__
+#include "core/array/array.h"
+
+#define STBI_MALLOC(sz) allocStatic(sz)
+#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
+#define STBI_FREE(p) freeStatic(p)
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include <math.h>
-#include "input/input.h"
-#define __UNIVERSAL_ARRAY_IMPLEMENTATION__
-#include "array/array.h"
 
-void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods, Array *string)
+Program
+programCreate()
 {
-    static Array *this = {0};
-
-    if (this == NULL)
-    {
-        this = string;
-    }
-
-    if (action == GLFW_PRESS)
-    {
-        arrayInsertElement(&this, &key);
-    }
-}
-
-Program programCreate()
-{
+    staticAllocatorInit(100092024);
     Program this = {0};
     this.graphics = graphicsCreate();
-    this.string = arrayCreate(1000, sizeof(char));
-    glfwSetKeyCallback(this.graphics.window, keyCallback);
+    this.sound = soundCreate();
+    spritesLoad(this.sprites);
+    Soloud_setGlobalVolume(this.sound.soloud, 0);
+    this.level = levelCreate(this.graphics, this.sprites, this.sound);
+    this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
+
     return this;
-}
-
-void printFPS(Graphics this)
-{
-    static double lastUpdate;
-    static double currentFPS;
-
-    currentFPS = (currentFPS + 1 / (glfwGetTime() - lastUpdate)) / 2;
-    {
-        char text[1000] = {0};
-        snprintf(text, 1000, "fps: %d", (int)floor(currentFPS));
-        graphicsPrintString(this, (Pointi){100, 0}, text, (Color){0, 0xff, 0xff});
-    }
-    {
-        graphicsDrawCircle(this, this.mousePosition, this.mouseRightDown ? 2 : 4, this.mouseRightDown ? (Color){255, 0, 0} : (Color){0, 255, 0});
-        graphicsPutPixel(this, this.mousePosition, (Color){255, 255, 255});
-    }
-    lastUpdate = glfwGetTime();
 }
 
 void programMainLoop(Program this)
 {
-    Graphics graphics = this.graphics;
-    keyCallback(NULL, 0, 0, 0, 0, this.string);
-    while (!glfwWindowShouldClose(this.graphics.window))
+    while (!this.level.shouldQuit)
     {
-        graphicsUpdateMouseCoordinates(&graphics);
-        graphicsClear(this.graphics);
-
-        if (glfwGetKey(graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        {
-            glfwSetWindowShouldClose(graphics.window, true);
-        }
-        if (this.string->header.length > 0)
-            graphicsPrintArray(graphics, (Pointi){0, 0}, this.string, (Color){0xff, 0xff, 0xff});
-
-        printFPS(graphics);
-        graphicsSwapBuffers(graphics);
-        glfwPollEvents();
+        this.mainMenu = mainMenuUpdate(this.mainMenu);
+        if (this.mainMenu.shouldQuit)
+            return;
+        this.level.hero = this.mainMenu.ships[this.mainMenu.selectedShip];
+        this.level = levelMainLoop(this.level);
     }
 }
 
 void programDestroy(Program this)
 {
+    levelDestroy(this.level);
     graphicsDestroy(this.graphics);
+    staticAllocatorDestroy();
 }
