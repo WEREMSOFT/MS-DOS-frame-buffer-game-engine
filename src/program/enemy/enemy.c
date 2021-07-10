@@ -65,7 +65,7 @@ static Enemy processStateMovingLeft(Enemy this, double deltaTime)
         this.movementDef.position.x = 900;
     }
     this.movementDef.phase += deltaTime * 5;
-    this.movementDef.position.y = sinf(this.movementDef.phase) * 10 + this.movementDef.center.y;
+    this.movementDef.position.y = sinf(this.movementDef.phase) * 5 + this.movementDef.center.y;
     this.movementDef.position.x -= this.movementDef.speed * deltaTime;
     return this;
 }
@@ -88,7 +88,7 @@ static Enemy processStateMovingRight(Enemy this, double deltaTime)
     }
 
     this.movementDef.phase += deltaTime * 5;
-    this.movementDef.position.y = sinf(this.movementDef.phase) * 10 + 100;
+    this.movementDef.position.y = sinf(this.movementDef.phase) * 5 + 100;
     this.movementDef.position.x += this.movementDef.speed * deltaTime;
 
     return this;

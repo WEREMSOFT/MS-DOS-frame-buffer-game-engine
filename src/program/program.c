@@ -11,8 +11,18 @@
 #define __STATIC_ALLOC_IMPLEMENTATION__
 #include "core/stackAllocator/staticAlloc.h"
 
+#ifdef ARRAY_MALLOC
+#undef ARRAY_MALLOC
+#endif
+
+#ifdef ARRAY_REALLOC
+#undef ARRAY_REALLOC
+#endif
+
 #define ARRAY_MALLOC allocStatic
+
 #define ARRAY_REALLOC reallocStatic
+
 #define __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #include "core/array/array.h"
 
@@ -23,7 +33,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Program programCreate()
+Program
+programCreate()
 {
     staticAllocatorInit(100092024);
     Program this = {0};
@@ -51,6 +62,7 @@ void programMainLoop(Program this)
 
 void programDestroy(Program this)
 {
+    levelDestroy(this.level);
     graphicsDestroy(this.graphics);
     staticAllocatorDestroy();
 }

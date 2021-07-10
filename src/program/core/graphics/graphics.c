@@ -59,13 +59,6 @@ void textureCreateFromImage(Graphics *this, char *fileName)
     }
 }
 
-static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
 Graphics graphicsCreate()
 {
     Graphics this = {0};
@@ -88,9 +81,6 @@ Graphics graphicsCreate()
 
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
     glfwMakeContextCurrent(this.window);
-    // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.
-    glfwSwapInterval(0);
-    glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
 
     GLenum err = glewInit();
 

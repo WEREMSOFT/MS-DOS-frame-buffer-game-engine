@@ -4,14 +4,15 @@
 #include "levelStaticFunctions.h"
 #include "../utils/utils.h"
 #include "../core/input/keyboard.h"
-#include "../core/array/array.h"
 #include "../core/stackAllocator/staticAlloc.h"
 #include <stdlib.h>
 #include <soloud_c.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #define PTHREAD_COUNT 1
-pthread_mutex_t lock;
+#define ENEMIES_COUNT 50
+#define STAR_COUNT 1000
 
 Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
 {
@@ -27,22 +28,12 @@ Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
     return this;
 }
 
-typedef struct
-{
-    Graphics graphics;
-    Array *enemiesArray;
-    Sprite *enemyLayer;
-    ImageData screen;
-    bool shouldQuit;
-    int from;
-    int to;
-} PthreadInfo;
-
 void *updateEnemies(void *params)
 {
 
     PthreadInfo *this = (PthreadInfo *)params;
 
+    int imageDataIndex = 0;
     double lastUpdate = 0;
     double deltaTime = 0;
     Array *enemiesArray = this->enemiesArray;
@@ -53,8 +44,6 @@ void *updateEnemies(void *params)
     imageDatas[1] = this->graphics.imageData;
     imageDatas[0].data = (Color *)allocStatic(this->graphics.imageData.bufferSize);
     imageDatas[1].data = (Color *)allocStatic(this->graphics.imageData.bufferSize);
-
-    int imageDataIndex = 0;
 
     this->enemyLayer->imageData = imageDatas[imageDataIndex];
 
@@ -74,14 +63,14 @@ void *updateEnemies(void *params)
             enemy->sprite.position = enemy->movementDef.position;
             spriteDrawTransparentClipped(enemy->sprite, imageDatas[imageDataIndex]);
         }
-        pthread_mutex_lock(&lock);
+        pthread_mutex_lock(this->lock);
         this->enemyLayer->imageData = imageDatas[imageDataIndex];
-        pthread_mutex_unlock(&lock);
+        pthread_mutex_unlock(this->lock);
         gettimeofday(&stop, NULL);
         unsigned long int elapsedUSec = (stop.tv_sec - start.tv_sec) / 1000000 + stop.tv_usec - start.tv_usec;
-        if (elapsedUSec < 60000)
+        if (elapsedUSec < 1.6666)
         {
-            usleep(60000 - elapsedUSec);
+            usleep(1.6666 - elapsedUSec);
         }
     }
     return NULL;
@@ -90,8 +79,9 @@ void *updateEnemies(void *params)
 Level levelMainLoop(Level this)
 {
     Graphics graphics = this.graphics;
-
-#define ENEMIES_COUNT 30000
+    double deltaTime = 0;
+    int bulletIndex = 0;
+    PthreadInfo pthreadInfo[PTHREAD_COUNT] = {0};
     Array *enemiesArray = arrayCreate(ENEMIES_COUNT, sizeof(Enemy));
 
     for (int i = 0; i < ENEMIES_COUNT; i++)
@@ -104,10 +94,7 @@ Level levelMainLoop(Level this)
         arrayInsertElement(&enemiesArray, &enemy);
     }
 
-#ifdef PTHREAD_COUNT
-    PthreadInfo pthreadInfo[PTHREAD_COUNT] = {0};
-
-    pthread_mutex_init(&lock, NULL);
+    pthread_mutex_init(&this.lock, NULL);
 
     for (int i = 0; i < PTHREAD_COUNT; i++)
     {
@@ -117,12 +104,9 @@ Level levelMainLoop(Level this)
         pthreadInfo[i].enemiesArray = enemiesArray;
         pthreadInfo[i].from = i * ENEMIES_COUNT / PTHREAD_COUNT;
         pthreadInfo[i].to = pthreadInfo[i].from + ENEMIES_COUNT / PTHREAD_COUNT;
+        pthreadInfo[i].lock = &this.lock;
     }
-#endif
-    double deltaTime = 0;
-    int bulletIndex = 0;
 
-#define STAR_COUNT 1000
     Star stars[STAR_COUNT] = {0};
 
     for (int i = 0; i < STAR_COUNT; i++)
@@ -135,13 +119,11 @@ Level levelMainLoop(Level this)
     float speed = -160.f;
     bool shouldExit = false;
 
-#ifdef PTHREAD_COUNT
     pthread_t updateEnemyID[PTHREAD_COUNT];
     for (int i = 0; i < PTHREAD_COUNT; i++)
     {
         pthread_create(&updateEnemyID[i], NULL, updateEnemies, &pthreadInfo[i]);
     }
-#endif
 
     while (!(shouldExit || this.shouldQuit))
     {
@@ -168,19 +150,9 @@ Level levelMainLoop(Level this)
             imPutPixel(graphics.imageData, (PointI){stars[i].x, stars[i].y},
                        (Color){stars[i].z * 255, stars[i].z * 255, stars[i].z * 255});
         }
-        pthread_mutex_lock(&lock);
+        pthread_mutex_lock(&this.lock);
         spriteDrawTransparent(this.enemyLayer, graphics.imageData);
-        pthread_mutex_unlock(&lock);
-
-#ifndef PTHREAD_COUNT
-        for (int i = 0; i < enemiesArray->header.length; i++)
-        {
-            Enemy *enemy = (Enemy *)arrayGetElementAt(enemiesArray, i);
-            *enemy = enemyFlyingEggUpdateState(*enemy, deltaTime);
-            enemy->sprite.position = enemy->movementDef.position;
-            spriteDrawTransparentClipped(enemy->sprite, graphics);
-        }
-#endif
+        pthread_mutex_unlock(&this.lock);
 
         this.hero.position = updatePositionBasedOnKeyboard(graphics.window,
                                                            this.hero.position, deltaTime, 100.0);
@@ -209,13 +181,15 @@ Level levelMainLoop(Level this)
         glfwPollEvents();
     }
 
-#ifdef PTHREAD_COUNT
     for (int i = 0; i < PTHREAD_COUNT; i++)
     {
         pthreadInfo[i].shouldQuit = true;
         pthread_join(updateEnemyID[i], NULL);
     }
-    pthread_mutex_destroy(&lock);
-#endif
     return this;
+}
+
+void levelDestroy(Level this)
+{
+    pthread_mutex_destroy(&this.lock);
 }
