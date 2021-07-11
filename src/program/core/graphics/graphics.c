@@ -62,8 +62,8 @@ void textureCreateFromImage(Graphics *this, char *fileName)
 Graphics graphicsCreate()
 {
     Graphics this = {0};
-    this.imageData.size.x = 640;
-    this.imageData.size.y = 480;
+    this.imageData.size.x = 320;
+    this.imageData.size.y = 240;
 
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -142,19 +142,59 @@ Graphics graphicsCreate()
     return this;
 }
 
+static PointI generateCarriageReturnAndNewLine(PointI this)
+{
+    return (PointI){0, this.y + 10};
+}
+
 void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Color color)
 {
     size_t stringLen = strlen(string);
+    PointI characterPosition = {0};
+
     for (size_t i = 0; i < stringLen; i++)
     {
+        characterPosition.x++;
+        if (string[i] == '\n')
+            characterPosition = generateCarriageReturnAndNewLine(characterPosition);
+
         if (string[i] >= '0' && string[i] <= '9')
         {
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, string[i] - '0', color);
         }
         else if (string[i] >= 'a' && string[i] <= 'z')
         {
             int charOffset = string[i] - 'a' + 10;
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+            if ((topLeftCorner.x + characterPosition.x * 6 + 6) > this.imageData.size.x)
+            {
+                characterPosition = generateCarriageReturnAndNewLine(characterPosition);
+            }
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
+        }
+        else if (string[i] == ',')
+        {
+            int charOffset = 'z' - 'a' + 10 + 1;
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
+        }
+        else if (string[i] == '.')
+        {
+            int charOffset = 'z' - 'a' + 10 + 2;
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
+        }
+        else if (string[i] == ';')
+        {
+            int charOffset = 'z' - 'a' + 10 + 3;
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
+        }
+        else if (string[i] == '{')
+        {
+            int charOffset = 'z' - 'a' + 10 + 4;
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
+        }
+        else if (string[i] == '}')
+        {
+            int charOffset = 'z' - 'a' + 10 + 5;
+            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
         }
     }
 }

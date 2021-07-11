@@ -13,6 +13,6 @@ typedef struct
 } TextEditor;
 
 TextEditor textEditorCreate(Graphics graphics, Sound sound);
-TextEditor textEditorUpdate(TextEditor this);
+TextEditor textEditorUpdate();
 
 #endif

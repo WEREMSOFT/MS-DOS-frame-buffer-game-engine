@@ -11,14 +11,21 @@ char *bufferText;
 int bufferTextIndex = 0;
 void keyboardCallback(GLFWwindow *window, int key, int scanCode, int action, int mods)
 {
-    snprintf(keyStatusText, 100, "key: %d - scan code: %d - action: %d, mods: %b", key, scanCode, action, mods);
+    snprintf(keyStatusText, 100, "key: %d - scan code: %d - action: %d, mods: %d", key, scanCode, action, mods);
     if (action == GLFW_PRESS)
     {
+        if (key == GLFW_KEY_TAB)
+        {
+            bufferText[bufferTextIndex++] = '\t';
+        }
         if (key == GLFW_KEY_BACKSPACE)
         {
             bufferTextIndex = fmax(0, --bufferTextIndex);
             bufferText[bufferTextIndex] = 0;
-            // bufferTextIndex--;
+        }
+        else if (key == GLFW_KEY_ENTER)
+        {
+            bufferText[bufferTextIndex++] = '\n';
         }
         else
         {
@@ -60,7 +67,7 @@ TextEditor textEditorUpdate(TextEditor this)
     return this;
 }
 
-void textEditorDestroy(TextEditor this)
+void textEditorDestroy()
 {
     freeStatic(bufferText);
 }
