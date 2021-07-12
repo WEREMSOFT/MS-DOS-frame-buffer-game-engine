@@ -158,44 +158,7 @@ void graphicsPrintString(Graphics this, PointI topLeftCorner, char *string, Colo
         if (string[i] == '\n')
             characterPosition = generateCarriageReturnAndNewLine(characterPosition);
 
-        if (string[i] >= '0' && string[i] <= '9')
-        {
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, string[i] - '0', color);
-        }
-        else if (string[i] >= 'a' && string[i] <= 'z')
-        {
-            int charOffset = string[i] - 'a' + 10;
-            if ((topLeftCorner.x + characterPosition.x * 6 + 6) > this.imageData.size.x)
-            {
-                characterPosition = generateCarriageReturnAndNewLine(characterPosition);
-            }
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
-        }
-        else if (string[i] == ',')
-        {
-            int charOffset = 'z' - 'a' + 10 + 1;
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
-        }
-        else if (string[i] == '.')
-        {
-            int charOffset = 'z' - 'a' + 10 + 2;
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
-        }
-        else if (string[i] == ';')
-        {
-            int charOffset = 'z' - 'a' + 10 + 3;
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
-        }
-        else if (string[i] == '{')
-        {
-            int charOffset = 'z' - 'a' + 10 + 4;
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
-        }
-        else if (string[i] == '}')
-        {
-            int charOffset = 'z' - 'a' + 10 + 5;
-            imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, charOffset, color);
-        }
+        imDrawCharacter(this.imageData, (PointI){topLeftCorner.x + characterPosition.x * 6, topLeftCorner.y + characterPosition.y}, string[i], color);
     }
 }
 

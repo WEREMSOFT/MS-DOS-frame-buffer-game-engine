@@ -9,31 +9,32 @@
 char keyStatusText[100] = {0};
 char *bufferText;
 int bufferTextIndex = 0;
-void keyboardCallback(GLFWwindow *window, int key, int scanCode, int action, int mods)
+void keyboardCallback(GLFWwindow *window, unsigned int key)
 {
-    snprintf(keyStatusText, 100, "key: %d - scan code: %d - action: %d, mods: %d", key, scanCode, action, mods);
-    if (action == GLFW_PRESS)
+    snprintf(keyStatusText, 100, "key: %d", key);
+
+    if (key >= 'A' && key <= 'Z')
+        bufferText[bufferTextIndex++] = (char)key + 32;
+    else
+        bufferText[bufferTextIndex++] = (char)key;
+}
+
+void keyCallback(GLFWwindow *window, int key, int code, int action, int mod)
+{
+    if (action != GLFW_PRESS)
+        return;
+    if (key == GLFW_KEY_TAB)
     {
-        if (key == GLFW_KEY_TAB)
-        {
-            bufferText[bufferTextIndex++] = '\t';
-        }
-        if (key == GLFW_KEY_BACKSPACE)
-        {
-            bufferTextIndex = fmax(0, --bufferTextIndex);
-            bufferText[bufferTextIndex] = 0;
-        }
-        else if (key == GLFW_KEY_ENTER)
-        {
-            bufferText[bufferTextIndex++] = '\n';
-        }
-        else
-        {
-            if (key >= 'A' && key <= 'Z')
-                bufferText[bufferTextIndex++] = (char)key + 32;
-            else
-                bufferText[bufferTextIndex++] = (char)key;
-        }
+        bufferText[bufferTextIndex++] = '\t';
+    }
+    if (key == GLFW_KEY_BACKSPACE)
+    {
+        bufferTextIndex = fmax(0, --bufferTextIndex);
+        bufferText[bufferTextIndex] = 0;
+    }
+    else if (key == GLFW_KEY_ENTER)
+    {
+        bufferText[bufferTextIndex++] = '\n';
     }
 }
 
@@ -43,7 +44,8 @@ TextEditor textEditorCreate(Graphics graphics, Sound sound)
     this.sound = sound;
     this.graphics = graphics;
     bufferText = allocStatic(100000);
-    glfwSetKeyCallback(graphics.window, keyboardCallback);
+    glfwSetCharCallback(graphics.window, keyboardCallback);
+    glfwSetKeyCallback(graphics.window, keyCallback);
 
     this.shouldQuit = false;
     return this;
