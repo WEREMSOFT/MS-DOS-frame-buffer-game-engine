@@ -54,7 +54,6 @@ void textureCreateFromImage(Graphics *this, char *fileName)
     {
         printf("%s::%s - Error loading texture \n", __FILE__, __FUNCTION__);
         printf("Error: %s\n", stbi_failure_reason());
-
         exit(1);
     }
 }
