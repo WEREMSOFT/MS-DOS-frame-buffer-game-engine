@@ -40,29 +40,48 @@ programCreate()
     Program this = {0};
     this.graphics = graphicsCreate();
     this.sound = soundCreate();
-    spritesLoad(this.sprites);
     Soloud_setGlobalVolume(this.sound.soloud, 0);
-    this.level = levelCreate(this.graphics, this.sprites, this.sound);
-    this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
-
     return this;
+}
+
+static void createImage(Graphics graphics, double deltaTime)
+{
+    unsigned int uvx;
+    unsigned int uvy;
+
+    for (int i = 0; i < graphics.imageData.size.x; i++)
+    {
+        for (int j = 0; j < graphics.imageData.size.y; j++)
+        {
+            uvx = (2.0 * i - graphics.imageData.size.x) / graphics.imageData.size.y;
+            uvy = (2.0 * j - graphics.imageData.size.y) / graphics.imageData.size.y;
+            imPutPixel(graphics.imageData, (PointI){i, j}, (Color){i % 255, j % 255, (i * j) % 255});
+        }
+    }
 }
 
 void programMainLoop(Program this)
 {
-    while (!this.level.shouldQuit)
+    bool shouldQuit = false;
+    double lastUpdate = glfwGetTime();
+    while (!shouldQuit)
     {
-        this.mainMenu = mainMenuUpdate(this.mainMenu);
-        if (this.mainMenu.shouldQuit)
-            return;
-        this.level.hero = this.mainMenu.ships[this.mainMenu.selectedShip];
-        this.level = levelMainLoop(this.level);
+        double deltaTime = glfwGetTime() - lastUpdate;
+        if (glfwGetKey(this.graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            shouldQuit = true;
+
+        imClear(this.graphics.imageData);
+
+        createImage(this.graphics, deltaTime);
+
+        graphicsSwapBuffers(this.graphics);
+        glfwPollEvents();
+        lastUpdate = glfwGetTime();
     }
 }
 
 void programDestroy(Program this)
 {
-    levelDestroy(this.level);
     graphicsDestroy(this.graphics);
     staticAllocatorDestroy();
 }
