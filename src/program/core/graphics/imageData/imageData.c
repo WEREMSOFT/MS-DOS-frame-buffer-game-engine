@@ -67,6 +67,15 @@ void imClearTransparent(ImageData this)
     }
 }
 
+void imClearColor(ImageData this, Color color)
+{
+    const int limit = this.size.x * this.size.y;
+    for (int i = 0; i < limit; i++)
+    {
+        this.data[i] = color;
+    }
+}
+
 void imDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, Color color)
 {
     for (int i = 0; i < 5; i++)
@@ -81,7 +90,7 @@ void imDrawCharacter(ImageData this, PointI topLeftCorner, unsigned int letter, 
 
 void imPrintFontTest(ImageData this)
 {
-    for (int i = 0; i < 38; i++)
+    for (int i = 0; i < 255; i++)
     {
         imDrawCharacter(this, (PointI){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
     }
@@ -92,15 +101,8 @@ void imPrintString(ImageData this, PointI topLeftCorner, char *string, Color col
     size_t stringLen = strlen(string);
     for (size_t i = 0; i < stringLen; i++)
     {
-        if (string[i] >= '0' && string[i] <= '9')
-        {
-            imDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
-        }
-        else if (string[i] >= 'a' && string[i] <= 'z')
-        {
-            int charOffset = string[i] - 'a' + 10;
-            imDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-        }
+        int charOffset = string[i];
+        imDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
     }
 }
 

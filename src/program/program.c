@@ -72,8 +72,9 @@ void programMainLoop(Program this)
 
         imClear(this.graphics.imageData);
 
-        createImage(this.graphics, deltaTime);
-
+        // createImage(this.graphics, deltaTime);
+        imPrintString(this.graphics.imageData, (PointI){100, 0}, "Hello World!!", (Color){0xff, 0, 0});
+        printFPS(this.graphics, deltaTime);
         graphicsSwapBuffers(this.graphics);
         glfwPollEvents();
         lastUpdate = glfwGetTime();
