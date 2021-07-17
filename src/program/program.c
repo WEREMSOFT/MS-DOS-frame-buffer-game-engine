@@ -33,29 +33,48 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-Program
-programCreate()
+Program programCreate()
 {
-    staticAllocatorInit(100092024);
+    staticAllocatorInit(10092024);
     Program this = {0};
     this.graphics = graphicsCreate();
-    this.sound = soundCreate();
-    Soloud_setGlobalVolume(this.sound.soloud, 0);
+    // this.sound = soundCreate();
+    // Soloud_setGlobalVolume(this.sound.soloud, 0);
     return this;
 }
 
-static void createImage(Graphics graphics, double deltaTime)
+static void createImage(Graphics graphics, double time)
 {
-    unsigned int uvx;
-    unsigned int uvy;
+    double uvx;
+    double uvy;
 
-    for (int i = 0; i < graphics.imageData.size.x; i++)
+    int halfHeight = graphics.imageData.size.y / 2 + 1;
+    int halfWidth = graphics.imageData.size.x / 2 + 1;
+
+    for (int i = 0; i < halfWidth; i++)
     {
-        for (int j = 0; j < graphics.imageData.size.y; j++)
+        for (int j = 0; j < halfHeight; j++)
         {
             uvx = (2.0 * i - graphics.imageData.size.x) / graphics.imageData.size.y;
             uvy = (2.0 * j - graphics.imageData.size.y) / graphics.imageData.size.y;
-            imPutPixel(graphics.imageData, (PointI){i, j}, (Color){i % 255, j % 255, (i * j) % 255});
+
+            uvy = 1.0 / fabsl(uvy);
+            uvx *= uvy;
+            uvx += time;
+            uvy += time;
+
+            Color color = (Color){
+                sin(9.0 * uvx) * 255,
+                sin(9.0 * uvy) * 255,
+                sin(9.0 * uvy) * 255};
+
+            unsigned int opositX = graphics.imageData.size.x - i;
+            unsigned int opositY = graphics.imageData.size.y - j;
+
+            imPutPixel(graphics.imageData, (PointI){i, j}, color);
+            imPutPixel(graphics.imageData, (PointI){opositX, j}, color);
+            imPutPixel(graphics.imageData, (PointI){opositX, opositY}, color);
+            imPutPixel(graphics.imageData, (PointI){i, opositY}, color);
         }
     }
 }
@@ -67,17 +86,14 @@ void programMainLoop(Program this)
     while (!shouldQuit)
     {
         double deltaTime = glfwGetTime() - lastUpdate;
+        lastUpdate = glfwGetTime();
         if (glfwGetKey(this.graphics.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             shouldQuit = true;
 
-        imClear(this.graphics.imageData);
-
-        // createImage(this.graphics, deltaTime);
-        imPrintString(this.graphics.imageData, (PointI){100, 0}, "Hello World!!", (Color){0xff, 0, 0});
+        createImage(this.graphics, lastUpdate);
         printFPS(this.graphics, deltaTime);
         graphicsSwapBuffers(this.graphics);
         glfwPollEvents();
-        lastUpdate = glfwGetTime();
     }
 }
 

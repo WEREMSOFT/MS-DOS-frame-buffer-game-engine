@@ -81,11 +81,9 @@ Graphics graphicsCreate()
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
     glfwMakeContextCurrent(this.window);
 
-    GLenum err = glewInit();
-
-    if (err != GLEW_OK || err == 255) // the 255 part is because Wayland fails even if the initialization went right
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        fprintf(stderr, "error initializing glew: %s\n", glewGetErrorString(err));
+        printf("Failed to initialize GLAD\n");
         exit(-1);
     }
 
