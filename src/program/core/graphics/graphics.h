@@ -1,6 +1,6 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 #include "imageData/imageData.h"
