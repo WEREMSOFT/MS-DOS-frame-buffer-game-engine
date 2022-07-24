@@ -16,12 +16,20 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
         returnValue = -1;
         goto error_handler;
     }
+    else
+    {
+        printf("shader file %s opened successfully\n", filename);
+    }
 
     if (fseek(fp, 0, SEEK_END) != 0)
     {
         printf("Error obtaining the file size ");
         returnValue = -1;
         goto error_handler;
+    }
+    else
+    {
+        printf("file %s size obtained sucessfully", filename);
     }
 
     fileSize = ftell(fp);
@@ -37,8 +45,12 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
 
     if (fread(shaderCode, sizeof(char), fileSize, fp) != fileSize)
     {
-        fprintf(stderr, "Error opening shader %s\n", fileName);
+        printf("Error opening shader: %s\n", fileName);
         exit(-1);
+    }
+    else
+    {
+        printf("Shader file open succeed %s\n", fileName);
     }
 
     glShaderSource(*vertexShader, 1, (const char **)&shaderCode, NULL);

@@ -1,5 +1,5 @@
 
-@echo off
+
 mkdir bin
 pushd src
 cl -Zi ^
@@ -95,13 +95,13 @@ cl -Zi ^
    ..\libs\soloud\src\filter\soloud_lofifilter.cpp ^
    ..\libs\soloud\src\filter\soloud_robotizefilter.cpp ^
    ..\libs\soloud\src\filter\soloud_waveshaperfilter.cpp ^
-   ..\..\libs\imgui\imgui.cpp^
-   ..\..\libs\imgui\imgui_demo.cpp^
-   ..\..\libs\imgui\imgui_draw.cpp^
-   ..\..\libs\imgui\backends\imgui_impl_glfw.cpp^
-   ..\..\libs\imgui\backends\imgui_impl_opengl3.cpp^
-   ..\..\libs\imgui\imgui_tables.cpp^
-   ..\..\libs\imgui\imgui_widgets.cpp^
+   ..\..\libs\imgui\imgui.cpp ^
+   ..\..\libs\imgui\imgui_demo.cpp ^
+   ..\..\libs\imgui\imgui_draw.cpp ^
+   ..\..\libs\imgui\backends\imgui_impl_glfw.cpp ^
+   ..\..\libs\imgui\backends\imgui_impl_opengl3.cpp ^
+   ..\..\libs\imgui\imgui_tables.cpp ^
+   ..\..\libs\imgui\imgui_widgets.cpp ^
    ..\..\libs\glfw\lib-vc2022\glfw3dll.lib ^
    ..\..\libs\glfw\lib-vc2022\glfw3_mt.lib ^
    ..\..\libs\pthreads\lib\x64\pthreadVC2.lib ^
@@ -110,10 +110,10 @@ cl -Zi ^
    -o ../bin/main.exe
 popd
 
-xcopy ..\libs\glfw\lib-vc2022\glfw3.dll bin /Y
-xcopy ..\libs\pthreads\dll\x64\pthreadVC2.dll bin /Y
-xcopy ..\libs\glew\bin\Release\x64\glew32.dll bin /Y
-xcopy assets bin\assets /E /H /C /I /Y
+rem xcopy ..\libs\glfw\lib-vc2022\glfw3.dll bin /Y
+rem xcopy ..\libs\pthreads\dll\x64\pthreadVC2.dll bin /Y
+rem xcopy ..\libs\glew\bin\Release\x64\glew32.dll bin /Y
+rem xcopy assets bin\assets /E /H /C /I /Y
 
 pushd bin
 main.exe
