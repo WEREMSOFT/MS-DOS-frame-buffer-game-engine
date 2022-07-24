@@ -10,6 +10,15 @@
 #include <soloud_c.h>
 
 #define PTHREAD_COUNT 7
+// windows shit
+#ifndef random
+
+long int random()
+{
+    return 100;
+}
+
+#endif
 
 Level levelCreate(Graphics graphics, Sprite *sprites, Sound sound)
 {
