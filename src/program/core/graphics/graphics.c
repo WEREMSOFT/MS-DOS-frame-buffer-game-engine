@@ -123,7 +123,7 @@ Graphics graphicsCreate()
 
     textureCreate(&this);
 
-    this.shaderProgram = shaderProgramCreateFromFiles("default.vs", "default.fs");
+    this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/default.vs", "assets/shaders/default.fs");
     glUseProgram(this.shaderProgram);
 
     unsigned int VBO, EBO;

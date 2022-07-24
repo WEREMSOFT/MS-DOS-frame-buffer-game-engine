@@ -6,16 +6,24 @@
 #include "../utils/utils.h"
 #include "../core/input/keyboard.h"
 #include "../core/array/array.h"
+#define _CRT_RAND_S
 #include <stdlib.h>
 #include <soloud_c.h>
 
-#define PTHREAD_COUNT 7
+#define NOT_PTHREAD_COUNT 1
 // windows shit
 #ifndef random
 
 long int random()
 {
-    return 100;
+    static bool firstRun = true;
+
+    if (firstRun)
+    {
+        srand((unsigned)time(NULL));
+        firstRun = false;
+    }
+    return rand();
 }
 
 #endif
@@ -77,10 +85,11 @@ void *updateEnemies(void *params)
 Level levelMainLoop(Level this)
 {
     Graphics graphics = this.graphics;
+    bool mainThreadBussy = false;
+
 #ifdef PTHREAD_COUNT
     PthreadInfo pthreadInfo[PTHREAD_COUNT] = {0};
     pthread_mutex_t lock;
-    bool mainThreadBussy = false;
 
     pthread_mutex_init(&lock, NULL);
 
@@ -92,7 +101,7 @@ Level levelMainLoop(Level this)
     }
 #endif
 
-#define ENEMIES_COUNT 10000
+#define ENEMIES_COUNT 10
     Array *enemiesArray = arrayCreate(ENEMIES_COUNT, sizeof(Enemy));
 
     for (int i = 0; i < ENEMIES_COUNT; i++)
@@ -168,7 +177,7 @@ Level levelMainLoop(Level this)
             Enemy *enemy = (Enemy *)arrayGetElementAt(enemiesArray, i);
             *enemy = enemyFlyingEggUpdateState(*enemy, deltaTime);
             enemy->sprite.position = enemy->movementDef.position;
-            spriteDrawTransparentClipped(enemy->sprite, graphics);
+            spriteDrawTransparentClipped(enemy->sprite, graphics.imageData);
         }
 #endif
 

@@ -3,3 +3,4 @@ bin
 **/*.kra
 **/*.obj
 **/*.pdb
+.vscode

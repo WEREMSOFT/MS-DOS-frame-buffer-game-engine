@@ -1,24 +1,18 @@
 #include "shader.h"
 #include "../stackAllocator/staticAlloc.h"
-
 static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader, int shaderType)
 {
     int returnValue = 0;
     size_t fileSize = 0;
     char *shaderCode = NULL;
     *vertexShader = glCreateShader(shaderType);
-
-    FILE *fp = fopen(fileName, "r");
+    FILE *fp = fopen(fileName, "rb");
 
     if (fp == NULL)
     {
         printf("Error opening file\n");
         returnValue = -1;
         goto error_handler;
-    }
-    else
-    {
-        printf("shader file %s opened successfully\n", filename);
     }
 
     if (fseek(fp, 0, SEEK_END) != 0)
@@ -27,19 +21,15 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
         returnValue = -1;
         goto error_handler;
     }
-    else
-    {
-        printf("file %s size obtained sucessfully", filename);
-    }
 
     fileSize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-
     shaderCode = allocStatic(fileSize + 1 * sizeof(char));
 
     if (shaderCode == NULL)
     {
         returnValue = -1;
+        printf("Error allocating memory\n");
         goto error_handler;
     }
 
@@ -48,18 +38,11 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
         printf("Error opening shader: %s\n", fileName);
         exit(-1);
     }
-    else
-    {
-        printf("Shader file open succeed %s\n", fileName);
-    }
 
     glShaderSource(*vertexShader, 1, (const char **)&shaderCode, NULL);
-
     glCompileShader(*vertexShader);
-
     int shaderCompilationSuccess;
     char infoLog[512];
-
     glGetShaderiv(*vertexShader, GL_COMPILE_STATUS, &shaderCompilationSuccess);
 
     if (!shaderCompilationSuccess)
@@ -75,34 +58,34 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
     }
 
 error_handler:
+
     if (shaderCode != NULL)
         freeStatic(shaderCode);
+
     if (fp != NULL)
         fclose(fp);
-
     return returnValue;
 }
 
 unsigned int shaderProgramCreateFromFiles(const char *vertexShaderPath, const char *fragmentShaderPath)
 {
     unsigned int vs, fs;
-
     shaderCreateFromFile(vertexShaderPath, &vs, GL_VERTEX_SHADER);
     shaderCreateFromFile(fragmentShaderPath, &fs, GL_FRAGMENT_SHADER);
-
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vs);
     glAttachShader(shaderProgram, fs);
+
     if (vs == 0 || fs == 0)
     {
         fprintf(stderr, "error loading shadfer files\n");
         exit(-1);
     }
+
     glLinkProgram(shaderProgram);
-
     int success;
-
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+
     if (!success)
     {
         char infoLog[512];
