@@ -1,3 +1,4 @@
+#define HAVE_STRUCT_TIMESPEC
 #include <pthread.h>
 #include "level.h"
 #include "../assetManager/assetManager.h"

@@ -7,6 +7,7 @@ cl -Zi ^
    /I ..\..\libs\glfw\include ^
    /I ..\..\libs\imgui ^
    /I ..\..\libs\glew\include ^
+   /I ..\..\libs\pthreads\include ^
    /I ..\libs\soloud\include ^
    /I ..\libs\include ^
    main.c ^
@@ -22,6 +23,8 @@ cl -Zi ^
    program\core\shader\shader.c ^
    program\core\sprite\sprite.c ^
    program\core\stackAllocator\stack_allocator.c ^
+   ..\libs\soloud\src\c_api\soloud_c.cpp ^
+   ..\libs\soloud\src\core\soloud_audiosource.cpp ^
    ..\..\libs\imgui\imgui.cpp^
    ..\..\libs\imgui\imgui_demo.cpp^
    ..\..\libs\imgui\imgui_draw.cpp^
@@ -31,12 +34,14 @@ cl -Zi ^
    ..\..\libs\imgui\imgui_widgets.cpp^
    ..\..\libs\glfw\lib-vc2022\glfw3dll.lib ^
    ..\..\libs\glfw\lib-vc2022\glfw3_mt.lib ^
+   ..\..\libs\pthreads\lib\x64\pthreadVC2.lib ^
    ..\..\libs\glew\lib\Release\x64\glew32.lib ^
    opengl32.lib ^
    -o ../bin/main.exe
 popd
 
 REM xcopy ..\libs\glfw\lib-vc2022\glfw3.dll bin /Y
+REM xcopy ..\libs\pthreads\dll\x64\pthreadVC2.dll bin /Y
 REM xcopy assets bin\assets /E /H /C /I /Y
 
 pushd bin
