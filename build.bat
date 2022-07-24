@@ -110,9 +110,10 @@ cl -Zi ^
    -o ../bin/main.exe
 popd
 
-REM xcopy ..\libs\glfw\lib-vc2022\glfw3.dll bin /Y
-REM xcopy ..\libs\pthreads\dll\x64\pthreadVC2.dll bin /Y
-REM xcopy assets bin\assets /E /H /C /I /Y
+xcopy ..\libs\glfw\lib-vc2022\glfw3.dll bin /Y
+xcopy ..\libs\pthreads\dll\x64\pthreadVC2.dll bin /Y
+xcopy ..\libs\glew\bin\Release\x64\glew32.dll bin /Y
+xcopy assets bin\assets /E /H /C /I /Y
 
 pushd bin
 main.exe

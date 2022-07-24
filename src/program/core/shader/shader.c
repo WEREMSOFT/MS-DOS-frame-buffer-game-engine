@@ -12,14 +12,14 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
 
     if (fp == NULL)
     {
-        fprintf(stderr, "Error opening file\n");
+        printf("Error opening file\n");
         returnValue = -1;
         goto error_handler;
     }
 
     if (fseek(fp, 0, SEEK_END) != 0)
     {
-        perror("Error obtaining the file size ");
+        printf("Error obtaining the file size ");
         returnValue = -1;
         goto error_handler;
     }
@@ -56,6 +56,10 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
         printf("%s::%s : vertex shader compilation failed. Error %s\n", __FILE__, __func__, infoLog);
         returnValue = -1;
         goto error_handler;
+    }
+    else
+    {
+        printf("shader compilation sucess\n");
     }
 
 error_handler:
