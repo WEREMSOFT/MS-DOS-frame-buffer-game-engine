@@ -1,3 +1,10 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+    "makefile.extensionOutputFolder": "./.vscode",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/werem/Documents/projects/c/MS-DOS-frame-buffer-game-engine/bin",
+            "binaryPath": "/home/werem/Documents/projects/c/MS-DOS-frame-buffer-game-engine/bin/main.bin",
+            "binaryArgs": []
+        }
+    ]
 }
