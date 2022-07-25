@@ -7,6 +7,9 @@
 #include "../shader/shader.h"
 #include "../stackAllocator/staticAlloc.h"
 #include <stb_image.h>
+#include <GL/gl.h>
+#include "../../glFunctionLoader.h"
+
 extern char fonts[][5];
 static void textureCreate(Graphics *this)
 {
@@ -77,17 +80,20 @@ Graphics graphicsCreate()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
+    loadOpenGLFunctions();
+
     glfwMakeContextCurrent(this.window);
+    {
+        void **p = (void *)(&glCreateShader);
+
+        void *fp = (void *)glfwGetProcAddress("glCreateShader");
+        *p = fp;
+    }
+    glCreateShader(GL_VERTEX_SHADER);
+
     // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.
     // glfwSwapInterval(2);
     glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
-    GLenum err = glewInit();
-
-    if (err != GLEW_OK || err == 255) // the 255 part is because Wayland fails even if the initialization went right
-    {
-        fprintf(stderr, "error initializing glew: %s\n", glewGetErrorString(err));
-        exit(-1);
-    }
 
     double ratioX = ((float)this.imageData.size.x / (float)this.imageData.size.y) / ((float)mode->width / (float)mode->height);
     double ratioY = 1.0;

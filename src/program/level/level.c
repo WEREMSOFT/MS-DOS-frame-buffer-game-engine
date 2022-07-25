@@ -85,7 +85,7 @@ void *updateEnemies(void *params)
 Level levelMainLoop(Level this)
 {
     Graphics graphics = this.graphics;
-    bool mainThreadBussy = false;
+    bool mainThreadBussy;
 
 #ifdef PTHREAD_COUNT
     PthreadInfo pthreadInfo[PTHREAD_COUNT] = {0};

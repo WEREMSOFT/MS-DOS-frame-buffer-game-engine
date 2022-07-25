@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Jul 24 19:59:59 2022
+# Make data base, printed on Sun Jul 24 23:13:04 2022
 
 # Variables
 
@@ -23,6 +23,7 @@ FLAGS_DEBUG := -g -O0
 # environment
 SNAP_INSTANCE_KEY = 
 # environment
+ 
 LC_NAME = en_GB.UTF-8
 # environment
 LC_NUMERIC = en_GB.UTF-8
@@ -31,9 +32,8 @@ VSCODE_CWD = /home/werem/Documents/projects/c/MS-DOS-frame-buffer-game-engine
 # environment
 WINDOWPATH = 2
 # makefile (from 'Makefile', line 7)
-LIBS := -lpthread -lm -lglfw -lGLEW -lGL -lstdc++ -ldl -lasound 
+LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound 
 # makefile (from 'Makefile', line 5)
- 
 SRC_CPP_O := libs/soloud/src/audiosource/vic/soloud_vic.o libs/soloud/src/audiosource/monotone/soloud_monotone.o libs/soloud/src/audiosource/speech/soloud_speech.o libs/soloud/src/audiosource/speech/klatt.o libs/soloud/src/audiosource/speech/resonator.o libs/soloud/src/audiosource/speech/tts.o libs/soloud/src/audiosource/speech/darray.o libs/soloud/src/audiosource/sfxr/soloud_sfxr.o libs/soloud/src/audiosource/wav/dr_impl.o libs/soloud/src/audiosource/wav/soloud_wav.o libs/soloud/src/audiosource/wav/soloud_wavstream.o libs/soloud/src/audiosource/openmpt/soloud_openmpt.o libs/soloud/src/audiosource/noise/soloud_noise.o libs/soloud/src/audiosource/tedsid/soloud_tedsid.o libs/soloud/src/audiosource/tedsid/sid.o libs/soloud/src/audiosource/tedsid/ted.o libs/soloud/src/audiosource/vizsn/soloud_vizsn.o libs/soloud/src/backend/coreaudio/soloud_coreaudio.o libs/soloud/src/backend/miniaudio/soloud_miniaudio.o libs/soloud/src/backend/oss/soloud_oss.o libs/soloud/src/backend/xaudio2/soloud_xaudio2.o libs/soloud/src/backend/portaudio/soloud_portaudio.o libs/soloud/src/backend/sdl_static/soloud_sdl_static.o libs/soloud/src/backend/openal/soloud_openal.o libs/soloud/src/backend/sdl/soloud_sdl1.o libs/soloud/src/backend/sdl/soloud_sdl2.o libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o libs/soloud/src/backend/winmm/soloud_winmm.o libs/soloud/src/backend/wasapi/soloud_wasapi.o libs/soloud/src/backend/alsa/soloud_alsa.o libs/soloud/src/backend/opensles/soloud_opensles.o libs/soloud/src/backend/nosound/soloud_nosound.o libs/soloud/src/backend/jack/soloud_jack.o libs/soloud/src/backend/null/soloud_null.o libs/soloud/src/c_api/soloud_c.o libs/soloud/src/filter/soloud_dcremovalfilter.o libs/soloud/src/filter/soloud_flangerfilter.o libs/soloud/src/filter/soloud_lofifilter.o libs/soloud/src/filter/soloud_freeverbfilter.o libs/soloud/src/filter/soloud_bassboostfilter.o libs/soloud/src/filter/soloud_robotizefilter.o libs/soloud/src/filter/soloud_fftfilter.o libs/soloud/src/filter/soloud_biquadresonantfilter.o libs/soloud/src/filter/soloud_waveshaperfilter.o libs/soloud/src/filter/soloud_echofilter.o libs/soloud/src/core/soloud_core_3d.o libs/soloud/src/core/soloud_core_voiceops.o libs/soloud/src/core/soloud_misc.o libs/soloud/src/core/soloud_core_setters.o libs/soloud/src/core/soloud_core_basicops.o libs/soloud/src/core/soloud_queue.o libs/soloud/src/core/soloud_bus.o libs/soloud/src/core/soloud_filter.o libs/soloud/src/core/soloud_core_getters.o libs/soloud/src/core/soloud_thread.o libs/soloud/src/core/soloud.o libs/soloud/src/core/soloud_core_voicegroup.o libs/soloud/src/core/soloud_core_faderops.o libs/soloud/src/core/soloud_fft_lut.o libs/soloud/src/core/soloud_core_filterops.o libs/soloud/src/core/soloud_file.o libs/soloud/src/core/soloud_fader.o libs/soloud/src/core/soloud_audiosource.o libs/soloud/src/core/soloud_fft.o
 # environment
 LC_ADDRESS = en_GB.UTF-8
@@ -106,7 +106,7 @@ SNAP_REEXEC =
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 9812
+VSCODE_PID = 36692
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
@@ -278,8 +278,7 @@ LC_IDENTIFICATION = en_GB.UTF-8
 # environment
 SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
 # variable set hash-table stats:
- 
-# Load=133/1024=13%, Rehash=0, Collisions=24/185=13%
+# Load=133/1024=13%, Rehash=0, Collisions=24/187=13%
 
 # Pattern-specific Variable Values
 
@@ -287,50 +286,21 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Directories
 
-# libs/soloud/src/backend/winmm (device 66309, inode 2365530): 4 files, no impossibilities.
-# libs/soloud/src/backend/coreaudio (device 66309, inode 2365103): 4 files, no impossibilities.
-# libs/soloud/src/audiosource/openmpt (device 66309, inode 2231377): 6 files, no impossibilities.
 # src/program/enemy (device 66309, inode 2621448): 3 files, no impossibilities so far.
 # src/program/core/fonts (device 66309, inode 2496137): 2 files, no impossibilities so far.
 # src/program/sound (device 66309, inode 2622310): 2 files, no impossibilities so far.
-# libs/soloud/src/audiosource/vic (device 66309, inode 2231402): 4 files, no impossibilities.
-# libs/soloud/src/audiosource/vizsn (device 66309, inode 2363209): 4 files, no impossibilities.
-# libs/soloud/src/backend/opensles (device 66309, inode 2365512): 4 files, no impossibilities.
-# libs/soloud/src/audiosource/wav (device 66309, inode 2363217): 14 files, no impossibilities.
-# libs/soloud/src/audiosource/monotone (device 66309, inode 2231372): 4 files, no impossibilities.
-# libs/soloud/src/audiosource/tedsid (device 66309, inode 2231395): 11 files, no impossibilities.
-# libs/soloud/src/core (device 66309, inode 2495209): 40 files, no impossibilities.
-# src/program (device 66309, inode 2496129): 9 files, no impossibilities so far.
-# src (device 66309, inode 2496127): 5 files, no impossibilities.
-# libs/soloud/src/backend/alsa (device 66309, inode 2364511): 4 files, no impossibilities.
-# libs/soloud/src/backend/jack (device 66309, inode 2365303): 4 files, no impossibilities.
-# libs/soloud/src/backend/null (device 66309, inode 2365507): 4 files, no impossibilities.
+# src/program (device 66309, inode 2496129): 11 files, no impossibilities so far.
 # src/program/core/input (device 66309, inode 2496142): 9 files, no impossibilities.
 # . (device 66309, inode 31854023): 12 files, no impossibilities.
-# libs/soloud/src/audiosource/noise (device 66309, inode 2231375): 4 files, no impossibilities.
-# libs/soloud/src/backend/miniaudio (device 66309, inode 2365463): 5 files, no impossibilities.
-# libs/soloud/src/filter (device 66309, inode 2496116): 22 files, no impossibilities.
 # src/program/core/sprite (device 66309, inode 2496151): 3 files, no impossibilities so far.
 # src/program/mainMenu (device 66309, inode 2622307): 3 files, no impossibilities so far.
-# libs/soloud/src/backend/openal (device 66309, inode 2365509): 6 files, no impossibilities.
-# libs/soloud/src/backend/xaudio2 (device 66309, inode 2492749): 4 files, no impossibilities.
-# libs/soloud/src/backend/oss (device 66309, inode 2365514): 4 files, no impossibilities.
-# libs/soloud/src/backend/portaudio (device 66309, inode 2365516): 6 files, no impossibilities.
 # src/program/core/stackAllocator (device 66309, inode 2496154): 6 files, no impossibilities.
 # src/program/core/graphics (device 66309, inode 2496139): 5 files, no impossibilities.
-# libs/soloud/src/backend/sdl (device 66309, inode 2365519): 10 files, no impossibilities.
 # src/program/core/shader (device 66309, inode 2496148): 4 files, no impossibilities so far.
-# libs/soloud/src/backend/wasapi (device 66309, inode 2365528): 4 files, no impossibilities.
-# libs/soloud/src/backend/sdl_static (device 66309, inode 2365526): 4 files, no impossibilities.
-# libs/soloud/src/audiosource/sfxr (device 66309, inode 2231380): 4 files, no impossibilities.
 # src/program/level (device 66309, inode 2621540): 4 files, no impossibilities so far.
-# libs/soloud/src/backend/nosound (device 66309, inode 2365468): 4 files, no impossibilities.
-# libs/soloud/src/c_api (device 66309, inode 2495206): 5 files, no impossibilities.
-# libs/soloud/src/backend/sdl2_static (device 66309, inode 2365524): 4 files, no impossibilities.
 # src/program/assetManager (device 66309, inode 2496130): 3 files, no impossibilities so far.
-# libs/soloud/src/audiosource/speech (device 66309, inode 2231382): 18 files, no impossibilities.
 
-# 281 files, no impossibilities in 42 directories.
+# 67 files, no impossibilities in 13 directories.
 
 # Implicit Rules
 
@@ -346,263 +316,101 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 # Files
 
 # Not a target:
-libs/soloud/src/audiosource/openmpt/soloud_openmpt.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/filter/soloud_flangerfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_fft.o: libs/soloud/src/core/soloud_fft.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_fft'
-#  Last modified 2022-07-24 19:59:13.775886463
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_fft.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/level/level.o: src/program/level/level.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/level/level'
-#  Last modified 2022-07-24 19:59:10.283886492
+#  Last modified 2022-07-24 23:10:21.755793136
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
-libs/soloud/src/core/soloud.o: libs/soloud/src/core/soloud.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud'
-#  Last modified 2022-07-24 19:59:13.139886468
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/core/soloud.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
+# Not a target:
+libs/soloud/src/backend/miniaudio/soloud_miniaudio.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/backend/portaudio/soloud_portaudio.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/core/soloud_core_3d.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/core/soloud_core_voiceops.o:
  
-# Not a target:
-libs/soloud/src/audiosource/sfxr/soloud_sfxr.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/miniaudio/soloud_miniaudio.o: libs/soloud/src/backend/miniaudio/soloud_miniaudio.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/miniaudio/soloud_miniaudio'
-#  Last modified 2022-07-24 19:54:39.555888695
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/backend/portaudio/soloud_portaudio.o: libs/soloud/src/backend/portaudio/soloud_portaudio.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/portaudio/soloud_portaudio'
-#  Last modified 2022-07-24 19:54:39.763888693
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/audiosource/tedsid/sid.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_core_3d.o: libs/soloud/src/core/soloud_core_3d.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_3d'
-#  Last modified 2022-07-24 19:59:12.287886475
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/core/soloud_core_voiceops.o: libs/soloud/src/core/soloud_core_voiceops.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_voiceops'
-#  Last modified 2022-07-24 19:59:12.363886475
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/backend/openal/soloud_openal_dll.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/winmm/soloud_winmm.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/openal/soloud_openal_dll.o: libs/soloud/src/backend/openal/soloud_openal_dll.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/openal/soloud_openal_dll'
-#  Last modified 2022-07-24 19:54:37.68388871
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-libs/soloud/src/audiosource/speech/soloud_speech.o: libs/soloud/src/audiosource/speech/soloud_speech.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/speech/soloud_speech'
-#  Last modified 2022-07-24 19:54:38.019888707
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/backend/winmm/soloud_winmm.o: libs/soloud/src/backend/winmm/soloud_winmm.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/winmm/soloud_winmm'
- 
-#  Last modified 2022-07-24 19:54:40.18388869
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/audiosource/speech/soloud_speech.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_fft.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/backend/opensles/soloud_opensles.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/filter/soloud_echofilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/winmm/soloud_winmm.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/program.o: src/program/program.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/program'
-#  Last modified 2022-07-24 19:59:10.575886489
+#  Last modified 2022-07-24 23:10:22.063793134
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
 # Not a target:
-libs/soloud/src/audiosource/speech/soloud_speech.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/audiosource/vic/soloud_vic.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_file.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/vic/soloud_vic.o: libs/soloud/src/audiosource/vic/soloud_vic.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/vic/soloud_vic'
- 
-#  Last modified 2022-07-24 19:54:37.847888709
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_fft_lut.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/audiosource/tedsid/soloud_tedsid.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/audiosource/speech/tts.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/audiosource/monotone/soloud_monotone.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/audiosource/vic/soloud_vic.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/audiosource/speech/klatt.cpp:
- 
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/filter/soloud_fftfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_fft_lut.o: libs/soloud/src/core/soloud_fft_lut.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_fft_lut'
-#  Last modified 2022-07-24 19:59:13.303886467
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/audiosource/speech/tts.o: libs/soloud/src/audiosource/speech/tts.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/speech/tts'
-#  Last modified 2022-07-24 19:54:38.227888706
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/backend/oss/soloud_oss.o: libs/soloud/src/backend/oss/soloud_oss.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/oss/soloud_oss'
-#  Last modified 2022-07-24 19:54:39.623888694
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.cpp:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/backend/null/soloud_null.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/oss/soloud_oss.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 run_main: all
 #  Implicit rule search has not been done.
@@ -611,37 +419,28 @@ run_main: all
 #  recipe to execute (from 'Makefile', line 20):
 	$(TARGET)
 
-libs/soloud/src/core/soloud_filter.o: libs/soloud/src/core/soloud_filter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_filter'
-#  Last modified 2022-07-24 19:59:12.839886471
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/core/soloud_filter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/filter/soloud_waveshaperfilter.o: libs/soloud/src/filter/soloud_waveshaperfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_waveshaperfilter'
-#  Last modified 2022-07-24 19:59:12.111886477
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/filter/soloud_waveshaperfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/core/soloud_queue.o: libs/soloud/src/core/soloud_queue.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_queue'
-#  Last modified 2022-07-24 19:59:12.679886472
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/core/soloud_queue.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/core/shader/shader.o: src/program/core/shader/shader.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/shader/shader'
-#  Last modified 2022-07-24 19:59:10.659886489
+#  Last modified 2022-07-24 23:10:22.203793132
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
@@ -650,7 +449,7 @@ src/program/core/shader/shader.o: src/program/core/shader/shader.c
 src/program/enemy/enemy.o: src/program/enemy/enemy.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/enemy/enemy'
-#  Last modified 2022-07-24 19:59:10.619886489
+#  Last modified 2022-07-24 23:10:22.103793133
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
@@ -659,157 +458,80 @@ src/program/enemy/enemy.o: src/program/enemy/enemy.c
 # Not a target:
 src/program/mainMenu/mainMenu.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 src/program/enemy/enemy.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/core/soloud_fader.cpp:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 src/program/mainMenu/mainMenu.o: src/program/mainMenu/mainMenu.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/mainMenu/mainMenu'
-#  Last modified 2022-07-24 19:59:10.107886493
+#  Last modified 2022-07-24 23:10:21.591793137
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
 # Not a target:
-libs/soloud/src/core/soloud_core_voiceops.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_audiosource.o: libs/soloud/src/core/soloud_audiosource.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_audiosource'
-#  Last modified 2022-07-24 19:59:13.619886464
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/filter/soloud_bassboostfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/core/soloud_audiosource.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:59:58.107886102
+#  Last modified 2022-07-24 22:50:49.175802679
 #  File has been updated.
 #  Successfully updated.
-
-libs/soloud/src/backend/alsa/soloud_alsa.o: libs/soloud/src/backend/alsa/soloud_alsa.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/alsa/soloud_alsa'
-#  Last modified 2022-07-24 19:59:10.959886486
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
- 
-# Not a target:
-libs/soloud/src/core/soloud_core_3d.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_core_getters.o: libs/soloud/src/core/soloud_core_getters.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_getters'
-#  Last modified 2022-07-24 19:59:12.91988647
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
 
 # Not a target:
-libs/soloud/src/audiosource/tedsid/ted.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/alsa/soloud_alsa.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/core/soloud_fader.o: libs/soloud/src/core/soloud_fader.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_fader'
-#  Last modified 2022-07-24 19:59:13.539886465
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/core/soloud_core_getters.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/core/soloud_fader.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/level/level.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 22:54:15.159801002
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_core_filterops.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_core_faderops.o: libs/soloud/src/core/soloud_core_faderops.cpp
-#  Implicit rule search has been done.
- 
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_faderops'
-#  Last modified 2022-07-24 19:59:13.295886467
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/backend/openal/soloud_openal.o: libs/soloud/src/backend/openal/soloud_openal.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/openal/soloud_openal'
-#  Last modified 2022-07-24 19:54:39.903888692
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_core_faderops.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_core_faderops.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/core/soloud.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/openal/soloud_openal.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/core/sprite/sprite.o: src/program/core/sprite/sprite.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/sprite/sprite'
-#  Last modified 2022-07-24 19:59:10.719886488
+#  Last modified 2022-07-24 23:10:22.263793132
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
@@ -825,373 +547,160 @@ clean:
 	rm -rf bin/assets
 
 # Not a target:
-libs/soloud/src/filter/soloud_waveshaperfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
 src/program/program.c:
 #  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 22:43:36.223806202
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
-libs/soloud/src/backend/sdl_static/soloud_sdl_static.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_thread.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o: libs/soloud/src/backend/portaudio/soloud_portaudio_dll.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/portaudio/soloud_portaudio_dll'
-#  Last modified 2022-07-24 19:54:37.67988871
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+libs/soloud/src/core/soloud_core_basicops.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/oss/soloud_oss.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_core_basicops.o: libs/soloud/src/core/soloud_core_basicops.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_basicops'
-#  Last modified 2022-07-24 19:59:12.603886473
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/filter/soloud_bassboostfilter.o: libs/soloud/src/filter/soloud_bassboostfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_bassboostfilter'
- 
-#  Last modified 2022-07-24 19:59:11.803886479
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/filter/soloud_bassboostfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/miniaudio/soloud_miniaudio.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_core_filterops.o: libs/soloud/src/core/soloud_core_filterops.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_filterops'
-#  Last modified 2022-07-24 19:59:13.387886466
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_core_filterops.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 copy_assets:
 #  Implicit rule search has not been done.
-#  Implicit/static pattern stem: ''
-#  File does not exist.
-#  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := copy_assets
-# automatic
-# * := 
-# automatic
-# < := 
-# automatic
-# + := 
-# automatic
-# % := 
-# automatic
-# ^ := 
-# automatic
-# ? := 
-# automatic
-# | := 
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=1/11=9%
+#  Modification time never checked.
+#  File has not been updated.
 #  recipe to execute (from 'Makefile', line 38):
 	cp -r assets bin
 
 # Not a target:
-libs/soloud/src/c_api/soloud_c.cpp:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/core/soloud_filter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/core/soloud_core_voicegroup.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/openmpt/soloud_openmpt.o: libs/soloud/src/audiosource/openmpt/soloud_openmpt.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/openmpt/soloud_openmpt'
-#  Last modified 2022-07-24 19:54:39.067888699
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/audiosource/openmpt/soloud_openmpt.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/sound/sound.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/speech/darray.o: libs/soloud/src/audiosource/speech/darray.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/speech/darray'
-#  Last modified 2022-07-24 19:54:38.239888705
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-src/main.c:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o: libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll'
-#  Last modified 2022-07-24 19:54:37.67588871
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-libs/soloud/src/filter/soloud_echofilter.o: libs/soloud/src/filter/soloud_echofilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_echofilter'
-#  Last modified 2022-07-24 19:59:12.191886476
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/backend/sdl/soloud_sdl1.o: libs/soloud/src/backend/sdl/soloud_sdl1.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/sdl/soloud_sdl1'
-#  Last modified 2022-07-24 19:54:39.975888691
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/core/soloud_core_setters.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/filter/soloud_lofifilter.o: libs/soloud/src/filter/soloud_lofifilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_lofifilter'
-#  Last modified 2022-07-24 19:59:11.643886481
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/backend/sdl/soloud_sdl1_dll.o: libs/soloud/src/backend/sdl/soloud_sdl1_dll.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/sdl/soloud_sdl1_dll'
- 
-#  Last modified 2022-07-24 19:54:37.69588871
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-# Not a target:
-libs/soloud/src/core/soloud_core_basicops.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/jack/soloud_jack.o: libs/soloud/src/backend/jack/soloud_jack.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/jack/soloud_jack'
-#  Last modified 2022-07-24 19:59:11.171886484
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/backend/portaudio/soloud_portaudio_dll.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
-libs/soloud/src/audiosource/wav/stb_vorbis.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.195889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/xaudio2/soloud_xaudio2.o: libs/soloud/src/backend/xaudio2/soloud_xaudio2.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/xaudio2/soloud_xaudio2'
-#  Last modified 2022-07-24 19:54:39.695888694
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/core/soloud_core_setters.o: libs/soloud/src/core/soloud_core_setters.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_setters'
-#  Last modified 2022-07-24 19:59:12.523886473
-#  File has been updated.
-#  Successfully updated.
- 
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/audiosource/speech/darray.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/filter/soloud_lofifilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/sdl/soloud_sdl2.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/filter/soloud_echofilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/openal/soloud_openal_dll.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/sdl/soloud_sdl1.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/filter/soloud_lofifilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/backend/sdl/soloud_sdl1_dll.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/backend/jack/soloud_jack.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/backend/xaudio2/soloud_xaudio2.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/core/soloud_core_setters.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/core/sprite/sprite.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_bus.o: libs/soloud/src/core/soloud_bus.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_bus'
-#  Last modified 2022-07-24 19:59:12.763886471
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-src/main.o: src/main.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/main'
-#  Last modified 2022-07-24 19:59:10.875886487
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
  
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+#  Last modified 2022-07-24 20:14:19.987879088
+#  File has been updated.
+#  Successfully updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_queue.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/sdl_static/soloud_sdl_static.o: libs/soloud/src/backend/sdl_static/soloud_sdl_static.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/sdl_static/soloud_sdl_static'
-#  Last modified 2022-07-24 19:54:39.835888693
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/audiosource/speech/resonator.o: libs/soloud/src/audiosource/speech/resonator.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/speech/resonator'
-#  Last modified 2022-07-24 19:54:38.191888706
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_bus.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/audiosource/speech/tts.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
+src/main.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/audiosource/wav/stb_vorbis.o: libs/soloud/src/audiosource/wav/stb_vorbis.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/wav/stb_vorbis'
-#  Last modified 2022-07-24 19:54:37.65988871
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+libs/soloud/src/backend/sdl_static/soloud_sdl_static.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/audiosource/speech/resonator.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/audiosource/wav/stb_vorbis.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/core/stackAllocator/stack_allocator.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
- 
 #  Successfully updated.
 
-libs/soloud/src/backend/sdl/soloud_sdl2.o: libs/soloud/src/backend/sdl/soloud_sdl2.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/sdl/soloud_sdl2'
-#  Last modified 2022-07-24 19:54:40.043888691
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/backend/sdl/soloud_sdl2.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .DEFAULT:
@@ -1200,64 +709,37 @@ libs/soloud/src/backend/sdl/soloud_sdl2.o: libs/soloud/src/backend/sdl/soloud_sd
 #  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/nosound/soloud_nosound.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/wav/soloud_wavstream.o: libs/soloud/src/audiosource/wav/soloud_wavstream.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/wav/soloud_wavstream'
-#  Last modified 2022-07-24 19:54:38.991888699
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/audiosource/tedsid/ted.o: libs/soloud/src/audiosource/tedsid/ted.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/tedsid/ted'
-#  Last modified 2022-07-24 19:54:39.331888697
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/audiosource/wav/soloud_wavstream.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/audiosource/noise/soloud_noise.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/audiosource/tedsid/ted.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/core/input/mouse.o: src/program/core/input/mouse.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/input/mouse'
-#  Last modified 2022-07-24 19:59:10.755886488
+#  Last modified 2022-07-24 23:10:22.311793132
 #  File has been updated.
- 
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
-libs/soloud/src/backend/wasapi/soloud_wasapi.o: libs/soloud/src/backend/wasapi/soloud_wasapi.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/wasapi/soloud_wasapi'
-#  Last modified 2022-07-24 19:54:40.251888689
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/backend/wasapi/soloud_wasapi.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/filter/soloud_flangerfilter.o: libs/soloud/src/filter/soloud_flangerfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_flangerfilter'
-#  Last modified 2022-07-24 19:59:11.567886481
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/filter/soloud_flangerfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 all: src/program/mainMenu/mainMenu.o src/program/assetManager/assetManager.o src/program/sound/sound.o src/program/level/level.o src/program/program.o src/program/enemy/enemy.o src/program/core/shader/shader.o src/program/core/fonts/fonts.o src/program/core/sprite/sprite.o src/program/core/stackAllocator/stack_allocator.o src/program/core/input/mouse.o src/program/core/input/keyboard.o src/program/core/graphics/graphics.o src/main.o libs/soloud/src/audiosource/wav/stb_vorbis.o libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o libs/soloud/src/backend/openal/soloud_openal_dll.o libs/soloud/src/backend/sdl/soloud_sdl2_dll.o libs/soloud/src/backend/sdl/soloud_sdl1_dll.o libs/soloud/src/audiosource/vic/soloud_vic.o libs/soloud/src/audiosource/monotone/soloud_monotone.o libs/soloud/src/audiosource/speech/soloud_speech.o libs/soloud/src/audiosource/speech/klatt.o libs/soloud/src/audiosource/speech/resonator.o libs/soloud/src/audiosource/speech/tts.o libs/soloud/src/audiosource/speech/darray.o libs/soloud/src/audiosource/sfxr/soloud_sfxr.o libs/soloud/src/audiosource/wav/dr_impl.o libs/soloud/src/audiosource/wav/soloud_wav.o libs/soloud/src/audiosource/wav/soloud_wavstream.o libs/soloud/src/audiosource/openmpt/soloud_openmpt.o libs/soloud/src/audiosource/noise/soloud_noise.o libs/soloud/src/audiosource/tedsid/soloud_tedsid.o libs/soloud/src/audiosource/tedsid/sid.o libs/soloud/src/audiosource/tedsid/ted.o libs/soloud/src/audiosource/vizsn/soloud_vizsn.o libs/soloud/src/backend/coreaudio/soloud_coreaudio.o libs/soloud/src/backend/miniaudio/soloud_miniaudio.o libs/soloud/src/backend/oss/soloud_oss.o libs/soloud/src/backend/xaudio2/soloud_xaudio2.o libs/soloud/src/backend/portaudio/soloud_portaudio.o libs/soloud/src/backend/sdl_static/soloud_sdl_static.o libs/soloud/src/backend/openal/soloud_openal.o libs/soloud/src/backend/sdl/soloud_sdl1.o libs/soloud/src/backend/sdl/soloud_sdl2.o libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o libs/soloud/src/backend/winmm/soloud_winmm.o libs/soloud/src/backend/wasapi/soloud_wasapi.o libs/soloud/src/backend/alsa/soloud_alsa.o libs/soloud/src/backend/opensles/soloud_opensles.o libs/soloud/src/backend/nosound/soloud_nosound.o libs/soloud/src/backend/jack/soloud_jack.o libs/soloud/src/backend/null/soloud_null.o libs/soloud/src/c_api/soloud_c.o libs/soloud/src/filter/soloud_dcremovalfilter.o libs/soloud/src/filter/soloud_flangerfilter.o libs/soloud/src/filter/soloud_lofifilter.o libs/soloud/src/filter/soloud_freeverbfilter.o libs/soloud/src/filter/soloud_bassboostfilter.o libs/soloud/src/filter/soloud_robotizefilter.o libs/soloud/src/filter/soloud_fftfilter.o libs/soloud/src/filter/soloud_biquadresonantfilter.o libs/soloud/src/filter/soloud_waveshaperfilter.o libs/soloud/src/filter/soloud_echofilter.o libs/soloud/src/core/soloud_core_3d.o libs/soloud/src/core/soloud_core_voiceops.o libs/soloud/src/core/soloud_misc.o libs/soloud/src/core/soloud_core_setters.o libs/soloud/src/core/soloud_core_basicops.o libs/soloud/src/core/soloud_queue.o libs/soloud/src/core/soloud_bus.o libs/soloud/src/core/soloud_filter.o libs/soloud/src/core/soloud_core_getters.o libs/soloud/src/core/soloud_thread.o libs/soloud/src/core/soloud.o libs/soloud/src/core/soloud_core_voicegroup.o libs/soloud/src/core/soloud_core_faderops.o libs/soloud/src/core/soloud_fft_lut.o libs/soloud/src/core/soloud_core_filterops.o libs/soloud/src/core/soloud_file.o libs/soloud/src/core/soloud_fader.o libs/soloud/src/core/soloud_audiosource.o libs/soloud/src/core/soloud_fft.o copy_assets
 #  Command line target.
@@ -1266,399 +748,221 @@ all: src/program/mainMenu/mainMenu.o src/program/assetManager/assetManager.o src
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/3=0%
+# Load=0/32=0%, Rehash=0, Collisions=0/5=0%
 #  recipe to execute (from 'Makefile', line 17):
 	gcc $(FLAGS_DEBUG) $(FLAGS) $(SRC_O) $(SRC_CPP_O) -o $(TARGET) $(LIBS)
 
-libs/soloud/src/audiosource/vizsn/soloud_vizsn.o: libs/soloud/src/audiosource/vizsn/soloud_vizsn.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/vizsn/soloud_vizsn'
-#  Last modified 2022-07-24 19:54:39.415888696
-#  File has been updated.
-#  Successfully updated.
- 
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/audiosource/vizsn/soloud_vizsn.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/core/graphics/graphics.o: src/program/core/graphics/graphics.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/graphics/graphics'
-#  Last modified 2022-07-24 19:59:10.839886487
+#  Last modified 2022-07-24 23:10:22.44779313
 #  File has been updated.
-#  Successfully updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := src/program/core/graphics/graphics.o
+# automatic
+# * := src/program/core/graphics/graphics
+# automatic
+# < := src/program/core/graphics/graphics.c
+# automatic
+# + := src/program/core/graphics/graphics.c
+# automatic
+# % := 
+# automatic
+# ^ := src/program/core/graphics/graphics.c
+# automatic
+# ? := src/program/core/graphics/graphics.c
+# automatic
+# | := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/15=7%
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
-libs/soloud/src/backend/coreaudio/soloud_coreaudio.o: libs/soloud/src/backend/coreaudio/soloud_coreaudio.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/coreaudio/soloud_coreaudio'
-#  Last modified 2022-07-24 19:54:39.487888695
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/backend/coreaudio/soloud_coreaudio.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/portaudio/soloud_portaudio.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/monotone/soloud_monotone.o: libs/soloud/src/audiosource/monotone/soloud_monotone.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/monotone/soloud_monotone'
-#  Last modified 2022-07-24 19:54:37.943888708
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/audiosource/monotone/soloud_monotone.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/core/fonts/fonts.o: src/program/core/fonts/fonts.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/fonts/fonts'
-#  Last modified 2022-07-24 19:59:10.663886488
+#  Last modified 2022-07-24 23:10:22.211793132
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
-libs/soloud/src/c_api/soloud_c.o: libs/soloud/src/c_api/soloud_c.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/c_api/soloud_c'
-#  Last modified 2022-07-24 19:59:11.411886482
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/c_api/soloud_c.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/audiosource/sfxr/soloud_sfxr.o: libs/soloud/src/audiosource/sfxr/soloud_sfxr.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/sfxr/soloud_sfxr'
-#  Last modified 2022-07-24 19:54:38.343888705
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/audiosource/sfxr/soloud_sfxr.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 src/program/core/stackAllocator/stack_allocator.o: src/program/core/stackAllocator/stack_allocator.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/stackAllocator/stack_allocator'
-#  Last modified 2022-07-24 19:59:10.731886488
+#  Last modified 2022-07-24 23:10:22.283793132
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
  
-libs/soloud/src/filter/soloud_fftfilter.o: libs/soloud/src/filter/soloud_fftfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_fftfilter'
-#  Last modified 2022-07-24 19:59:11.959886478
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/core/soloud_misc.o: libs/soloud/src/core/soloud_misc.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_misc'
-#  Last modified 2022-07-24 19:59:12.439886474
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
 
 # Not a target:
-libs/soloud/src/backend/jack/soloud_jack.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.199889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/filter/soloud_fftfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/filter/soloud_robotizefilter.o: libs/soloud/src/filter/soloud_robotizefilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_robotizefilter'
-#  Last modified 2022-07-24 19:59:11.883886479
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/core/soloud_misc.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/filter/soloud_dcremovalfilter.o: libs/soloud/src/filter/soloud_dcremovalfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_dcremovalfilter'
-#  Last modified 2022-07-24 19:59:11.491886482
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/filter/soloud_robotizefilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+libs/soloud/src/filter/soloud_dcremovalfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/assetManager/assetManager.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/backend/openal/soloud_openal.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
- 
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/audiosource/wav/dr_impl.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.195889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 src/program/core/input/mouse.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 src/program/core/shader/shader.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_file.o: libs/soloud/src/core/soloud_file.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_file'
-#  Last modified 2022-07-24 19:59:13.467886466
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/nosound/soloud_nosound.o: libs/soloud/src/backend/nosound/soloud_nosound.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/nosound/soloud_nosound'
-#  Last modified 2022-07-24 19:59:11.103886485
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/core/soloud_core_voicegroup.o: libs/soloud/src/core/soloud_core_voicegroup.cpp
-#  Implicit rule search has been done.
- 
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_core_voicegroup'
-#  Last modified 2022-07-24 19:59:13.215886468
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/filter/soloud_robotizefilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
-libs/soloud/src/backend/alsa/soloud_alsa.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.195889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/core/soloud_thread.o: libs/soloud/src/core/soloud_thread.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/core/soloud_thread'
-#  Last modified 2022-07-24 19:59:12.999886469
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_file.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_fft_lut.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/nosound/soloud_nosound.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_audiosource.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/opensles/soloud_opensles.o: libs/soloud/src/backend/opensles/soloud_opensles.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/opensles/soloud_opensles'
-#  Last modified 2022-07-24 19:59:11.031886486
- 
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/audiosource/tedsid/sid.o: libs/soloud/src/audiosource/tedsid/sid.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/tedsid/sid'
-#  Last modified 2022-07-24 19:54:39.315888697
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/core/soloud_core_voicegroup.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/filter/soloud_biquadresonantfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/core/soloud_thread.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/filter/soloud_freeverbfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/sdl/soloud_sdl2_dll.o: libs/soloud/src/backend/sdl/soloud_sdl2_dll.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/sdl/soloud_sdl2_dll'
-#  Last modified 2022-07-24 19:54:37.68788871
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-libs/soloud/src/backend/null/soloud_null.o: libs/soloud/src/backend/null/soloud_null.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/null/soloud_null'
-#  Last modified 2022-07-24 19:59:11.243886484
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
- 
+libs/soloud/src/backend/opensles/soloud_opensles.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/filter/soloud_dcremovalfilter.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/audiosource/tedsid/sid.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/audiosource/wav/soloud_wavstream.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.195889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/sdl/soloud_sdl2_dll.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/coreaudio/soloud_coreaudio.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.199889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/backend/null/soloud_null.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_bus.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/audiosource/speech/klatt.o: libs/soloud/src/audiosource/speech/klatt.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/speech/klatt'
-#  Last modified 2022-07-24 19:54:38.119888706
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/audiosource/speech/klatt.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-libs/soloud/src/backend/sdl/soloud_sdl1.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o: libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/backend/sdl2_static/soloud_sdl2_static'
- 
-#  Last modified 2022-07-24 19:54:40.11588869
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/core/graphics/graphics.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 23:12:58.827791858
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
-libs/soloud/src/audiosource/wav/soloud_wav.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.195889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/audiosource/noise/soloud_noise.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-libs/soloud/src/audiosource/noise/soloud_noise.o: libs/soloud/src/audiosource/noise/soloud_noise.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/noise/soloud_noise'
-#  Last modified 2022-07-24 19:54:39.143888698
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-libs/soloud/src/audiosource/wav/soloud_wav.o: libs/soloud/src/audiosource/wav/soloud_wav.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/wav/soloud_wav'
-#  Last modified 2022-07-24 19:54:38.8878887
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
+# Not a target:
+libs/soloud/src/audiosource/wav/soloud_wav.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 src/program/core/fonts/fonts.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/backend/sdl/soloud_sdl1_dll.c:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
 
 src/program/core/input/keyboard.o: src/program/core/input/keyboard.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/core/input/keyboard'
-#  Last modified 2022-07-24 19:59:10.779886488
+#  Last modified 2022-07-24 23:10:22.343793131
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
@@ -1667,63 +971,36 @@ src/program/core/input/keyboard.o: src/program/core/input/keyboard.c
 src/program/assetManager/assetManager.o: src/program/assetManager/assetManager.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/assetManager/assetManager'
-#  Last modified 2022-07-24 19:59:10.211886492
+#  Last modified 2022-07-24 23:10:21.679793137
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
-libs/soloud/src/audiosource/wav/dr_impl.o: libs/soloud/src/audiosource/wav/dr_impl.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/wav/dr_impl'
-#  Last modified 2022-07-24 19:54:38.791888701
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
 # Not a target:
-libs/soloud/src/audiosource/speech/darray.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-src/program/core/input/keyboard.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/filter/soloud_freeverbfilter.o: libs/soloud/src/filter/soloud_freeverbfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_freeverbfilter'
-#  Last modified 2022-07-24 19:59:11.73188648
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
- 
-# Not a target:
-libs/soloud/src/backend/wasapi/soloud_wasapi.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-.PONY: clean
+libs/soloud/src/audiosource/wav/dr_impl.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
 # Not a target:
-libs/soloud/src/core/soloud_misc.cpp:
+src/program/core/input/keyboard.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
+#  Last modified 2022-07-24 20:14:19.987879088
 #  File has been updated.
 #  Successfully updated.
+
+ 
+# Not a target:
+libs/soloud/src/filter/soloud_freeverbfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+.PONY: clean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 deep_clean: clean
 #  Implicit rule search has not been done.
@@ -1734,91 +1011,40 @@ deep_clean: clean
 	
 
 # Not a target:
-.SUFFIXES:
+libs/soloud/src/audiosource/tedsid/soloud_tedsid.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
-libs/soloud/src/audiosource/tedsid/soloud_tedsid.o: libs/soloud/src/audiosource/tedsid/soloud_tedsid.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/audiosource/tedsid/soloud_tedsid'
-#  Last modified 2022-07-24 19:54:39.227888697
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/audiosource/speech/resonator.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/audiosource/vizsn/soloud_vizsn.cpp:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 19:53:15.191889381
-#  File has been updated.
-#  Successfully updated.
-
 src/program/sound/sound.o: src/program/sound/sound.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/program/sound/sound'
-#  Last modified 2022-07-24 19:59:10.219886492
+#  Last modified 2022-07-24 23:10:21.687793137
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 23):
 	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
 
 # Not a target:
-libs/soloud/src/core/soloud_core_getters.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-libs/soloud/src/backend/sdl/soloud_sdl2_dll.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
-
-libs/soloud/src/filter/soloud_biquadresonantfilter.o: libs/soloud/src/filter/soloud_biquadresonantfilter.cpp
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'libs/soloud/src/filter/soloud_biquadresonantfilter'
-#  Last modified 2022-07-24 19:59:12.039886477
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 26):
-	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
-
-# Not a target:
-libs/soloud/src/backend/xaudio2/soloud_xaudio2.cpp:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 19:53:15.203889381
-#  File has been updated.
-#  Successfully updated.
+libs/soloud/src/filter/soloud_biquadresonantfilter.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # files hash-table stats:
- 
-# Load=177/1024=17%, Rehash=0, Collisions=78/595=13%
+# Load=106/1024=10%, Rehash=0, Collisions=16/246=7%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 3 (2) / strings = 577 / storage = 17969 B / avg = 31 B
-# current buf: size = 8162 B / used = 1699 B / count = 44 / avg = 38 B
-# other used: total = 16270 B / count = 533 / avg = 30 B
-# other free: total = 54 B / max = 27 B / min = 27 B / avg = 27 B
+# strcache buffers: 1 (0) / strings = 187 / storage = 5276 B / avg = 28 B
+# current buf: size = 8162 B / used = 5276 B / count = 187 / avg = 28 B
 
-# strcache performance: lookups = 752 / hit rate = 23%
+# strcache performance: lookups = 231 / hit rate = 19%
 # hash-table stats:
-# Load=577/8192=7%, Rehash=0, Collisions=28/752=4%
-# Finished Make data base on Sun Jul 24 19:59:59 2022
+# Load=187/8192=2%, Rehash=0, Collisions=1/231=0%
+# Finished Make data base on Sun Jul 24 23:13:04 2022
 
  
