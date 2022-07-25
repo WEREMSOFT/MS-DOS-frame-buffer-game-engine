@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "../../glFunctionLoader.h"
 #include "../stackAllocator/staticAlloc.h"
 static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader, int shaderType)
 {

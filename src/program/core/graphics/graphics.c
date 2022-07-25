@@ -8,6 +8,7 @@
 #include "../stackAllocator/staticAlloc.h"
 #include <stb_image.h>
 #include <GL/gl.h>
+#define GL_FUNCTION_LOADER__IMPLEMENTATION
 #include "../../glFunctionLoader.h"
 
 extern char fonts[][5];
@@ -79,16 +80,12 @@ Graphics graphicsCreate()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
-    loadOpenGLFunctions();
 
     glfwMakeContextCurrent(this.window);
-    {
-        void **p = (void *)(&glCreateShader);
+    loadOpenGLFunctions();
 
-        void *fp = (void *)glfwGetProcAddress("glCreateShader");
-        *p = fp;
-    }
     glCreateShader(GL_VERTEX_SHADER);
 
     // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.

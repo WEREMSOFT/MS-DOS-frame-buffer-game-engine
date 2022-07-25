@@ -12,6 +12,8 @@
         "staticalloc.h": "c",
         "graphics.h": "c",
         "stdlib.h": "c",
-        "glfunctionloader.h": "c"
-    }
+        "glfunctionloader.h": "c",
+        "thread": "c"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }

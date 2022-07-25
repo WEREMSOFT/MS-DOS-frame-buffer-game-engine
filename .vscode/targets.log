@@ -5,8 +5,9 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Sun Jul 24 23:13:04 2022
+# Make data base, printed on Mon Jul 25 11:43:26 2022
 
 # Variables
 
@@ -19,26 +20,31 @@ GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
 SSH_AGENT_LAUNCHER = gnome-keyring
 # makefile (from 'Makefile', line 9)
-FLAGS_DEBUG := -g -O0 
+FLAGS_DEBUG := -g -O0 -w
 # environment
 SNAP_INSTANCE_KEY = 
 # environment
- 
+GJS_DEBUG_OUTPUT = stderr
+# environment
 LC_NAME = en_GB.UTF-8
 # environment
 LC_NUMERIC = en_GB.UTF-8
 # environment
 VSCODE_CWD = /home/werem/Documents/projects/c/MS-DOS-frame-buffer-game-engine
 # environment
-WINDOWPATH = 2
+WINDOWID = 0
+# environment
+WINDOWPATH = 3
 # makefile (from 'Makefile', line 7)
 LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound 
 # makefile (from 'Makefile', line 5)
-SRC_CPP_O := libs/soloud/src/audiosource/vic/soloud_vic.o libs/soloud/src/audiosource/monotone/soloud_monotone.o libs/soloud/src/audiosource/speech/soloud_speech.o libs/soloud/src/audiosource/speech/klatt.o libs/soloud/src/audiosource/speech/resonator.o libs/soloud/src/audiosource/speech/tts.o libs/soloud/src/audiosource/speech/darray.o libs/soloud/src/audiosource/sfxr/soloud_sfxr.o libs/soloud/src/audiosource/wav/dr_impl.o libs/soloud/src/audiosource/wav/soloud_wav.o libs/soloud/src/audiosource/wav/soloud_wavstream.o libs/soloud/src/audiosource/openmpt/soloud_openmpt.o libs/soloud/src/audiosource/noise/soloud_noise.o libs/soloud/src/audiosource/tedsid/soloud_tedsid.o libs/soloud/src/audiosource/tedsid/sid.o libs/soloud/src/audiosource/tedsid/ted.o libs/soloud/src/audiosource/vizsn/soloud_vizsn.o libs/soloud/src/backend/coreaudio/soloud_coreaudio.o libs/soloud/src/backend/miniaudio/soloud_miniaudio.o libs/soloud/src/backend/oss/soloud_oss.o libs/soloud/src/backend/xaudio2/soloud_xaudio2.o libs/soloud/src/backend/portaudio/soloud_portaudio.o libs/soloud/src/backend/sdl_static/soloud_sdl_static.o libs/soloud/src/backend/openal/soloud_openal.o libs/soloud/src/backend/sdl/soloud_sdl1.o libs/soloud/src/backend/sdl/soloud_sdl2.o libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o libs/soloud/src/backend/winmm/soloud_winmm.o libs/soloud/src/backend/wasapi/soloud_wasapi.o libs/soloud/src/backend/alsa/soloud_alsa.o libs/soloud/src/backend/opensles/soloud_opensles.o libs/soloud/src/backend/nosound/soloud_nosound.o libs/soloud/src/backend/jack/soloud_jack.o libs/soloud/src/backend/null/soloud_null.o libs/soloud/src/c_api/soloud_c.o libs/soloud/src/filter/soloud_dcremovalfilter.o libs/soloud/src/filter/soloud_flangerfilter.o libs/soloud/src/filter/soloud_lofifilter.o libs/soloud/src/filter/soloud_freeverbfilter.o libs/soloud/src/filter/soloud_bassboostfilter.o libs/soloud/src/filter/soloud_robotizefilter.o libs/soloud/src/filter/soloud_fftfilter.o libs/soloud/src/filter/soloud_biquadresonantfilter.o libs/soloud/src/filter/soloud_waveshaperfilter.o libs/soloud/src/filter/soloud_echofilter.o libs/soloud/src/core/soloud_core_3d.o libs/soloud/src/core/soloud_core_voiceops.o libs/soloud/src/core/soloud_misc.o libs/soloud/src/core/soloud_core_setters.o libs/soloud/src/core/soloud_core_basicops.o libs/soloud/src/core/soloud_queue.o libs/soloud/src/core/soloud_bus.o libs/soloud/src/core/soloud_filter.o libs/soloud/src/core/soloud_core_getters.o libs/soloud/src/core/soloud_thread.o libs/soloud/src/core/soloud.o libs/soloud/src/core/soloud_core_voicegroup.o libs/soloud/src/core/soloud_core_faderops.o libs/soloud/src/core/soloud_fft_lut.o libs/soloud/src/core/soloud_core_filterops.o libs/soloud/src/core/soloud_file.o libs/soloud/src/core/soloud_fader.o libs/soloud/src/core/soloud_audiosource.o libs/soloud/src/core/soloud_fft.o
+SRC_CPP_O := libs/soloud/src/audiosource/tedsid/sid.o libs/soloud/src/audiosource/tedsid/ted.o libs/soloud/src/audiosource/tedsid/soloud_tedsid.o libs/soloud/src/audiosource/monotone/soloud_monotone.o libs/soloud/src/audiosource/noise/soloud_noise.o libs/soloud/src/audiosource/openmpt/soloud_openmpt.o libs/soloud/src/audiosource/speech/darray.o libs/soloud/src/audiosource/speech/klatt.o libs/soloud/src/audiosource/speech/soloud_speech.o libs/soloud/src/audiosource/speech/resonator.o libs/soloud/src/audiosource/speech/tts.o libs/soloud/src/audiosource/wav/dr_impl.o libs/soloud/src/audiosource/wav/soloud_wav.o libs/soloud/src/audiosource/wav/soloud_wavstream.o libs/soloud/src/audiosource/sfxr/soloud_sfxr.o libs/soloud/src/audiosource/vizsn/soloud_vizsn.o libs/soloud/src/audiosource/vic/soloud_vic.o libs/soloud/src/backend/sdl/soloud_sdl1.o libs/soloud/src/backend/sdl/soloud_sdl2.o libs/soloud/src/backend/portaudio/soloud_portaudio.o libs/soloud/src/backend/xaudio2/soloud_xaudio2.o libs/soloud/src/backend/opensles/soloud_opensles.o libs/soloud/src/backend/sdl_static/soloud_sdl_static.o libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o libs/soloud/src/backend/wasapi/soloud_wasapi.o libs/soloud/src/backend/coreaudio/soloud_coreaudio.o libs/soloud/src/backend/alsa/soloud_alsa.o libs/soloud/src/backend/openal/soloud_openal.o libs/soloud/src/backend/miniaudio/soloud_miniaudio.o libs/soloud/src/backend/jack/soloud_jack.o libs/soloud/src/backend/oss/soloud_oss.o libs/soloud/src/backend/nosound/soloud_nosound.o libs/soloud/src/backend/null/soloud_null.o libs/soloud/src/backend/winmm/soloud_winmm.o libs/soloud/src/filter/soloud_lofifilter.o libs/soloud/src/filter/soloud_echofilter.o libs/soloud/src/filter/soloud_biquadresonantfilter.o libs/soloud/src/filter/soloud_waveshaperfilter.o libs/soloud/src/filter/soloud_dcremovalfilter.o libs/soloud/src/filter/soloud_freeverbfilter.o libs/soloud/src/filter/soloud_fftfilter.o libs/soloud/src/filter/soloud_robotizefilter.o libs/soloud/src/filter/soloud_bassboostfilter.o libs/soloud/src/filter/soloud_flangerfilter.o libs/soloud/src/core/soloud_core_basicops.o libs/soloud/src/core/soloud_fader.o libs/soloud/src/core/soloud_core_voiceops.o libs/soloud/src/core/soloud_file.o libs/soloud/src/core/soloud_core_setters.o libs/soloud/src/core/soloud.o libs/soloud/src/core/soloud_fft_lut.o libs/soloud/src/core/soloud_audiosource.o libs/soloud/src/core/soloud_misc.o libs/soloud/src/core/soloud_core_faderops.o libs/soloud/src/core/soloud_queue.o libs/soloud/src/core/soloud_core_filterops.o libs/soloud/src/core/soloud_core_getters.o libs/soloud/src/core/soloud_core_3d.o libs/soloud/src/core/soloud_bus.o libs/soloud/src/core/soloud_fft.o libs/soloud/src/core/soloud_core_voicegroup.o libs/soloud/src/core/soloud_filter.o libs/soloud/src/core/soloud_thread.o libs/soloud/src/c_api/soloud_c.o
 # environment
 LC_ADDRESS = en_GB.UTF-8
 # default
 MAKE_COMMAND := make
+# environment
+GTK3_MODULES = xapp-gtk3-module:xapp-gtk3-module
 # environment
 QT_ACCESSIBILITY = 1
 # automatic
@@ -56,7 +62,7 @@ PWD = /home/werem/Documents/projects/c/MS-DOS-frame-buffer-game-engine
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # environment
-XDG_DATA_DIRS = /usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
 # environment
 OLDPWD = /home/werem/Documents/projects/c
 # automatic
@@ -74,7 +80,7 @@ XAUTHORITY = /run/user/1000/gdm/Xauthority
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.93
+COLORFGBG = 15;0
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -96,7 +102,7 @@ XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # makefile (from 'Makefile', line 3)
-OBJ_FOR_CLEAN_F := ./src/program/program.o ./src/program/mainMenu/mainMenu.o ./src/program/assetManager/assetManager.o ./src/program/sound/sound.o ./src/program/level/level.o ./src/program/enemy/enemy.o ./src/program/core/shader/shader.o ./src/program/core/fonts/fonts.o ./src/program/core/sprite/sprite.o ./src/program/core/stackAllocator/stack_allocator.o ./src/program/core/input/keyboard.o ./src/program/core/input/mouse.o ./src/program/core/graphics/graphics.o ./src/main.o
+OBJ_FOR_CLEAN_F := ./src/program/program.o ./src/program/assetManager/assetManager.o ./src/program/mainMenu/mainMenu.o ./src/program/enemy/enemy.o ./src/program/sound/sound.o ./src/program/core/shader/shader.o ./src/program/core/fonts/fonts.o ./src/program/core/input/keyboard.o ./src/program/core/input/mouse.o ./src/program/core/graphics/graphics.o ./src/program/core/stackAllocator/stack_allocator.o ./src/program/core/sprite/sprite.o ./src/program/level/level.o ./src/main.o
 # environment
 XDG_SESSION_DESKTOP = ubuntu
 # makefile (from 'Makefile', line 1)
@@ -106,7 +112,7 @@ SNAP_REEXEC =
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 36692
+VSCODE_PID = 14429
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
@@ -114,9 +120,13 @@ XDG_SESSION_TYPE = x11
 # makefile (from 'Makefile', line 11)
 FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 # environment
-SESSION_MANAGER = local/cube:@/tmp/.ICE-unix/2248,unix/cube:/tmp/.ICE-unix/2248
+SESSION_MANAGER = local/werem-ubuntu:@/tmp/.ICE-unix/6912,unix/werem-ubuntu:/tmp/.ICE-unix/6912
 # automatic
 *F = $(notdir $*)
+# environment
+EM_CONFIG = /home/werem/Documents/projects/c/emsdk/.emscripten
+# environment
+QT_QPA_PLATFORMTHEME = 
 # environment
 CHROME_DESKTOP = code-url-handler.desktop
 # environment
@@ -136,29 +146,43 @@ MAKECMDGOALS := all
 # environment
 XMODIFIERS = @im=ibus
 # environment
+GJS_DEBUG_TOPICS = JS ERROR;JS LOG
+# environment
 SHLVL = 1
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/b377556b_8058_4ad5_a2ad_78aa63ff7c39
+QSG_RENDER_LOOP = threaded
 # environment
 MAKELEVEL := 0
+# environment
+IM_CONFIG_CHECK_ENV = 1
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
-SNAP_COOKIE = bfUoniibxQRJmeXqLcjNqYdyYlf6PWOo3LqIv3Q75tWZ-IJe9WjW
+SNAP_COOKIE = h4wL14zIwIUYEIcldVrf76QB3ApT0ed1ZQ8FoCpU2EHQNDi8oYCf
 # environment
-PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/werem/Documents/programs/blinkerlights
+PATH = /home/werem/Documents/projects/c/emsdk:/home/werem/Documents/projects/c/emsdk/upstream/emscripten:/home/werem/Documents/projects/c/emsdk/node/12.18.1_64bit/bin:/home/werem/.local/bin:/home/werem/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/werem/.dotnet/tools:/home/werem/Documents/programs/sqlite/:/home/werem/Documents/programs/build-wrapper-linux-x86:/home/werem/Documents/programs/sonar-scanner/bin
+# environment
+EMSDK_NODE = /home/werem/Documents/projects/c/emsdk/node/12.18.1_64bit/bin/node
 # default
 MAKEFILES := 
+# environment
+LANGUAGE = 
 # environment
 LC_MONETARY = en_GB.UTF-8
 # automatic
 ^F = $(notdir $^)
 # environment
+EM_CACHE = /home/werem/Documents/projects/c/emsdk/upstream/emscripten/cache
+# environment
 SNAP_USER_COMMON = /home/werem/snap/code/common
+# environment
+KB_LAYOUT_DIR = /usr/lib/x86_64-linux-gnu/qt5/qml/QMLTermWidget/kb-layouts
 # environment
 LC_TIME = en_GB.UTF-8
 # environment
 SNAP = /snap/code/102
+# environment
+INVOCATION_ID = 1d3b0bb185a34de4bf91808dab4d22e9
 # environment
 SNAP_REVISION = 102
 # environment
@@ -172,7 +196,7 @@ LESSCLOSE = /usr/bin/lesspipe %s %s
 # automatic
 ?F = $(notdir $?)
 # makefile (from 'Makefile', line 2)
-SRC_CPP := libs/soloud/src/audiosource/vic/soloud_vic.cpp libs/soloud/src/audiosource/monotone/soloud_monotone.cpp libs/soloud/src/audiosource/speech/soloud_speech.cpp libs/soloud/src/audiosource/speech/klatt.cpp libs/soloud/src/audiosource/speech/resonator.cpp libs/soloud/src/audiosource/speech/tts.cpp libs/soloud/src/audiosource/speech/darray.cpp libs/soloud/src/audiosource/sfxr/soloud_sfxr.cpp libs/soloud/src/audiosource/wav/dr_impl.cpp libs/soloud/src/audiosource/wav/soloud_wav.cpp libs/soloud/src/audiosource/wav/soloud_wavstream.cpp libs/soloud/src/audiosource/openmpt/soloud_openmpt.cpp libs/soloud/src/audiosource/noise/soloud_noise.cpp libs/soloud/src/audiosource/tedsid/soloud_tedsid.cpp libs/soloud/src/audiosource/tedsid/sid.cpp libs/soloud/src/audiosource/tedsid/ted.cpp libs/soloud/src/audiosource/vizsn/soloud_vizsn.cpp libs/soloud/src/backend/coreaudio/soloud_coreaudio.cpp libs/soloud/src/backend/miniaudio/soloud_miniaudio.cpp libs/soloud/src/backend/oss/soloud_oss.cpp libs/soloud/src/backend/xaudio2/soloud_xaudio2.cpp libs/soloud/src/backend/portaudio/soloud_portaudio.cpp libs/soloud/src/backend/sdl_static/soloud_sdl_static.cpp libs/soloud/src/backend/openal/soloud_openal.cpp libs/soloud/src/backend/sdl/soloud_sdl1.cpp libs/soloud/src/backend/sdl/soloud_sdl2.cpp libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.cpp libs/soloud/src/backend/winmm/soloud_winmm.cpp libs/soloud/src/backend/wasapi/soloud_wasapi.cpp libs/soloud/src/backend/alsa/soloud_alsa.cpp libs/soloud/src/backend/opensles/soloud_opensles.cpp libs/soloud/src/backend/nosound/soloud_nosound.cpp libs/soloud/src/backend/jack/soloud_jack.cpp libs/soloud/src/backend/null/soloud_null.cpp libs/soloud/src/c_api/soloud_c.cpp libs/soloud/src/filter/soloud_dcremovalfilter.cpp libs/soloud/src/filter/soloud_flangerfilter.cpp libs/soloud/src/filter/soloud_lofifilter.cpp libs/soloud/src/filter/soloud_freeverbfilter.cpp libs/soloud/src/filter/soloud_bassboostfilter.cpp libs/soloud/src/filter/soloud_robotizefilter.cpp libs/soloud/src/filter/soloud_fftfilter.cpp libs/soloud/src/filter/soloud_biquadresonantfilter.cpp libs/soloud/src/filter/soloud_waveshaperfilter.cpp libs/soloud/src/filter/soloud_echofilter.cpp libs/soloud/src/core/soloud_core_3d.cpp libs/soloud/src/core/soloud_core_voiceops.cpp libs/soloud/src/core/soloud_misc.cpp libs/soloud/src/core/soloud_core_setters.cpp libs/soloud/src/core/soloud_core_basicops.cpp libs/soloud/src/core/soloud_queue.cpp libs/soloud/src/core/soloud_bus.cpp libs/soloud/src/core/soloud_filter.cpp libs/soloud/src/core/soloud_core_getters.cpp libs/soloud/src/core/soloud_thread.cpp libs/soloud/src/core/soloud.cpp libs/soloud/src/core/soloud_core_voicegroup.cpp libs/soloud/src/core/soloud_core_faderops.cpp libs/soloud/src/core/soloud_fft_lut.cpp libs/soloud/src/core/soloud_core_filterops.cpp libs/soloud/src/core/soloud_file.cpp libs/soloud/src/core/soloud_fader.cpp libs/soloud/src/core/soloud_audiosource.cpp libs/soloud/src/core/soloud_fft.cpp
+SRC_CPP := libs/soloud/src/audiosource/tedsid/sid.cpp libs/soloud/src/audiosource/tedsid/ted.cpp libs/soloud/src/audiosource/tedsid/soloud_tedsid.cpp libs/soloud/src/audiosource/monotone/soloud_monotone.cpp libs/soloud/src/audiosource/noise/soloud_noise.cpp libs/soloud/src/audiosource/openmpt/soloud_openmpt.cpp libs/soloud/src/audiosource/speech/darray.cpp libs/soloud/src/audiosource/speech/klatt.cpp libs/soloud/src/audiosource/speech/soloud_speech.cpp libs/soloud/src/audiosource/speech/resonator.cpp libs/soloud/src/audiosource/speech/tts.cpp libs/soloud/src/audiosource/wav/dr_impl.cpp libs/soloud/src/audiosource/wav/soloud_wav.cpp libs/soloud/src/audiosource/wav/soloud_wavstream.cpp libs/soloud/src/audiosource/sfxr/soloud_sfxr.cpp libs/soloud/src/audiosource/vizsn/soloud_vizsn.cpp libs/soloud/src/audiosource/vic/soloud_vic.cpp libs/soloud/src/backend/sdl/soloud_sdl1.cpp libs/soloud/src/backend/sdl/soloud_sdl2.cpp libs/soloud/src/backend/portaudio/soloud_portaudio.cpp libs/soloud/src/backend/xaudio2/soloud_xaudio2.cpp libs/soloud/src/backend/opensles/soloud_opensles.cpp libs/soloud/src/backend/sdl_static/soloud_sdl_static.cpp libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.cpp libs/soloud/src/backend/wasapi/soloud_wasapi.cpp libs/soloud/src/backend/coreaudio/soloud_coreaudio.cpp libs/soloud/src/backend/alsa/soloud_alsa.cpp libs/soloud/src/backend/openal/soloud_openal.cpp libs/soloud/src/backend/miniaudio/soloud_miniaudio.cpp libs/soloud/src/backend/jack/soloud_jack.cpp libs/soloud/src/backend/oss/soloud_oss.cpp libs/soloud/src/backend/nosound/soloud_nosound.cpp libs/soloud/src/backend/null/soloud_null.cpp libs/soloud/src/backend/winmm/soloud_winmm.cpp libs/soloud/src/filter/soloud_lofifilter.cpp libs/soloud/src/filter/soloud_echofilter.cpp libs/soloud/src/filter/soloud_biquadresonantfilter.cpp libs/soloud/src/filter/soloud_waveshaperfilter.cpp libs/soloud/src/filter/soloud_dcremovalfilter.cpp libs/soloud/src/filter/soloud_freeverbfilter.cpp libs/soloud/src/filter/soloud_fftfilter.cpp libs/soloud/src/filter/soloud_robotizefilter.cpp libs/soloud/src/filter/soloud_bassboostfilter.cpp libs/soloud/src/filter/soloud_flangerfilter.cpp libs/soloud/src/core/soloud_core_basicops.cpp libs/soloud/src/core/soloud_fader.cpp libs/soloud/src/core/soloud_core_voiceops.cpp libs/soloud/src/core/soloud_file.cpp libs/soloud/src/core/soloud_core_setters.cpp libs/soloud/src/core/soloud.cpp libs/soloud/src/core/soloud_fft_lut.cpp libs/soloud/src/core/soloud_audiosource.cpp libs/soloud/src/core/soloud_misc.cpp libs/soloud/src/core/soloud_core_faderops.cpp libs/soloud/src/core/soloud_queue.cpp libs/soloud/src/core/soloud_core_filterops.cpp libs/soloud/src/core/soloud_core_getters.cpp libs/soloud/src/core/soloud_core_3d.cpp libs/soloud/src/core/soloud_bus.cpp libs/soloud/src/core/soloud_fft.cpp libs/soloud/src/core/soloud_core_voicegroup.cpp libs/soloud/src/core/soloud_filter.cpp libs/soloud/src/core/soloud_thread.cpp libs/soloud/src/c_api/soloud_c.cpp
 # environment
 XDG_CURRENT_DESKTOP = Unity
 # environment
@@ -182,7 +206,7 @@ LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:
 # environment
 DESKTOP_SESSION = ubuntu
 # makefile (from 'Makefile', line 1)
-SRC_F := src/program/mainMenu/mainMenu.c src/program/assetManager/assetManager.c src/program/sound/sound.c src/program/level/level.c src/program/program.c src/program/enemy/enemy.c src/program/core/shader/shader.c src/program/core/fonts/fonts.c src/program/core/sprite/sprite.c src/program/core/stackAllocator/stack_allocator.c src/program/core/input/mouse.c src/program/core/input/keyboard.c src/program/core/graphics/graphics.c src/main.c libs/soloud/src/audiosource/wav/stb_vorbis.c libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.c libs/soloud/src/backend/portaudio/soloud_portaudio_dll.c libs/soloud/src/backend/openal/soloud_openal_dll.c libs/soloud/src/backend/sdl/soloud_sdl2_dll.c libs/soloud/src/backend/sdl/soloud_sdl1_dll.c
+SRC_F := src/program/assetManager/assetManager.c src/program/mainMenu/mainMenu.c src/program/enemy/enemy.c src/program/program.c src/program/sound/sound.c src/program/core/shader/shader.c src/program/core/fonts/fonts.c src/program/core/input/keyboard.c src/program/core/input/mouse.c src/program/core/graphics/graphics.c src/program/core/stackAllocator/stack_allocator.c src/program/core/sprite/sprite.c src/program/level/level.c src/main.c libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.c libs/soloud/src/audiosource/wav/stb_vorbis.c libs/soloud/src/backend/sdl/soloud_sdl1_dll.c libs/soloud/src/backend/sdl/soloud_sdl2_dll.c libs/soloud/src/backend/portaudio/soloud_portaudio_dll.c libs/soloud/src/backend/openal/soloud_openal_dll.c
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
 # 'override' directive
@@ -190,13 +214,15 @@ GNUMAKEFLAGS :=
 # environment
 LOGNAME = werem
 # environment
+GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/cool-retro-term.desktop
+# environment
+EMSDK = /home/werem/Documents/projects/c/emsdk
+# environment
 SNAP_ARCH = amd64
 # makefile (from 'Makefile', line 10)
 FLAGS__DEBUG := -O3 -fdata-sections -ffunction-sections
 # makefile
 .DEFAULT_GOAL := all
-# environment
-SYSTEMD_EXEC_PID = 2272
 # environment
 DISPLAY = :1
 # environment
@@ -212,9 +238,15 @@ DISABLE_WAYLAND = 1
 # environment
 SNAP_DATA = /var/snap/code/102
 # environment
-SNAP_CONTEXT = bfUoniibxQRJmeXqLcjNqYdyYlf6PWOo3LqIv3Q75tWZ-IJe9WjW
+COLORSCHEMES_DIR = /usr/lib/x86_64-linux-gnu/qt5/qml/QMLTermWidget/color-schemes
+# environment
+SNAP_CONTEXT = h4wL14zIwIUYEIcldVrf76QB3ApT0ed1ZQ8FoCpU2EHQNDi8oYCf
+# environment
+MANAGERPID = 1905
 # environment
 LC_MEASUREMENT = en_GB.UTF-8
+# environment
+GIO_LAUNCHED_DESKTOP_FILE_PID = 13383
 # environment
 LC_PAPER = en_GB.UTF-8
 # environment
@@ -222,9 +254,9 @@ XDG_RUNTIME_DIR = /run/user/1000
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-COLORTERM = truecolor
-# environment
 GDK_PIXBUF_MODULE_FILE = /home/werem/snap/code/common/.cache/gdk-pixbuf-loaders.cache
+# environment
+JOURNAL_STREAM = 8:66937
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -238,13 +270,15 @@ ELECTRON_RUN_AS_NODE = 1
 # environment
 VSCODE_IPC_HOOK = /run/user/1000/vscode-c2d9916e-1.69.2-main.sock
 # environment
-TERM = xterm-256color
+TERM = xterm
 # environment
 SNAP_NAME = code
 # makefile (from 'Makefile', line 4)
-SRC_O := src/program/mainMenu/mainMenu.o src/program/assetManager/assetManager.o src/program/sound/sound.o src/program/level/level.o src/program/program.o src/program/enemy/enemy.o src/program/core/shader/shader.o src/program/core/fonts/fonts.o src/program/core/sprite/sprite.o src/program/core/stackAllocator/stack_allocator.o src/program/core/input/mouse.o src/program/core/input/keyboard.o src/program/core/graphics/graphics.o src/main.o libs/soloud/src/audiosource/wav/stb_vorbis.o libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o libs/soloud/src/backend/openal/soloud_openal_dll.o libs/soloud/src/backend/sdl/soloud_sdl2_dll.o libs/soloud/src/backend/sdl/soloud_sdl1_dll.o
+SRC_O := src/program/assetManager/assetManager.o src/program/mainMenu/mainMenu.o src/program/enemy/enemy.o src/program/program.o src/program/sound/sound.o src/program/core/shader/shader.o src/program/core/fonts/fonts.o src/program/core/input/keyboard.o src/program/core/input/mouse.o src/program/core/graphics/graphics.o src/program/core/stackAllocator/stack_allocator.o src/program/core/sprite/sprite.o src/program/level/level.o src/main.o libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o libs/soloud/src/audiosource/wav/stb_vorbis.o libs/soloud/src/backend/sdl/soloud_sdl1_dll.o libs/soloud/src/backend/sdl/soloud_sdl2_dll.o libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o libs/soloud/src/backend/openal/soloud_openal_dll.o
 # environment
 GSETTINGS_SCHEMA_DIR = /snap/code/102/usr/share/glib-2.0/schemas
+# environment
+IM_CONFIG_PHASE = 1
 # environment
 PAPERSIZE = a4
 # default
@@ -262,8 +296,6 @@ VSCODE_CLI = 1
 # environment
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
-VTE_VERSION = 6800
-# environment
 SNAP_COMMON = /var/snap/code/common
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
@@ -278,7 +310,8 @@ LC_IDENTIFICATION = en_GB.UTF-8
 # environment
 SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
 # variable set hash-table stats:
-# Load=133/1024=13%, Rehash=0, Collisions=24/187=13%
+# Load=149/1024=15%, Rehash=0, Collisions=19/203=9%
+ 
 
 # Pattern-specific Variable Values
 
@@ -286,21 +319,9 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Directories
 
-# src/program/enemy (device 66309, inode 2621448): 3 files, no impossibilities so far.
-# src/program/core/fonts (device 66309, inode 2496137): 2 files, no impossibilities so far.
-# src/program/sound (device 66309, inode 2622310): 2 files, no impossibilities so far.
-# src/program (device 66309, inode 2496129): 11 files, no impossibilities so far.
-# src/program/core/input (device 66309, inode 2496142): 9 files, no impossibilities.
-# . (device 66309, inode 31854023): 12 files, no impossibilities.
-# src/program/core/sprite (device 66309, inode 2496151): 3 files, no impossibilities so far.
-# src/program/mainMenu (device 66309, inode 2622307): 3 files, no impossibilities so far.
-# src/program/core/stackAllocator (device 66309, inode 2496154): 6 files, no impossibilities.
-# src/program/core/graphics (device 66309, inode 2496139): 5 files, no impossibilities.
-# src/program/core/shader (device 66309, inode 2496148): 4 files, no impossibilities so far.
-# src/program/level (device 66309, inode 2621540): 4 files, no impossibilities so far.
-# src/program/assetManager (device 66309, inode 2496130): 3 files, no impossibilities so far.
+# . (device 66309, inode 1548610): 12 files, no impossibilities.
 
-# 67 files, no impossibilities in 13 directories.
+# 12 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -321,14 +342,11 @@ libs/soloud/src/core/soloud_fft.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/level/level.o: src/program/level/level.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/level/level'
-#  Last modified 2022-07-24 23:10:21.755793136
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/level/level.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/core/soloud.o:
@@ -356,7 +374,6 @@ libs/soloud/src/core/soloud_core_3d.o:
 
 # Not a target:
 libs/soloud/src/core/soloud_core_voiceops.o:
- 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -379,14 +396,11 @@ libs/soloud/src/backend/winmm/soloud_winmm.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/program.o: src/program/program.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/program'
-#  Last modified 2022-07-24 23:10:22.063793134
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/program.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/audiosource/vic/soloud_vic.o:
@@ -437,46 +451,23 @@ libs/soloud/src/core/soloud_queue.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/core/shader/shader.o: src/program/core/shader/shader.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/shader/shader'
-#  Last modified 2022-07-24 23:10:22.203793132
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-src/program/enemy/enemy.o: src/program/enemy/enemy.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/enemy/enemy'
-#  Last modified 2022-07-24 23:10:22.103793133
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/core/shader/shader.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-src/program/mainMenu/mainMenu.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
+src/program/enemy/enemy.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
-src/program/enemy/enemy.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
-src/program/mainMenu/mainMenu.o: src/program/mainMenu/mainMenu.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/mainMenu/mainMenu'
-#  Last modified 2022-07-24 23:10:21.591793137
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+src/program/mainMenu/mainMenu.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/core/soloud_audiosource.o:
@@ -487,7 +478,7 @@ libs/soloud/src/core/soloud_audiosource.o:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-24 22:50:49.175802679
+#  Last modified 2022-07-25 11:42:56.542963927
 #  File has been updated.
 #  Successfully updated.
 
@@ -510,13 +501,6 @@ libs/soloud/src/core/soloud_fader.o:
 #  File has not been updated.
 
 # Not a target:
-src/program/level/level.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 22:54:15.159801002
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
 libs/soloud/src/core/soloud_core_faderops.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -528,30 +512,40 @@ libs/soloud/src/backend/openal/soloud_openal.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/core/sprite/sprite.o: src/program/core/sprite/sprite.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/sprite/sprite'
-#  Last modified 2022-07-24 23:10:22.263793132
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-clean:
+# Not a target:
+src/program/core/sprite/sprite.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := clean
+# automatic
+# * := 
+# automatic
+# < := 
+# automatic
+# + := 
+# automatic
+# % := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# automatic
+# | := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=5/13=38%
 #  recipe to execute (from 'Makefile', line 29):
 	rm -rf $(OBJ_FOR_CLEAN_F)
 	rm -rf $(TARGET)
 	rm -rf bin/assets
-
-# Not a target:
-src/program/program.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 22:43:36.223806202
-#  File has been updated.
-#  Successfully updated.
 
 # Not a target:
 libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o:
@@ -589,13 +583,6 @@ libs/soloud/src/audiosource/openmpt/soloud_openmpt.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-
-# Not a target:
-src/program/sound/sound.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
 
 # Not a target:
 libs/soloud/src/audiosource/speech/darray.o:
@@ -652,14 +639,6 @@ libs/soloud/src/core/soloud_core_setters.o:
 #  File has not been updated.
 
 # Not a target:
-src/program/core/sprite/sprite.c:
-#  Implicit rule search has been done.
- 
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
 libs/soloud/src/core/soloud_bus.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -690,13 +669,6 @@ libs/soloud/src/audiosource/wav/stb_vorbis.o:
 #  File has not been updated.
 
 # Not a target:
-src/program/core/stackAllocator/stack_allocator.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
 libs/soloud/src/backend/sdl/soloud_sdl2.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -704,6 +676,7 @@ libs/soloud/src/backend/sdl/soloud_sdl2.o:
 
 # Not a target:
 .DEFAULT:
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -720,14 +693,11 @@ libs/soloud/src/audiosource/tedsid/ted.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/core/input/mouse.o: src/program/core/input/mouse.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/input/mouse'
-#  Last modified 2022-07-24 23:10:22.311793132
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/core/input/mouse.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/backend/wasapi/soloud_wasapi.o:
@@ -741,7 +711,7 @@ libs/soloud/src/filter/soloud_flangerfilter.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-all: src/program/mainMenu/mainMenu.o src/program/assetManager/assetManager.o src/program/sound/sound.o src/program/level/level.o src/program/program.o src/program/enemy/enemy.o src/program/core/shader/shader.o src/program/core/fonts/fonts.o src/program/core/sprite/sprite.o src/program/core/stackAllocator/stack_allocator.o src/program/core/input/mouse.o src/program/core/input/keyboard.o src/program/core/graphics/graphics.o src/main.o libs/soloud/src/audiosource/wav/stb_vorbis.o libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o libs/soloud/src/backend/openal/soloud_openal_dll.o libs/soloud/src/backend/sdl/soloud_sdl2_dll.o libs/soloud/src/backend/sdl/soloud_sdl1_dll.o libs/soloud/src/audiosource/vic/soloud_vic.o libs/soloud/src/audiosource/monotone/soloud_monotone.o libs/soloud/src/audiosource/speech/soloud_speech.o libs/soloud/src/audiosource/speech/klatt.o libs/soloud/src/audiosource/speech/resonator.o libs/soloud/src/audiosource/speech/tts.o libs/soloud/src/audiosource/speech/darray.o libs/soloud/src/audiosource/sfxr/soloud_sfxr.o libs/soloud/src/audiosource/wav/dr_impl.o libs/soloud/src/audiosource/wav/soloud_wav.o libs/soloud/src/audiosource/wav/soloud_wavstream.o libs/soloud/src/audiosource/openmpt/soloud_openmpt.o libs/soloud/src/audiosource/noise/soloud_noise.o libs/soloud/src/audiosource/tedsid/soloud_tedsid.o libs/soloud/src/audiosource/tedsid/sid.o libs/soloud/src/audiosource/tedsid/ted.o libs/soloud/src/audiosource/vizsn/soloud_vizsn.o libs/soloud/src/backend/coreaudio/soloud_coreaudio.o libs/soloud/src/backend/miniaudio/soloud_miniaudio.o libs/soloud/src/backend/oss/soloud_oss.o libs/soloud/src/backend/xaudio2/soloud_xaudio2.o libs/soloud/src/backend/portaudio/soloud_portaudio.o libs/soloud/src/backend/sdl_static/soloud_sdl_static.o libs/soloud/src/backend/openal/soloud_openal.o libs/soloud/src/backend/sdl/soloud_sdl1.o libs/soloud/src/backend/sdl/soloud_sdl2.o libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o libs/soloud/src/backend/winmm/soloud_winmm.o libs/soloud/src/backend/wasapi/soloud_wasapi.o libs/soloud/src/backend/alsa/soloud_alsa.o libs/soloud/src/backend/opensles/soloud_opensles.o libs/soloud/src/backend/nosound/soloud_nosound.o libs/soloud/src/backend/jack/soloud_jack.o libs/soloud/src/backend/null/soloud_null.o libs/soloud/src/c_api/soloud_c.o libs/soloud/src/filter/soloud_dcremovalfilter.o libs/soloud/src/filter/soloud_flangerfilter.o libs/soloud/src/filter/soloud_lofifilter.o libs/soloud/src/filter/soloud_freeverbfilter.o libs/soloud/src/filter/soloud_bassboostfilter.o libs/soloud/src/filter/soloud_robotizefilter.o libs/soloud/src/filter/soloud_fftfilter.o libs/soloud/src/filter/soloud_biquadresonantfilter.o libs/soloud/src/filter/soloud_waveshaperfilter.o libs/soloud/src/filter/soloud_echofilter.o libs/soloud/src/core/soloud_core_3d.o libs/soloud/src/core/soloud_core_voiceops.o libs/soloud/src/core/soloud_misc.o libs/soloud/src/core/soloud_core_setters.o libs/soloud/src/core/soloud_core_basicops.o libs/soloud/src/core/soloud_queue.o libs/soloud/src/core/soloud_bus.o libs/soloud/src/core/soloud_filter.o libs/soloud/src/core/soloud_core_getters.o libs/soloud/src/core/soloud_thread.o libs/soloud/src/core/soloud.o libs/soloud/src/core/soloud_core_voicegroup.o libs/soloud/src/core/soloud_core_faderops.o libs/soloud/src/core/soloud_fft_lut.o libs/soloud/src/core/soloud_core_filterops.o libs/soloud/src/core/soloud_file.o libs/soloud/src/core/soloud_fader.o libs/soloud/src/core/soloud_audiosource.o libs/soloud/src/core/soloud_fft.o copy_assets
+all: clean src/program/assetManager/assetManager.o src/program/mainMenu/mainMenu.o src/program/enemy/enemy.o src/program/program.o src/program/sound/sound.o src/program/core/shader/shader.o src/program/core/fonts/fonts.o src/program/core/input/keyboard.o src/program/core/input/mouse.o src/program/core/graphics/graphics.o src/program/core/stackAllocator/stack_allocator.o src/program/core/sprite/sprite.o src/program/level/level.o src/main.o libs/soloud/src/audiosource/openmpt/soloud_openmpt_dll.o libs/soloud/src/audiosource/wav/stb_vorbis.o libs/soloud/src/backend/sdl/soloud_sdl1_dll.o libs/soloud/src/backend/sdl/soloud_sdl2_dll.o libs/soloud/src/backend/portaudio/soloud_portaudio_dll.o libs/soloud/src/backend/openal/soloud_openal_dll.o libs/soloud/src/audiosource/tedsid/sid.o libs/soloud/src/audiosource/tedsid/ted.o libs/soloud/src/audiosource/tedsid/soloud_tedsid.o libs/soloud/src/audiosource/monotone/soloud_monotone.o libs/soloud/src/audiosource/noise/soloud_noise.o libs/soloud/src/audiosource/openmpt/soloud_openmpt.o libs/soloud/src/audiosource/speech/darray.o libs/soloud/src/audiosource/speech/klatt.o libs/soloud/src/audiosource/speech/soloud_speech.o libs/soloud/src/audiosource/speech/resonator.o libs/soloud/src/audiosource/speech/tts.o libs/soloud/src/audiosource/wav/dr_impl.o libs/soloud/src/audiosource/wav/soloud_wav.o libs/soloud/src/audiosource/wav/soloud_wavstream.o libs/soloud/src/audiosource/sfxr/soloud_sfxr.o libs/soloud/src/audiosource/vizsn/soloud_vizsn.o libs/soloud/src/audiosource/vic/soloud_vic.o libs/soloud/src/backend/sdl/soloud_sdl1.o libs/soloud/src/backend/sdl/soloud_sdl2.o libs/soloud/src/backend/portaudio/soloud_portaudio.o libs/soloud/src/backend/xaudio2/soloud_xaudio2.o libs/soloud/src/backend/opensles/soloud_opensles.o libs/soloud/src/backend/sdl_static/soloud_sdl_static.o libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o libs/soloud/src/backend/wasapi/soloud_wasapi.o libs/soloud/src/backend/coreaudio/soloud_coreaudio.o libs/soloud/src/backend/alsa/soloud_alsa.o libs/soloud/src/backend/openal/soloud_openal.o libs/soloud/src/backend/miniaudio/soloud_miniaudio.o libs/soloud/src/backend/jack/soloud_jack.o libs/soloud/src/backend/oss/soloud_oss.o libs/soloud/src/backend/nosound/soloud_nosound.o libs/soloud/src/backend/null/soloud_null.o libs/soloud/src/backend/winmm/soloud_winmm.o libs/soloud/src/filter/soloud_lofifilter.o libs/soloud/src/filter/soloud_echofilter.o libs/soloud/src/filter/soloud_biquadresonantfilter.o libs/soloud/src/filter/soloud_waveshaperfilter.o libs/soloud/src/filter/soloud_dcremovalfilter.o libs/soloud/src/filter/soloud_freeverbfilter.o libs/soloud/src/filter/soloud_fftfilter.o libs/soloud/src/filter/soloud_robotizefilter.o libs/soloud/src/filter/soloud_bassboostfilter.o libs/soloud/src/filter/soloud_flangerfilter.o libs/soloud/src/core/soloud_core_basicops.o libs/soloud/src/core/soloud_fader.o libs/soloud/src/core/soloud_core_voiceops.o libs/soloud/src/core/soloud_file.o libs/soloud/src/core/soloud_core_setters.o libs/soloud/src/core/soloud.o libs/soloud/src/core/soloud_fft_lut.o libs/soloud/src/core/soloud_audiosource.o libs/soloud/src/core/soloud_misc.o libs/soloud/src/core/soloud_core_faderops.o libs/soloud/src/core/soloud_queue.o libs/soloud/src/core/soloud_core_filterops.o libs/soloud/src/core/soloud_core_getters.o libs/soloud/src/core/soloud_core_3d.o libs/soloud/src/core/soloud_bus.o libs/soloud/src/core/soloud_fft.o libs/soloud/src/core/soloud_core_voicegroup.o libs/soloud/src/core/soloud_filter.o libs/soloud/src/core/soloud_thread.o libs/soloud/src/c_api/soloud_c.o copy_assets
 #  Command line target.
 #  Implicit rule search has not been done.
 #  File does not exist.
@@ -758,32 +728,11 @@ libs/soloud/src/audiosource/vizsn/soloud_vizsn.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/core/graphics/graphics.o: src/program/core/graphics/graphics.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/graphics/graphics'
-#  Last modified 2022-07-24 23:10:22.44779313
-#  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := src/program/core/graphics/graphics.o
-# automatic
-# * := src/program/core/graphics/graphics
-# automatic
-# < := src/program/core/graphics/graphics.c
-# automatic
-# + := src/program/core/graphics/graphics.c
-# automatic
-# % := 
-# automatic
-# ^ := src/program/core/graphics/graphics.c
-# automatic
-# ? := src/program/core/graphics/graphics.c
-# automatic
-# | := 
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=1/15=7%
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/core/graphics/graphics.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/backend/coreaudio/soloud_coreaudio.o:
@@ -797,14 +746,11 @@ libs/soloud/src/audiosource/monotone/soloud_monotone.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/core/fonts/fonts.o: src/program/core/fonts/fonts.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/fonts/fonts'
-#  Last modified 2022-07-24 23:10:22.211793132
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/core/fonts/fonts.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/c_api/soloud_c.o:
@@ -818,15 +764,11 @@ libs/soloud/src/audiosource/sfxr/soloud_sfxr.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/core/stackAllocator/stack_allocator.o: src/program/core/stackAllocator/stack_allocator.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/stackAllocator/stack_allocator'
-#  Last modified 2022-07-24 23:10:22.283793132
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
- 
+# Not a target:
+src/program/core/stackAllocator/stack_allocator.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/filter/soloud_fftfilter.o:
@@ -853,27 +795,6 @@ libs/soloud/src/filter/soloud_dcremovalfilter.o:
 #  File has not been updated.
 
 # Not a target:
-src/program/assetManager/assetManager.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-src/program/core/input/mouse.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
-src/program/core/shader/shader.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
 libs/soloud/src/core/soloud_file.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -888,6 +809,7 @@ libs/soloud/src/backend/nosound/soloud_nosound.o:
 # Not a target:
 libs/soloud/src/core/soloud_core_voicegroup.o:
 #  Implicit rule search has not been done.
+ 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -934,13 +856,6 @@ libs/soloud/src/backend/sdl2_static/soloud_sdl2_static.o:
 #  File has not been updated.
 
 # Not a target:
-src/program/core/graphics/graphics.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 23:12:58.827791858
-#  File has been updated.
-#  Successfully updated.
-
-# Not a target:
 libs/soloud/src/audiosource/noise/soloud_noise.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -953,29 +868,16 @@ libs/soloud/src/audiosource/wav/soloud_wav.o:
 #  File has not been updated.
 
 # Not a target:
-src/program/core/fonts/fonts.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
+src/program/core/input/keyboard.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
-src/program/core/input/keyboard.o: src/program/core/input/keyboard.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/core/input/keyboard'
-#  Last modified 2022-07-24 23:10:22.343793131
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
-
-src/program/assetManager/assetManager.o: src/program/assetManager/assetManager.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/assetManager/assetManager'
-#  Last modified 2022-07-24 23:10:21.679793137
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/assetManager/assetManager.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/audiosource/wav/dr_impl.o:
@@ -983,14 +885,6 @@ libs/soloud/src/audiosource/wav/dr_impl.o:
 #  Modification time never checked.
 #  File has not been updated.
 
-# Not a target:
-src/program/core/input/keyboard.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-07-24 20:14:19.987879088
-#  File has been updated.
-#  Successfully updated.
-
- 
 # Not a target:
 libs/soloud/src/filter/soloud_freeverbfilter.o:
 #  Implicit rule search has not been done.
@@ -1011,19 +905,22 @@ deep_clean: clean
 	
 
 # Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
 libs/soloud/src/audiosource/tedsid/soloud_tedsid.o:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
-src/program/sound/sound.o: src/program/sound/sound.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'src/program/sound/sound'
-#  Last modified 2022-07-24 23:10:21.687793137
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 23):
-	gcc -c $(FLAGS_DEBUG) $(FLAGS) $^ -o $@
+# Not a target:
+src/program/sound/sound.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 libs/soloud/src/filter/soloud_biquadresonantfilter.o:
@@ -1032,19 +929,20 @@ libs/soloud/src/filter/soloud_biquadresonantfilter.o:
 #  File has not been updated.
 
 # files hash-table stats:
-# Load=106/1024=10%, Rehash=0, Collisions=16/246=7%
+ 
+# Load=93/1024=9%, Rehash=0, Collisions=10/196=5%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 187 / storage = 5276 B / avg = 28 B
-# current buf: size = 8162 B / used = 5276 B / count = 187 / avg = 28 B
+# strcache buffers: 1 (0) / strings = 109 / storage = 3773 B / avg = 34 B
+# current buf: size = 8162 B / used = 3773 B / count = 109 / avg = 34 B
 
-# strcache performance: lookups = 231 / hit rate = 19%
+# strcache performance: lookups = 127 / hit rate = 14%
 # hash-table stats:
-# Load=187/8192=2%, Rehash=0, Collisions=1/231=0%
-# Finished Make data base on Sun Jul 24 23:13:04 2022
+# Load=109/8192=1%, Rehash=0, Collisions=0/127=0%
+# Finished Make data base on Mon Jul 25 11:43:26 2022
 
  

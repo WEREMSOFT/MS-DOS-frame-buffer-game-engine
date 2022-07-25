@@ -6,14 +6,14 @@ SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound 
 
-FLAGS_DEBUG := -g -O0 
+FLAGS_DEBUG := -g -O0 -w
 FLAGS__DEBUG := -O3 -fdata-sections -ffunction-sections
 FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin
 .PONY: clean
 
-all: $(SRC_O) $(SRC_CPP_O) copy_assets
+all: clean $(SRC_O) $(SRC_CPP_O) copy_assets
 	gcc $(FLAGS_DEBUG) $(FLAGS) $(SRC_O) $(SRC_CPP_O) -o $(TARGET) $(LIBS)
 
 run_main: all
