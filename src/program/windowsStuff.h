@@ -6,6 +6,23 @@
 #if defined(_WIN32) || defined(_WIN64)
 
 void (*glActiveTexture)(GLenum texture);
+void (*glGenerateMipmap)(GLenum target);
+void (*glUniform4f)(	GLint location,
+ 	GLfloat v0,
+ 	GLfloat v1,
+ 	GLfloat v2,
+ 	GLfloat v3);
+     
+void (*glUniformMatrix4fv)(	GLint location,
+ 	GLsizei count,
+ 	GLboolean transpose,
+ 	const GLfloat *value);
+
+     
+void (*glUniformMatrix3fv)(	GLint location,
+ 	GLsizei count,
+ 	GLboolean transpose,
+ 	const GLfloat *value);
 
 #ifndef GLchar
 typedef char GLchar;
