@@ -6,7 +6,6 @@ cl -Zi ^
    /DWITH_MINIAUDIO ^
    /std:c++17 ^
    /I ..\..\libs\glfw\include ^
-   /I ..\..\libs\glew\include ^
    /I ..\..\libs\pthreads\include ^
    /I ..\libs\soloud\include ^
    /I ..\libs\include ^
@@ -97,7 +96,6 @@ cl -Zi ^
    ..\..\libs\glfw\lib-vc2022\glfw3dll.lib ^
    ..\..\libs\glfw\lib-vc2022\glfw3_mt.lib ^
    ..\..\libs\pthreads\lib\x64\pthreadVC2.lib ^
-   ..\..\libs\glew\lib\Release\x64\glew32.lib ^
    opengl32.lib ^
    -o ../bin/main.exe
 popd
