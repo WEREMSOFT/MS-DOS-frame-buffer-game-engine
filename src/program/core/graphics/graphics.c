@@ -89,7 +89,7 @@ Graphics graphicsCreate()
     glCreateShader(GL_VERTEX_SHADER);
 
     // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.
-    // glfwSwapInterval(2);
+    // glfwSwapInterval(0);
     glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
 
     double ratioX = ((float)this.imageData.size.x / (float)this.imageData.size.y) / ((float)mode->width / (float)mode->height);
