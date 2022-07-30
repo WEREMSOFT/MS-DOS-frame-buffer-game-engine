@@ -4,6 +4,9 @@
 void spritesLoad(Sprite *this)
 {
     this[ASSET_BACKGROUND] = spriteCreate("assets/320x240Test.png");
+    this[ASSET_SIGHT] = spriteCreate("assets/aimcross.png");
+    this[ASSET_SHOOT] = spriteCreate("assets/shoot.png");
+
     // this[ASSET_BACKGROUND] = spriteCreate("assets/Decoration/mainMenuLogo01.png");
 
     //     this[ASSET_SHIP_THRUSTERS].animated = true;

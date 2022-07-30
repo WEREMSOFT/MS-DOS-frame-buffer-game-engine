@@ -4,6 +4,8 @@
 enum Assets
 {
     ASSET_BACKGROUND,
+    ASSET_SIGHT,
+    ASSET_SHOOT,
     ASSET_COUNT
 };
 

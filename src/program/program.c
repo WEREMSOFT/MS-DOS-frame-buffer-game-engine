@@ -33,7 +33,7 @@ Program programCreate()
     this.graphics = graphicsCreate(320, 240);
     this.sound = soundCreate();
     spritesLoad(this.sprites);
-    Soloud_setGlobalVolume(this.sound.soloud, 0);
+    Soloud_setGlobalVolume(this.sound.soloud, 1.);
     this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
 
     return this;

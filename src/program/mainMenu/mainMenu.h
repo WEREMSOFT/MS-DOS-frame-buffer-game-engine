@@ -13,11 +13,25 @@ typedef enum
     SHIP_COUNT
 } ShipsEnum;
 
+typedef enum
+{
+    AIM_TOP,
+    AIM_BOTTOM,
+    AIM_LEFT,
+    AIM_RIGHT,
+    AIM_UP_RIGHT,
+    AIM_UP_LEFT,
+    AIM_DOWN_RIGHT,
+    AIM_DOWN_LEFT,
+    AIM_COUNT
+} AimState;
+
 typedef struct
 {
     Graphics graphics;
-    Sprite background;
+    Sprite *sprites;
     PointI textPosition;
+    AimState aimState;
     Sound sound;
     bool shouldQuit;
 } MainMenu;
