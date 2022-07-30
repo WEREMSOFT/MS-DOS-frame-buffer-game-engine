@@ -3,13 +3,7 @@
 #include "../core/sprite/sprite.h"
 enum Assets
 {
-    ASSET_SHIP_GREEN,
-    ASSET_SHIP_BLUE,
-    ASSET_SHIP_RED,
-    ASSET_SHIP_THRUSTERS,
-    ASSET_HERO_BULLET,
-    ASSET_ENEMY_SHOOTING_EGG,
-    ASSET_LOGO,
+    ASSET_BACKGROUND,
     ASSET_COUNT
 };
 

@@ -65,11 +65,11 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-Graphics graphicsCreate()
+Graphics graphicsCreate(int width, int height)
 {
     Graphics this = {0};
-    this.imageData.size.x = 640;
-    this.imageData.size.y = 480;
+    this.imageData.size.x = width;
+    this.imageData.size.y = height;
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);

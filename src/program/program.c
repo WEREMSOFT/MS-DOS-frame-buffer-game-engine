@@ -30,11 +30,10 @@ Program programCreate()
 {
     staticAllocatorInit(100092024);
     Program this = {0};
-    this.graphics = graphicsCreate();
+    this.graphics = graphicsCreate(320, 240);
     this.sound = soundCreate();
     spritesLoad(this.sprites);
     Soloud_setGlobalVolume(this.sound.soloud, 0);
-    this.level = levelCreate(this.graphics, this.sprites, this.sound);
     this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
 
     return this;
@@ -47,8 +46,6 @@ void programMainLoop(Program this)
         this.mainMenu = mainMenuUpdate(this.mainMenu);
         if (this.mainMenu.shouldQuit)
             return;
-        this.level.hero = this.mainMenu.ships[this.mainMenu.selectedShip];
-        this.level = levelMainLoop(this.level);
     }
 }
 

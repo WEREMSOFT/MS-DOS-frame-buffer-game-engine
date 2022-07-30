@@ -17,10 +17,6 @@ typedef struct
 {
     Graphics graphics;
     Sprite background;
-    Sprite selectionIndicator;
-    Sprite ships[SHIP_COUNT];
-    Sprite logo;
-    int selectedShip;
     PointI textPosition;
     Sound sound;
     bool shouldQuit;
