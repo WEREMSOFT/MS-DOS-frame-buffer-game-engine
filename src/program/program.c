@@ -41,7 +41,7 @@ Program programCreate()
 
 void programMainLoop(Program this)
 {
-    while (!this.level.shouldQuit)
+    while (!this.mainMenu.shouldQuit)
     {
         this.mainMenu = mainMenuUpdate(this.mainMenu);
         if (this.mainMenu.shouldQuit)

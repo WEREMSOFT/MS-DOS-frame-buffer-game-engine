@@ -6,8 +6,8 @@ SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound 
 
-FLAGS__DEBUG := -g -O0 -w
-FLAGS_DEBUG := -O3
+FLAGS_DEBUG := -g -O0 -w
+FLAGS__DEBUG := -O3
 FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 
 TARGET := bin/main.bin
