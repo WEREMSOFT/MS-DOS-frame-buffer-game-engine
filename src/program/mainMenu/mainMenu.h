@@ -29,7 +29,9 @@ typedef enum
 typedef struct
 {
     Graphics graphics;
-    Sprite *sprites;
+    Sprite background;
+    Sprite sight;
+    Sprite shoot;
     PointI textPosition;
     AimState aimState;
     Sound sound;
