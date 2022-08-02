@@ -103,6 +103,10 @@ Sprite spriteCreateCkeckerBoard(PointI size, int checkerWidth, Color color1, Col
 void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, double deltaTime)
 {
     Sprite this = *thisP;
+    if (!thisP->animation.isPlaying)
+    {
+        thisP->animation.isPlaying = true;
+    }
 
     int clippedWidth = fmin(this.animation.frameWidth,
                             fmax(0, this.animation.frameWidth - (this.animation.frameWidth + this.position.x -
@@ -113,9 +117,14 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, do
     int clippedX = this.position.x < 0 ? -this.position.x : 0;
     int clippedY = this.position.y < 0 ? -this.position.y : 0;
 
-    thisP->animation.frameIncrement += deltaTime * 30;
+    thisP->animation.frameIncrement += deltaTime * thisP->animation.frameRate;
+    int lastFrame = thisP->animation.currentFrame;
     thisP->animation.currentFrame = this.animation.frameIncrement;
     thisP->animation.currentFrame %= this.animation.frameCount;
+    if (thisP->animation.currentFrame < lastFrame)
+    {
+        thisP->animation.isPlaying = false;
+    }
 
     for (int i = clippedX; i < clippedWidth; i++)
     {

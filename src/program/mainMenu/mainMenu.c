@@ -95,6 +95,7 @@ MainMenu handleControls(MainMenu this)
         this.aimState = AIM_LEFT;
         return this;
     }
+    this.aimState = AIM_NONE;
     return this;
 }
 
@@ -106,6 +107,7 @@ MainMenu mainMenuUpdate(MainMenu this)
 
     while (shouldContinue && !this.shouldQuit)
     {
+        float dt = getDeltaTime();
         graphicsClear(this.graphics.imageData);
         if (isKeyJustPressed(this.graphics.window, GLFW_KEY_ENTER))
         {
@@ -117,15 +119,22 @@ MainMenu mainMenuUpdate(MainMenu this)
         spriteDrawClipped(this.background, this.graphics.imageData);
         this = handleControls(this);
 
-        if (glfwGetKey(this.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            switch (this.aimState)
+        if (this.shoot.animation.isPlaying)
+        {
+            spriteDrawTransparentAnimatedClipped(&this.shoot, this.graphics.imageData, dt);
+        }
+        else if (glfwGetKey(this.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        {
+            if (this.aimState != AIM_NONE)
             {
-            case AIM_TOP:
-                spriteDrawTransparentClipped(this.shoot, this.graphics.imageData);
-                break;
+                this.shoot.position = this.sight.position;
+                this.shoot.position.x -= this.sight.size.x / 2;
+                this.shoot.position.y -= this.sight.size.y / 2;
+                spriteDrawTransparentAnimatedClipped(&this.shoot, this.graphics.imageData, dt);
+                soundPlaySfx(this.sound, SFX_SHOOT_HERO);
             }
-
-        printFPS(this.graphics, getDeltaTime());
+        }
+        printFPS(this.graphics, dt);
         graphicsSwapBuffers(this.graphics);
         glfwPollEvents();
     }

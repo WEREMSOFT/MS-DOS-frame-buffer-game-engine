@@ -15,6 +15,7 @@ typedef enum
 
 typedef enum
 {
+    AIM_NONE,
     AIM_TOP,
     AIM_BOTTOM,
     AIM_LEFT,

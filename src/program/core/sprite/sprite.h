@@ -5,12 +5,13 @@
 
 typedef struct
 {
+    bool isPlaying;
     int frameWidth;
     int t;
     int currentFrame;
     int frameCount;
     float frameIncrement;
-    float inverseFramerrate;
+    float frameRate;
 } Animation;
 
 typedef struct
