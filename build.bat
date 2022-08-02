@@ -19,16 +19,10 @@ cl -Zi ^
    program\core\shader\shader.c ^
    program\core\sprite\sprite.c ^
    program\core\stackAllocator\stack_allocator.c ^
-   program\enemy\enemy.c ^
-   program\level\level.c ^
    program\mainMenu\mainMenu.c ^
    program\sound\sound.c ^
    ..\libs\soloud\src\audiosource\openmpt\soloud_openmpt_dll.c ^
    ..\libs\soloud\src\audiosource\wav\stb_vorbis.c ^
-   ..\libs\soloud\src\backend\openal\soloud_openal_dll.c ^
-   ..\libs\soloud\src\backend\portaudio\soloud_portaudio_dll.c ^
-   ..\libs\soloud\src\backend\sdl\soloud_sdl1_dll.c ^
-   ..\libs\soloud\src\backend\sdl\soloud_sdl2_dll.c ^
    ..\libs\soloud\src\audiosource\monotone\soloud_monotone.cpp ^
    ..\libs\soloud\src\audiosource\noise\soloud_noise.cpp ^
    ..\libs\soloud\src\audiosource\openmpt\soloud_openmpt.cpp ^
@@ -47,22 +41,9 @@ cl -Zi ^
    ..\libs\soloud\src\audiosource\wav\soloud_wav.cpp ^
    ..\libs\soloud\src\audiosource\wav\soloud_wavstream.cpp ^
    ..\libs\soloud\src\backend\alsa\soloud_alsa.cpp ^
-   ..\libs\soloud\src\backend\coreaudio\soloud_coreaudio.cpp ^
-   ..\libs\soloud\src\backend\jack\soloud_jack.cpp ^
    ..\libs\soloud\src\backend\miniaudio\soloud_miniaudio.cpp ^
-   ..\libs\soloud\src\backend\nosound\soloud_nosound.cpp ^
-   ..\libs\soloud\src\backend\null\soloud_null.cpp ^
-   ..\libs\soloud\src\backend\openal\soloud_openal.cpp ^
-   ..\libs\soloud\src\backend\opensles\soloud_opensles.cpp ^
-   ..\libs\soloud\src\backend\oss\soloud_oss.cpp ^
-   ..\libs\soloud\src\backend\portaudio\soloud_portaudio.cpp ^
-   ..\libs\soloud\src\backend\sdl\soloud_sdl1.cpp ^
-   ..\libs\soloud\src\backend\sdl\soloud_sdl2.cpp ^
-   ..\libs\soloud\src\backend\sdl2_static\soloud_sdl2_static.cpp ^
-   ..\libs\soloud\src\backend\sdl_static\soloud_sdl_static.cpp ^
    ..\libs\soloud\src\backend\wasapi\soloud_wasapi.cpp ^
    ..\libs\soloud\src\backend\winmm\soloud_winmm.cpp ^
-   ..\libs\soloud\src\backend\xaudio2\soloud_xaudio2.cpp ^
    ..\libs\soloud\src\core\soloud.cpp ^
    ..\libs\soloud\src\core\soloud_audiosource.cpp ^
    ..\libs\soloud\src\core\soloud_bus.cpp ^
