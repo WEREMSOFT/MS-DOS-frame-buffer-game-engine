@@ -6,6 +6,7 @@ enum Assets
     ASSET_BACKGROUND,
     ASSET_SIGHT,
     ASSET_SHOOT,
+    ASSET_ENEMY_GREEN_BIG,
     ASSET_COUNT
 };
 

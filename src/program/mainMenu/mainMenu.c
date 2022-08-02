@@ -12,6 +12,9 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
     this.sound = sound;
     this.graphics = graphics;
     this.background = sprites[ASSET_BACKGROUND];
+    this.enemyGreenBig = sprites[ASSET_ENEMY_GREEN_BIG];
+    this.enemyGreenBig.position.y = this.graphics.imageData.size.y - this.enemyGreenBig.size.y;
+    this.enemyGreenBig.position.x = 40;
     this.shoot = sprites[ASSET_SHOOT];
     this.sight = sprites[ASSET_SIGHT];
     this.shouldQuit = false;
@@ -24,7 +27,7 @@ MainMenu handleControls(MainMenu this)
         glfwGetKey(this.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         this.sight.position.x = 42;
-        this.sight.position.y = 50;
+        this.sight.position.y = 55;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_UP_LEFT;
         return this;
@@ -34,7 +37,7 @@ MainMenu handleControls(MainMenu this)
         glfwGetKey(this.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         this.sight.position.x = 260;
-        this.sight.position.y = 50;
+        this.sight.position.y = 55;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_UP_RIGHT;
         return this;
@@ -43,7 +46,7 @@ MainMenu handleControls(MainMenu this)
     if (glfwGetKey(this.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
         glfwGetKey(this.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        this.sight.position.x = 55;
+        this.sight.position.x = 60;
         this.sight.position.y = 180;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_DOWN_LEFT;
@@ -53,7 +56,7 @@ MainMenu handleControls(MainMenu this)
     if (glfwGetKey(this.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
         glfwGetKey(this.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        this.sight.position.x = 220;
+        this.sight.position.x = 225;
         this.sight.position.y = 180;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_DOWN_RIGHT;
@@ -62,7 +65,7 @@ MainMenu handleControls(MainMenu this)
 
     if (glfwGetKey(this.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        this.sight.position.x = 120;
+        this.sight.position.x = 125;
         this.sight.position.y = 50;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_TOP;
@@ -71,7 +74,7 @@ MainMenu handleControls(MainMenu this)
 
     if (glfwGetKey(this.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        this.sight.position.x = 120;
+        this.sight.position.x = 125;
         this.sight.position.y = 180;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_BOTTOM;
@@ -80,7 +83,7 @@ MainMenu handleControls(MainMenu this)
 
     if (glfwGetKey(this.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        this.sight.position.x = 260;
+        this.sight.position.x = 265;
         this.sight.position.y = 130;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_RIGHT;
@@ -90,7 +93,7 @@ MainMenu handleControls(MainMenu this)
     if (glfwGetKey(this.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         this.sight.position.x = 55;
-        this.sight.position.y = 120;
+        this.sight.position.y = 125;
         spriteDrawTransparentClipped(this.sight, this.graphics.imageData);
         this.aimState = AIM_LEFT;
         return this;
@@ -118,6 +121,8 @@ MainMenu mainMenuUpdate(MainMenu this)
 
         spriteDrawClipped(this.background, this.graphics.imageData);
         this = handleControls(this);
+
+        spriteDrawTransparentClipped(this.enemyGreenBig, this.graphics.imageData);
 
         if (this.shoot.animation.isPlaying)
         {

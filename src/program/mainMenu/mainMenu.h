@@ -31,6 +31,7 @@ typedef struct
 {
     Graphics graphics;
     Sprite background;
+    Sprite enemyGreenBig;
     Sprite sight;
     Sprite shoot;
     PointI textPosition;
