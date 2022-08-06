@@ -2,7 +2,7 @@
 #define __PROGRAM_H__
 #include "core/graphics/graphics.h"
 #include "core/sprite/sprite.h"
-#include "mainMenu/mainMenu.h"
+#include "level1/level1.h"
 #include "assetManager/assetManager.h"
 #include "sound/sound.h"
 

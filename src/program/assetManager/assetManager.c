@@ -13,5 +13,9 @@ void spritesLoad(Sprite *this)
     this[ASSET_SHOOT].animation.frameWidth = 55;
     this[ASSET_SHOOT].animation.frameRate = 10.;
 
-    this[ASSET_ENEMY_GREEN_BIG] = spriteCreate("assets/enemyGreenBig.bmp");
+    this[ASSET_ENEMY_GREEN_BIG] = spriteCreate("assets/enemyGreenBig2.bmp");
+    this[ASSET_ENEMY_GREEN_BIG_SHOOT] = spriteCreate("assets/enemyGreenBig1.bmp");
+
+    this[ASSET_ENEMY_GREEN_SMALL] = spriteCreate("assets/enemyGreenSmall2.bmp");
+    this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenSmall1.bmp");
 }

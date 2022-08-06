@@ -4,40 +4,36 @@
 #include "../core/graphics/graphics.h"
 #include "../core/sprite/sprite.h"
 #include "../sound/sound.h"
+#include "enemy.h"
 
 typedef enum
 {
-    SHIP_RED,
-    SHIP_GREEN,
-    SHIP_BLUE,
-    SHIP_COUNT
-} ShipsEnum;
-
-typedef enum
-{
-    AIM_NONE,
-    AIM_TOP,
-    AIM_BOTTOM,
-    AIM_LEFT,
-    AIM_RIGHT,
-    AIM_UP_RIGHT,
-    AIM_UP_LEFT,
-    AIM_DOWN_RIGHT,
-    AIM_DOWN_LEFT,
-    AIM_COUNT
-} AimState;
+    QPOS_NONE,
+    QPOS_BOTTOM,
+    QPOS_BOTTOM_RIGHT,
+    QPOS_BOTTOM_LEFT,
+    QPOS_TOP,
+    QPOS_TOP_RIGHT,
+    QPOS_TOP_LEFT,
+    QPOS_RIGHT,
+    QPOS_LEFT,
+    QPOS_COUNT
+} QuadrantPosition;
 
 typedef struct
 {
     Graphics graphics;
     Sprite background;
     Sprite enemyGreenBig;
+    Sprite enemyGreenSmall;
     Sprite sight;
     Sprite shoot;
     PointI textPosition;
-    AimState aimState;
+    QuadrantPosition quadPosition;
     Sound sound;
     bool shouldQuit;
+    Enemy enemyBigs[8];
+    PointI positions[QPOS_COUNT];
 } MainMenu;
 
 MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound);

@@ -18,7 +18,7 @@ typedef struct
 {
     bool animated;
     Animation animation;
-    PointF position;
+    PointI position;
     PointI size;
     Color *imageData;
 } Sprite;
