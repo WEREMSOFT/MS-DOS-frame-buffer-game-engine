@@ -7,25 +7,33 @@
 
 typedef enum
 {
-    SHIP_RED,
-    SHIP_GREEN,
-    SHIP_BLUE,
-    SHIP_COUNT
-} ShipsEnum;
+    QPOS_NONE,
+    QPOS_TOP,
+    QPOS_BOTTOM,
+    QPOS_LEFT,
+    QPOS_RIGHT,
+    QPOS_TOP_RIGHT,
+    QPOS_TOP_LEFT,
+    QPOS_BOTTOM_RIGHT,
+    QPOS_BOTTOM_LEFT,
+    QPOS_COUNT
+} QuadrantPosition;
 
 typedef enum
 {
-    AIM_NONE,
-    AIM_TOP,
-    AIM_BOTTOM,
-    AIM_LEFT,
-    AIM_RIGHT,
-    AIM_UP_RIGHT,
-    AIM_UP_LEFT,
-    AIM_DOWN_RIGHT,
-    AIM_DOWN_LEFT,
-    AIM_COUNT
-} AimState;
+    ENEMY_STATE_IDLE,
+    ENEMY_STATE_GOING_UP,
+    ENEMY_STATE_GOING_DOWN,
+    ENEMY_STATE_DEAD,
+    ENEMY_STATE_COUNT
+} EnemyState;
+
+typedef struct
+{
+    int spriteId;
+    PointI basePosition;
+    EnemyState state;
+} EnemyBig;
 
 typedef struct
 {
@@ -35,9 +43,11 @@ typedef struct
     Sprite sight;
     Sprite shoot;
     PointI textPosition;
-    AimState aimState;
+    QuadrantPosition quadPosition;
     Sound sound;
     bool shouldQuit;
+    EnemyBig enemyBigs[8];
+    PointI positions[QPOS_COUNT];
 } MainMenu;
 
 MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound);
