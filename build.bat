@@ -10,8 +10,6 @@ cl -Zi ^
    /I ..\libs\soloud\include ^
    /I ..\libs\include ^
    main.c ^
-   program\program.c ^
-   program\assetManager\assetManager.c ^
    program\core\fonts\fonts.c ^
    program\core\graphics\graphics.c ^
    program\core\input\keyboard.c ^
@@ -19,7 +17,6 @@ cl -Zi ^
    program\core\shader\shader.c ^
    program\core\sprite\sprite.c ^
    program\core\stackAllocator\stack_allocator.c ^
-   program\mainMenu\mainMenu.c ^
    program\sound\sound.c ^
    ..\libs\soloud\src\audiosource\openmpt\soloud_openmpt_dll.c ^
    ..\libs\soloud\src\audiosource\wav\stb_vorbis.c ^

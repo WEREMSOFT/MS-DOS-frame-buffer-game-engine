@@ -8,6 +8,12 @@
 #include "program/core/graphics/graphics.h"
 #include "program/core/sprite/sprite.h"
 #include "program/sound/sound.h"
+#define STBI_MALLOC(sz) allocStatic(sz)
+#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
+#define STBI_FREE(p) freeStatic(p)
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #define __STATIC_ALLOC_IMPLEMENTATION__
 #include "program/core/stackAllocator/staticAlloc.h"
@@ -16,6 +22,10 @@
 #define ARRAY_REALLOC reallocStatic
 #define __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #include "program/core/array/array.h"
+
+#define ENEMY_SPEED 50.
+#define ENEMY_DOWN_OFFSET 30
+#define ENEMY_UP_OFFSET 20
 
 typedef enum
 {
@@ -46,10 +56,6 @@ typedef struct
     EnemyState state;
 } Enemy;
 
-#define ENEMY_SPEED 50.
-#define ENEMY_DOWN_OFFSET 30
-#define ENEMY_UP_OFFSET 20
-
 typedef enum
 {
     QPOS_NONE,
@@ -79,6 +85,14 @@ typedef struct
     Enemy enemyBigs[8];
     PointI positions[QPOS_COUNT];
 } Level1;
+
+typedef struct
+{
+    Graphics graphics;
+    Level1 mainMenu;
+    Sprite sprites[ASSET_COUNT];
+    Sound sound;
+} Program;
 
 void spritesLoad(Sprite *this)
 {
@@ -282,7 +296,7 @@ Level1 handleControls(Level1 _this)
     return _this;
 }
 
-Level1 mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
+Level1 level1Create(Graphics graphics, Sprite *sprites, Sound sound)
 {
     Level1 _this = {0};
 
@@ -311,7 +325,7 @@ Level1 mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
     return _this;
 }
 
-static void enemiesDraw(Level1 _this)
+void enemiesDraw(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
@@ -323,7 +337,7 @@ static void enemiesDraw(Level1 _this)
     spriteDrawTransparentClipped(_this.enemyGreenBig, _this.graphics.imageData);
 }
 
-Level1 mainMenuUpdate(Level1 _this)
+Level1 level1Update(Level1 _this)
 {
     soundPlaySpeech(_this.sound, SPEECH_SELECT_SHIP);
     bool shouldContinue = true;
@@ -376,21 +390,6 @@ Level1 mainMenuUpdate(Level1 _this)
     return _this;
 }
 
-typedef struct
-{
-    Graphics graphics;
-    Level1 mainMenu;
-    Sprite sprites[ASSET_COUNT];
-    Sound sound;
-} Program;
-
-#define STBI_MALLOC(sz) allocStatic(sz)
-#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
-#define STBI_FREE(p) freeStatic(p)
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 Program programCreate()
 {
     staticAllocatorInit(100092024);
@@ -399,7 +398,7 @@ Program programCreate()
     this.sound = soundCreate();
     spritesLoad(this.sprites);
     Soloud_setGlobalVolume(this.sound.soloud, 1.);
-    this.mainMenu = mainMenuCreate(this.graphics, this.sprites, this.sound);
+    this.mainMenu = level1Create(this.graphics, this.sprites, this.sound);
 
     return this;
 }
@@ -408,7 +407,7 @@ void programMainLoop(Program this)
 {
     while (!this.mainMenu.shouldQuit)
     {
-        this.mainMenu = mainMenuUpdate(this.mainMenu);
+        this.mainMenu = level1Update(this.mainMenu);
         if (this.mainMenu.shouldQuit)
             return;
     }
