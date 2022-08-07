@@ -2,6 +2,7 @@
 #define __UTILS_H__
 #include <math.h>
 #include <stdio.h>
+#include "../graphics/graphics.h"
 static inline PointF positionUpdateIntoCircularMovenent()
 {
     PointF this = {0};
