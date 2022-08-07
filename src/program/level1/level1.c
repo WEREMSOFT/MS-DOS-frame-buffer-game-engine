@@ -39,7 +39,18 @@ static void setPositions(PointI *positions)
     positions[QPOS_TOP_LEFT].y = 55;
 }
 
-MainMenu handleControls(MainMenu _this)
+static Level1 initializeEnemies(Level1 _this)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        _this.enemyBigs[i].position.x = _this.enemyBigs[i].basePosition.x = (int)_this.positions[i].x;
+        _this.enemyBigs[i].position.y = _this.enemyBigs[i].basePosition.y = (int)_this.positions[i].y;
+        _this.enemyBigs[i] = enemyPassToStateHidden(_this.enemyBigs[i]);
+    }
+    return _this;
+}
+
+Level1 handleControls(Level1 _this)
 {
 
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
@@ -114,9 +125,9 @@ MainMenu handleControls(MainMenu _this)
     return _this;
 }
 
-MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
+Level1 mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
 {
-    MainMenu _this = {0};
+    Level1 _this = {0};
 
     setPositions(_this.positions);
 
@@ -133,26 +144,29 @@ MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound)
     _this.sight = sprites[ASSET_SIGHT];
     _this.shouldQuit = false;
 
+    _this = initializeEnemies(_this);
+
     for (int i = 0; i < 8; i++)
     {
-        //_this.enemyBigs[i] = enemyBigPassToStateHidden(_this.enemyBigs[i]);
+        _this.enemyBigs[i] = enemyPassToStateHidden(_this.enemyBigs[i]);
     }
 
     return _this;
 }
 
-static void enemiesDraw(MainMenu _this)
+static void enemiesDraw(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
-        _this.enemyGreenBig.position = _this.positions[i];
-        _this.enemyGreenBig.position.x += ENEMY_OFFSET.x;
-        _this.enemyGreenBig.position.y += ENEMY_OFFSET.y;
-        spriteDrawTransparentClipped(_this.enemyGreenBig, _this.graphics.imageData);
-    }
+        if (_this.enemyBigs[i].state == ENEMY_STATE_HIDDEN)
+            continue;
+        _this.enemyGreenBig.position.x = (int)_this.enemyBigs[i].position.x;
+        _this.enemyGreenBig.position.y = (int)_this.enemyBigs[i].position.y;
+    };
+    spriteDrawTransparentClipped(_this.enemyGreenBig, _this.graphics.imageData);
 }
 
-MainMenu mainMenuUpdate(MainMenu _this)
+Level1 mainMenuUpdate(Level1 _this)
 {
     soundPlaySpeech(_this.sound, SPEECH_SELECT_SHIP);
     bool shouldContinue = true;
@@ -169,8 +183,14 @@ MainMenu mainMenuUpdate(MainMenu _this)
         {
             elapsedTime = glfwGetTime();
             int enemyToDisplay = 1 + rand() % 3;
-            enemyBigPassToStateGoingUp(_this.enemyBigs[enemyToDisplay]);
+            if (_this.enemyBigs[enemyToDisplay].state == ENEMY_STATE_HIDDEN)
+                _this.enemyBigs[enemyToDisplay] = enemyPassToStateGoingUp(_this.enemyBigs[enemyToDisplay]);
         }
+
+        enemyProcessStateGoingDown(_this.enemyBigs, dt);
+        enemyProcessStateGoingUp(_this.enemyBigs, dt);
+
+        enemiesDraw(_this);
 
         _this = handleControls(_this);
 

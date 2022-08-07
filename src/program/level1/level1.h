@@ -34,9 +34,9 @@ typedef struct
     bool shouldQuit;
     Enemy enemyBigs[8];
     PointI positions[QPOS_COUNT];
-} MainMenu;
+} Level1;
 
-MainMenu mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound);
-MainMenu mainMenuUpdate(MainMenu this);
+Level1 mainMenuCreate(Graphics graphics, Sprite *sprites, Sound sound);
+Level1 mainMenuUpdate(Level1 this);
 
 #endif

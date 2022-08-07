@@ -4,19 +4,24 @@
 
 PointI ENEMY_OFFSET = {-10, -10};
 
-Enemy enemyBigPassToStateHidden(Enemy this)
+Enemy enemyPassToStateHidden(Enemy this)
 {
     this.state = ENEMY_STATE_HIDDEN;
+    this.position.y = this.basePosition.y + ENEMY_DOWN_OFFSET;
+    return this;
 }
 
-Enemy enemyBigPassToStateGoingUp(Enemy this)
+Enemy enemyPassToStateGoingUp(Enemy this)
 {
     this.state = ENEMY_STATE_GOING_UP;
+    this.position.y = this.basePosition.y + ENEMY_DOWN_OFFSET;
+    return this;
 }
 
-Enemy enemyBigPassToStateGoingDown(Enemy this)
+Enemy enemyPassToStateGoingDown(Enemy this)
 {
     this.state = ENEMY_STATE_GOING_DOWN;
+    return this;
 }
 
 static int sortByStateHiddenFirst(Enemy *a, Enemy *b)
@@ -29,16 +34,18 @@ static int sortByStateGoingUpFirst(Enemy *a, Enemy *b)
     return a->state == ENEMY_STATE_GOING_UP ? 1 : 0;
 }
 
-void enemyProcessStateGoingDown(Enemy *enemies)
+void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime)
 {
-    qsort(enemies, 8, sizeof(Enemy), sortByStateHiddenFirst);
-    for (int i = 0; i < 8 || enemies[i].state != ENEMY_STATE_GOING_UP; i++)
+    for (int i = 0; i < 8; i++)
     {
-        enemies[i].position.y++;
-        if (enemies[i].position.y > enemies[i].basePosition.y + 50)
+        if (enemies[i].state != ENEMY_STATE_GOING_DOWN)
+            continue;
+        if (enemies[i].position.y > enemies[i].basePosition.y + ENEMY_DOWN_OFFSET)
         {
-            enemies[i] = enemyBigPassToStateHidden(enemies[i]);
+            enemies[i] = enemyPassToStateHidden(enemies[i]);
+            continue;
         }
+        enemies[i].position.y += ENEMY_SPEED * deltaTime;
     }
 }
 
@@ -47,15 +54,17 @@ void enemyProcessStateIdle(Enemy *enemies)
     qsort(enemies, 8, sizeof(Enemy), sortByStateHiddenFirst);
 }
 
-void enemyProcessStateGoingUp(Enemy *enemies)
+void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime)
 {
-    qsort(enemies, 8, sizeof(Enemy), sortByStateHiddenFirst);
-    for (int i = 0; i < 8 || enemies[i].state != ENEMY_STATE_GOING_UP; i++)
+    for (int i = 0; i < 8; i++)
     {
-        enemies[i].position.y--;
-        if (enemies[i].position.y > enemies[i].basePosition.y - 50)
+        if (enemies[i].state != ENEMY_STATE_GOING_UP)
+            continue;
+        if (enemies[i].position.y < enemies[i].basePosition.y - ENEMY_UP_OFFSET)
         {
-            enemies[i] = enemyBigPassToStateGoingDown(enemies[i]);
+            enemies[i] = enemyPassToStateGoingDown(enemies[i]);
+            continue;
         }
+        enemies[i].position.y -= ENEMY_SPEED * deltaTime;
     }
 }

@@ -12,21 +12,25 @@ typedef enum
     ENEMY_STATE_COUNT
 } EnemyState;
 
+#define ENEMY_SPEED 50.
+#define ENEMY_DOWN_OFFSET 30
+#define ENEMY_UP_OFFSET 20
+
 extern PointI ENEMY_OFFSET;
 
 typedef struct
 {
     int spriteId;
     PointI basePosition;
-    PointI position;
+    PointF position;
     EnemyState state;
 } Enemy;
 
-Enemy enemyBigPassToStateHidden(Enemy this);
-Enemy enemyBigPassToStateGoingUp(Enemy this);
-Enemy enemyBigPassToStateGoingDown(Enemy this);
-void enemyProcessStateGoingDown(Enemy *enemies);
+Enemy enemyPassToStateHidden(Enemy this);
+Enemy enemyPassToStateGoingUp(Enemy this);
+Enemy enemyPassToStateGoingDown(Enemy this);
+void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime);
 void enemyProcessStateIdle(Enemy *enemies);
-void enemyProcessStateGoingUp(Enemy *enemies);
+void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime);
 
 #endif

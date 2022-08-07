@@ -9,7 +9,7 @@
 typedef struct
 {
     Graphics graphics;
-    MainMenu mainMenu;
+    Level1 mainMenu;
     Sprite sprites[ASSET_COUNT];
     Sound sound;
 } Program;
