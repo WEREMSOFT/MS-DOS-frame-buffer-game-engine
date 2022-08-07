@@ -71,6 +71,25 @@ void spriteDrawTransparentClipped(Sprite this, ImageData imageData)
     }
 }
 
+void spriteDrawTransparentClippedLowerLine(Sprite this, ImageData imageData, int lowerLineHeight)
+{
+    int clippedWidth = fmin(this.size.x,
+                            fmax(0, this.size.x - (this.size.x + this.position.x - imageData.size.x)));
+    int clippedHeight = fmin(this.size.y,
+                             fmax(0, this.size.y - (this.size.y + this.position.y - lowerLineHeight)));
+    int clippedX = this.position.x < 0 ? -this.position.x : 0;
+    int clippedY = this.position.y < 0 ? -this.position.y : 0;
+    for (int i = clippedX; i < clippedWidth; i++)
+    {
+        for (int j = clippedY; j < clippedHeight; j++)
+        {
+            Color color = this.imageData[j * this.size.x + i];
+            if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
+                graphicsPutPixel(imageData, (PointI){this.position.x + i, this.position.y + j}, color);
+        }
+    }
+}
+
 void spriteDestroy(Sprite this)
 {
     freeStatic(this.imageData);

@@ -8,12 +8,6 @@
 #include "program/core/graphics/graphics.h"
 #include "program/core/sprite/sprite.h"
 #include "program/sound/sound.h"
-#define STBI_MALLOC(sz) allocStatic(sz)
-#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
-#define STBI_FREE(p) freeStatic(p)
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 #define __STATIC_ALLOC_IMPLEMENTATION__
 #include "program/core/stackAllocator/staticAlloc.h"
@@ -23,9 +17,18 @@
 #define __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #include "program/core/array/array.h"
 
+#define STBI_MALLOC(sz) allocStatic(sz)
+#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
+#define STBI_FREE(p) freeStatic(p)
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #define ENEMY_SPEED 50.
-#define ENEMY_DOWN_OFFSET 30
+#define ENEMY_DOWN_OFFSET 53
 #define ENEMY_UP_OFFSET 20
+
+PointI ENEMY_OFFSET;
 
 typedef enum
 {
@@ -58,26 +61,22 @@ typedef struct
 
 typedef enum
 {
-    QPOS_NONE,
-    QPOS_BOTTOM,
-    QPOS_BOTTOM_RIGHT,
-    QPOS_BOTTOM_LEFT,
+    QPOS_TOP_LEFT,
     QPOS_TOP,
     QPOS_TOP_RIGHT,
-    QPOS_TOP_LEFT,
     QPOS_RIGHT,
     QPOS_LEFT,
+    QPOS_BOTTOM_LEFT,
+    QPOS_BOTTOM,
+    QPOS_BOTTOM_RIGHT,
+    QPOS_NONE,
     QPOS_COUNT
 } QuadrantPosition;
 
 typedef struct
 {
     Graphics graphics;
-    Sprite background;
-    Sprite enemyGreenBig;
-    Sprite enemyGreenSmall;
-    Sprite sight;
-    Sprite shoot;
+    Sprite sprites[ASSET_COUNT];
     PointI textPosition;
     QuadrantPosition quadPosition;
     Sound sound;
@@ -113,8 +112,6 @@ void spritesLoad(Sprite *this)
     this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenSmall1.bmp");
 }
 
-PointI ENEMY_OFFSET = {-10, -10};
-
 Enemy enemyPassToStateHidden(Enemy this)
 {
     this.state = ENEMY_STATE_HIDDEN;
@@ -135,16 +132,6 @@ Enemy enemyPassToStateGoingDown(Enemy this)
     return this;
 }
 
-static int sortByStateHiddenFirst(Enemy *a, Enemy *b)
-{
-    return a->state == ENEMY_STATE_HIDDEN ? 1 : 0;
-}
-
-static int sortByStateGoingUpFirst(Enemy *a, Enemy *b)
-{
-    return a->state == ENEMY_STATE_GOING_UP ? 1 : 0;
-}
-
 void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime)
 {
     for (int i = 0; i < 8; i++)
@@ -158,11 +145,6 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime)
         }
         enemies[i].position.y += ENEMY_SPEED * deltaTime;
     }
-}
-
-void enemyProcessStateIdle(Enemy *enemies)
-{
-    qsort(enemies, 8, sizeof(Enemy), sortByStateHiddenFirst);
 }
 
 void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime)
@@ -180,7 +162,7 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime)
     }
 }
 
-static void setPositions(PointI *positions)
+void level1SetPositions(PointI *positions)
 {
     positions[QPOS_TOP_LEFT].x = 42;
     positions[QPOS_TOP_LEFT].y = 55;
@@ -210,25 +192,26 @@ static void setPositions(PointI *positions)
     positions[QPOS_TOP_LEFT].y = 55;
 }
 
-static Level1 initializeEnemies(Level1 _this)
+static Level1 level1InitializeEnemies(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
-        _this.enemyBigs[i].position.x = _this.enemyBigs[i].basePosition.x = (int)_this.positions[i].x;
-        _this.enemyBigs[i].position.y = _this.enemyBigs[i].basePosition.y = (int)_this.positions[i].y;
+        _this.enemyBigs[i].position.x = _this.enemyBigs[i].basePosition.x = (int)_this.positions[i].x + ENEMY_OFFSET.x;
+        _this.enemyBigs[i].position.y = _this.enemyBigs[i].basePosition.y = (int)_this.positions[i].y + ENEMY_OFFSET.y;
         _this.enemyBigs[i] = enemyPassToStateHidden(_this.enemyBigs[i]);
+        _this.enemyBigs[i].spriteId = i >= 5 ? ASSET_ENEMY_GREEN_BIG : ASSET_ENEMY_GREEN_SMALL;
     }
     return _this;
 }
 
-Level1 handleControls(Level1 _this)
+Level1 level1HandleControls(Level1 _this)
 {
 
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
         glfwGetKey(_this.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_TOP_LEFT];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_TOP_LEFT;
         return _this;
     }
@@ -236,8 +219,8 @@ Level1 handleControls(Level1 _this)
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
         glfwGetKey(_this.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_TOP_RIGHT];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_TOP_RIGHT;
         return _this;
     }
@@ -245,8 +228,8 @@ Level1 handleControls(Level1 _this)
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
         glfwGetKey(_this.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_BOTTOM_LEFT];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_BOTTOM_LEFT;
         return _this;
     }
@@ -254,40 +237,40 @@ Level1 handleControls(Level1 _this)
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
         glfwGetKey(_this.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_BOTTOM_RIGHT];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_BOTTOM_RIGHT;
         return _this;
     }
 
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_TOP];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_TOP;
         return _this;
     }
 
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_BOTTOM];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_BOTTOM;
         return _this;
     }
 
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_RIGHT];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_RIGHT;
         return _this;
     }
 
     if (glfwGetKey(_this.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        _this.sight.position = _this.positions[QPOS_LEFT];
-        spriteDrawTransparentClipped(_this.sight, _this.graphics.imageData);
+        _this.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
+        spriteDrawTransparentClipped(_this.sprites[ASSET_SIGHT], _this.graphics.imageData);
         _this.quadPosition = QPOS_LEFT;
         return _this;
     }
@@ -300,22 +283,21 @@ Level1 level1Create(Graphics graphics, Sprite *sprites, Sound sound)
 {
     Level1 _this = {0};
 
-    setPositions(_this.positions);
+    level1SetPositions(_this.positions);
 
     _this.sound = sound;
     _this.graphics = graphics;
-    _this.background = sprites[ASSET_BACKGROUND];
-    _this.enemyGreenBig = sprites[ASSET_ENEMY_GREEN_BIG];
-    _this.enemyGreenSmall = sprites[ASSET_ENEMY_GREEN_SMALL];
+    for (int i = 0; i < ASSET_COUNT; i++)
+    {
+        _this.sprites[i] = sprites[i];
+    }
 
-    ENEMY_OFFSET.y = _this.graphics.imageData.size.y - _this.enemyGreenBig.size.y - _this.positions[QPOS_BOTTOM_LEFT].y;
-    ENEMY_OFFSET.x = 40 - _this.positions[QPOS_BOTTOM_LEFT].x;
+    ENEMY_OFFSET.y = 0;
+    ENEMY_OFFSET.x = -8;
 
-    _this.shoot = sprites[ASSET_SHOOT];
-    _this.sight = sprites[ASSET_SIGHT];
     _this.shouldQuit = false;
 
-    _this = initializeEnemies(_this);
+    _this = level1InitializeEnemies(_this);
 
     for (int i = 0; i < 8; i++)
     {
@@ -325,16 +307,17 @@ Level1 level1Create(Graphics graphics, Sprite *sprites, Sound sound)
     return _this;
 }
 
-void enemiesDraw(Level1 _this)
+void level1EnemiesDraw(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
         if (_this.enemyBigs[i].state == ENEMY_STATE_HIDDEN)
             continue;
-        _this.enemyGreenBig.position.x = (int)_this.enemyBigs[i].position.x;
-        _this.enemyGreenBig.position.y = (int)_this.enemyBigs[i].position.y;
+        _this.sprites[_this.enemyBigs[i].spriteId].position.x = (int)_this.enemyBigs[i].position.x;
+        _this.sprites[_this.enemyBigs[i].spriteId].position.y = (int)_this.enemyBigs[i].position.y;
+        int lowerLimit = i >= 5 ? 240 : 180;
+        spriteDrawTransparentClippedLowerLine(_this.sprites[_this.enemyBigs[i].spriteId], _this.graphics.imageData, lowerLimit);
     };
-    spriteDrawTransparentClipped(_this.enemyGreenBig, _this.graphics.imageData);
 }
 
 Level1 level1Update(Level1 _this)
@@ -348,12 +331,12 @@ Level1 level1Update(Level1 _this)
         graphicsClear(_this.graphics.imageData);
 
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
-        spriteDrawClipped(_this.background, _this.graphics.imageData);
+        spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
 
         if (glfwGetTime() - elapsedTime > 1.)
         {
             elapsedTime = glfwGetTime();
-            int enemyToDisplay = 1 + rand() % 3;
+            int enemyToDisplay = rand() % 8;
             if (_this.enemyBigs[enemyToDisplay].state == ENEMY_STATE_HIDDEN)
                 _this.enemyBigs[enemyToDisplay] = enemyPassToStateGoingUp(_this.enemyBigs[enemyToDisplay]);
         }
@@ -361,23 +344,23 @@ Level1 level1Update(Level1 _this)
         enemyProcessStateGoingDown(_this.enemyBigs, dt);
         enemyProcessStateGoingUp(_this.enemyBigs, dt);
 
-        enemiesDraw(_this);
+        level1EnemiesDraw(_this);
 
-        _this = handleControls(_this);
+        _this = level1HandleControls(_this);
 
-        if (_this.shoot.animation.isPlaying)
+        if (_this.sprites[ASSET_ENEMY_GREEN_BIG_SHOOT].animation.isPlaying)
         {
-            spriteDrawTransparentAnimatedClipped(&_this.shoot, _this.graphics.imageData, dt);
+            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_ENEMY_GREEN_BIG_SHOOT], _this.graphics.imageData, dt);
         }
         else if (glfwGetKey(_this.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
         {
 
             if (_this.quadPosition != QPOS_NONE)
             {
-                _this.shoot.position = _this.sight.position;
-                _this.shoot.position.x -= _this.sight.size.x / 2;
-                _this.shoot.position.y -= _this.sight.size.y / 2;
-                spriteDrawTransparentAnimatedClipped(&_this.shoot, _this.graphics.imageData, dt);
+                _this.sprites[ASSET_SHOOT].position = _this.sprites[ASSET_SIGHT].position;
+                _this.sprites[ASSET_SHOOT].position.x -= _this.sprites[ASSET_SIGHT].size.x / 2;
+                _this.sprites[ASSET_SHOOT].position.y -= _this.sprites[ASSET_SIGHT].size.y / 2;
+                spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_SHOOT], _this.graphics.imageData, dt);
                 soundPlaySfx(_this.sound, SFX_SHOOT_HERO);
             }
         }
