@@ -37,6 +37,8 @@ typedef enum
     ASSET_SHOOT,
     ASSET_ENEMY_GREEN_BIG,
     ASSET_ENEMY_GREEN_BIG_SHOOT,
+    ASSET_ENEMY_GREEN_MEDIUM,
+    ASSET_ENEMY_GREEN_MEDIUM_SHOOT,
     ASSET_ENEMY_GREEN_SMALL,
     ASSET_ENEMY_GREEN_SMALL_SHOOT,
     ASSET_COUNT
@@ -56,6 +58,9 @@ typedef struct
     EnemyState state;
     int spriteId;
     int lowerClippingPosition;
+    int downClip;
+    int topOffset;
+    int bottomOffset;
     PointI basePosition;
     PointF position;
 } Enemy;
@@ -65,8 +70,8 @@ typedef enum
     QPOS_TOP_LEFT,
     QPOS_TOP,
     QPOS_TOP_RIGHT,
-    QPOS_RIGHT,
     QPOS_LEFT,
+    QPOS_RIGHT,
     QPOS_BOTTOM_LEFT,
     QPOS_BOTTOM,
     QPOS_BOTTOM_RIGHT,
@@ -109,8 +114,11 @@ void spritesLoad(Sprite *this)
     this[ASSET_ENEMY_GREEN_BIG] = spriteCreate("assets/enemyGreenBig2.bmp");
     this[ASSET_ENEMY_GREEN_BIG_SHOOT] = spriteCreate("assets/enemyGreenBig1.bmp");
 
-    this[ASSET_ENEMY_GREEN_SMALL] = spriteCreate("assets/enemyGreenSmall2.bmp");
-    this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenSmall1.bmp");
+    this[ASSET_ENEMY_GREEN_MEDIUM] = spriteCreate("assets/enemyGreenSmall2.bmp");
+    this[ASSET_ENEMY_GREEN_MEDIUM_SHOOT] = spriteCreate("assets/enemyGreenSmall1.bmp");
+
+    this[ASSET_ENEMY_GREEN_SMALL] = spriteCreate("assets/enemyGreenTiny2.bmp");
+    this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenTiny1.bmp");
 }
 
 Enemy enemyPassToStateHidden(Enemy this)
@@ -139,7 +147,7 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime)
     {
         if (enemies[i].state != ENEMY_STATE_GOING_DOWN)
             continue;
-        if (enemies[i].position.y > enemies[i].basePosition.y + ENEMY_DOWN_OFFSET)
+        if (enemies[i].position.y > enemies[i].basePosition.y + enemies[i].bottomOffset)
         {
             enemies[i] = enemyPassToStateHidden(enemies[i]);
             continue;
@@ -154,7 +162,7 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime)
     {
         if (enemies[i].state != ENEMY_STATE_GOING_UP)
             continue;
-        if (enemies[i].position.y < enemies[i].basePosition.y - ENEMY_UP_OFFSET)
+        if (enemies[i].position.y < enemies[i].basePosition.y - enemies[i].topOffset)
         {
             enemies[i] = enemyPassToStateGoingDown(enemies[i]);
             continue;
@@ -200,7 +208,14 @@ static Level1 level1InitializeEnemies(Level1 _this)
         _this.enemies[i].position.x = _this.enemies[i].basePosition.x = (int)_this.positions[i].x + ENEMY_OFFSET.x;
         _this.enemies[i].position.y = _this.enemies[i].basePosition.y = (int)_this.positions[i].y + ENEMY_OFFSET.y;
         _this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
-        _this.enemies[i].spriteId = i >= 5 ? ASSET_ENEMY_GREEN_BIG : ASSET_ENEMY_GREEN_SMALL;
+        if (i <= QPOS_TOP_RIGHT)
+            _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_SMALL;
+        else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)
+            _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_MEDIUM;
+        else
+            _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_BIG;
+
+        _this.enemies[i].lowerClippingPosition = 240;
     }
 
     _this.enemies[QPOS_LEFT].lowerClippingPosition = 157;
@@ -355,9 +370,9 @@ Level1 level1Update(Level1 _this)
 
         _this = level1HandleControls(_this);
 
-        if (_this.sprites[ASSET_ENEMY_GREEN_BIG_SHOOT].animation.isPlaying)
+        if (_this.sprites[ASSET_SHOOT].animation.isPlaying)
         {
-            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_ENEMY_GREEN_BIG_SHOOT], _this.graphics.imageData, dt);
+            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_SHOOT], _this.graphics.imageData, dt);
         }
         else if (glfwGetKey(_this.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
         {
@@ -367,6 +382,7 @@ Level1 level1Update(Level1 _this)
                 _this.sprites[ASSET_SHOOT].position = _this.sprites[ASSET_SIGHT].position;
                 _this.sprites[ASSET_SHOOT].position.x -= _this.sprites[ASSET_SIGHT].size.x / 2;
                 _this.sprites[ASSET_SHOOT].position.y -= _this.sprites[ASSET_SIGHT].size.y / 2;
+
                 spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_SHOOT], _this.graphics.imageData, dt);
                 soundPlaySfx(_this.sound, SFX_SHOOT_HERO);
             }
