@@ -53,10 +53,11 @@ typedef enum
 
 typedef struct
 {
+    EnemyState state;
     int spriteId;
+    int lowerClippingPosition;
     PointI basePosition;
     PointF position;
-    EnemyState state;
 } Enemy;
 
 typedef enum
@@ -81,7 +82,7 @@ typedef struct
     QuadrantPosition quadPosition;
     Sound sound;
     bool shouldQuit;
-    Enemy enemyBigs[8];
+    Enemy enemies[8];
     PointI positions[QPOS_COUNT];
 } Level1;
 
@@ -196,11 +197,18 @@ static Level1 level1InitializeEnemies(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
-        _this.enemyBigs[i].position.x = _this.enemyBigs[i].basePosition.x = (int)_this.positions[i].x + ENEMY_OFFSET.x;
-        _this.enemyBigs[i].position.y = _this.enemyBigs[i].basePosition.y = (int)_this.positions[i].y + ENEMY_OFFSET.y;
-        _this.enemyBigs[i] = enemyPassToStateHidden(_this.enemyBigs[i]);
-        _this.enemyBigs[i].spriteId = i >= 5 ? ASSET_ENEMY_GREEN_BIG : ASSET_ENEMY_GREEN_SMALL;
+        _this.enemies[i].position.x = _this.enemies[i].basePosition.x = (int)_this.positions[i].x + ENEMY_OFFSET.x;
+        _this.enemies[i].position.y = _this.enemies[i].basePosition.y = (int)_this.positions[i].y + ENEMY_OFFSET.y;
+        _this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
+        _this.enemies[i].spriteId = i >= 5 ? ASSET_ENEMY_GREEN_BIG : ASSET_ENEMY_GREEN_SMALL;
     }
+
+    _this.enemies[QPOS_LEFT].lowerClippingPosition = 157;
+    _this.enemies[QPOS_RIGHT].lowerClippingPosition = 180;
+    _this.enemies[QPOS_BOTTOM_LEFT].lowerClippingPosition = 240;
+    _this.enemies[QPOS_BOTTOM_RIGHT].lowerClippingPosition = 240;
+    _this.enemies[QPOS_BOTTOM].lowerClippingPosition = 240;
+
     return _this;
 }
 
@@ -301,7 +309,7 @@ Level1 level1Create(Graphics graphics, Sprite *sprites, Sound sound)
 
     for (int i = 0; i < 8; i++)
     {
-        _this.enemyBigs[i] = enemyPassToStateHidden(_this.enemyBigs[i]);
+        _this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
     }
 
     return _this;
@@ -311,12 +319,11 @@ void level1EnemiesDraw(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
-        if (_this.enemyBigs[i].state == ENEMY_STATE_HIDDEN)
+        if (_this.enemies[i].state == ENEMY_STATE_HIDDEN)
             continue;
-        _this.sprites[_this.enemyBigs[i].spriteId].position.x = (int)_this.enemyBigs[i].position.x;
-        _this.sprites[_this.enemyBigs[i].spriteId].position.y = (int)_this.enemyBigs[i].position.y;
-        int lowerLimit = i >= 5 ? 240 : 180;
-        spriteDrawTransparentClippedLowerLine(_this.sprites[_this.enemyBigs[i].spriteId], _this.graphics.imageData, lowerLimit);
+        _this.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
+        _this.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
+        spriteDrawTransparentClippedLowerLine(_this.sprites[_this.enemies[i].spriteId], _this.graphics.imageData, _this.enemies[i].lowerClippingPosition);
     };
 }
 
@@ -337,12 +344,12 @@ Level1 level1Update(Level1 _this)
         {
             elapsedTime = glfwGetTime();
             int enemyToDisplay = rand() % 8;
-            if (_this.enemyBigs[enemyToDisplay].state == ENEMY_STATE_HIDDEN)
-                _this.enemyBigs[enemyToDisplay] = enemyPassToStateGoingUp(_this.enemyBigs[enemyToDisplay]);
+            if (_this.enemies[enemyToDisplay].state == ENEMY_STATE_HIDDEN)
+                _this.enemies[enemyToDisplay] = enemyPassToStateGoingUp(_this.enemies[enemyToDisplay]);
         }
 
-        enemyProcessStateGoingDown(_this.enemyBigs, dt);
-        enemyProcessStateGoingUp(_this.enemyBigs, dt);
+        enemyProcessStateGoingDown(_this.enemies, dt);
+        enemyProcessStateGoingUp(_this.enemies, dt);
 
         level1EnemiesDraw(_this);
 
