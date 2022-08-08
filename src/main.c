@@ -33,6 +33,7 @@ PointI ENEMY_OFFSET;
 typedef enum
 {
     ASSET_BACKGROUND,
+    ASSET_FOREGROUND,
     ASSET_SIGHT,
     ASSET_SHOOT,
     ASSET_ENEMY_GREEN_BIG,
@@ -58,8 +59,7 @@ typedef struct
     EnemyState state;
     int spriteId;
     int lowerClippingPosition;
-    int downClip;
-    int topOffset;
+    int topLimit;
     int bottomOffset;
     PointI basePosition;
     PointF position;
@@ -101,7 +101,9 @@ typedef struct
 
 void spritesLoad(Sprite *this)
 {
-    this[ASSET_BACKGROUND] = spriteCreate("assets/320x240Test.png");
+    this[ASSET_BACKGROUND] = spriteCreate("assets/background.bmp");
+    this[ASSET_FOREGROUND] = spriteCreate("assets/foreground.bmp");
+
     this[ASSET_SIGHT] = spriteCreate("assets/aimcross.png");
 
     this[ASSET_SHOOT] = spriteCreate("assets/shoot.bmp");
@@ -128,11 +130,11 @@ Enemy enemyPassToStateHidden(Enemy this)
     return this;
 }
 
-Enemy enemyPassToStateGoingUp(Enemy this)
+Enemy enemyPassToStateGoingUp(Enemy _this)
 {
-    this.state = ENEMY_STATE_GOING_UP;
-    this.position.y = this.basePosition.y + ENEMY_DOWN_OFFSET;
-    return this;
+    _this.state = ENEMY_STATE_GOING_UP;
+    _this.position.y = _this.basePosition.y + ENEMY_DOWN_OFFSET;
+    return _this;
 }
 
 Enemy enemyPassToStateGoingDown(Enemy this)
@@ -147,7 +149,7 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime)
     {
         if (enemies[i].state != ENEMY_STATE_GOING_DOWN)
             continue;
-        if (enemies[i].position.y > enemies[i].basePosition.y + enemies[i].bottomOffset)
+        if (enemies[i].position.y > enemies[i].lowerClippingPosition)
         {
             enemies[i] = enemyPassToStateHidden(enemies[i]);
             continue;
@@ -162,7 +164,7 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime)
     {
         if (enemies[i].state != ENEMY_STATE_GOING_UP)
             continue;
-        if (enemies[i].position.y < enemies[i].basePosition.y - enemies[i].topOffset)
+        if (enemies[i].position.y < enemies[i].topLimit)
         {
             enemies[i] = enemyPassToStateGoingDown(enemies[i]);
             continue;
@@ -201,13 +203,23 @@ void level1SetPositions(PointI *positions)
     positions[QPOS_TOP_LEFT].y = 55;
 }
 
-static Level1 level1InitializeEnemies(Level1 _this)
+static Level1 level1InitEnemies(Level1 _this)
 {
+    _this.enemies[QPOS_TOP_LEFT].lowerClippingPosition = 92;
+    _this.enemies[QPOS_TOP].lowerClippingPosition = 94;
+    _this.enemies[QPOS_TOP_RIGHT].lowerClippingPosition = 102;
+    _this.enemies[QPOS_LEFT].lowerClippingPosition = 157;
+    _this.enemies[QPOS_RIGHT].lowerClippingPosition = 177;
+    _this.enemies[QPOS_BOTTOM_LEFT].lowerClippingPosition = 240;
+    _this.enemies[QPOS_BOTTOM_RIGHT].lowerClippingPosition = 240;
+    _this.enemies[QPOS_BOTTOM].lowerClippingPosition = 240;
+
     for (int i = 0; i < 8; i++)
     {
         _this.enemies[i].position.x = _this.enemies[i].basePosition.x = (int)_this.positions[i].x + ENEMY_OFFSET.x;
         _this.enemies[i].position.y = _this.enemies[i].basePosition.y = (int)_this.positions[i].y + ENEMY_OFFSET.y;
         _this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
+
         if (i <= QPOS_TOP_RIGHT)
             _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_SMALL;
         else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)
@@ -215,14 +227,9 @@ static Level1 level1InitializeEnemies(Level1 _this)
         else
             _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_BIG;
 
-        _this.enemies[i].lowerClippingPosition = 240;
+        _this.enemies[i].bottomOffset = _this.enemies[i].lowerClippingPosition;
+        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - _this.sprites[_this.enemies[i].spriteId].size.y;
     }
-
-    _this.enemies[QPOS_LEFT].lowerClippingPosition = 157;
-    _this.enemies[QPOS_RIGHT].lowerClippingPosition = 180;
-    _this.enemies[QPOS_BOTTOM_LEFT].lowerClippingPosition = 240;
-    _this.enemies[QPOS_BOTTOM_RIGHT].lowerClippingPosition = 240;
-    _this.enemies[QPOS_BOTTOM].lowerClippingPosition = 240;
 
     return _this;
 }
@@ -320,7 +327,7 @@ Level1 level1Create(Graphics graphics, Sprite *sprites, Sound sound)
 
     _this.shouldQuit = false;
 
-    _this = level1InitializeEnemies(_this);
+    _this = level1InitEnemies(_this);
 
     for (int i = 0; i < 8; i++)
     {
@@ -355,6 +362,7 @@ Level1 level1Update(Level1 _this)
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
         spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
 
+        // Enemy selection and trigger to attack
         if (glfwGetTime() - elapsedTime > 1.)
         {
             elapsedTime = glfwGetTime();
@@ -388,6 +396,7 @@ Level1 level1Update(Level1 _this)
             }
         }
 
+        spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
         printFPS(_this.graphics, dt);
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
