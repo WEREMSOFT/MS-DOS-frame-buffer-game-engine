@@ -24,7 +24,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#define ENEMY_SPEED 50.
+#define ENEMY_SPEED 100.
 #define ENEMY_DOWN_OFFSET 53
 #define ENEMY_UP_OFFSET 20
 
@@ -32,16 +32,20 @@ PointI ENEMY_OFFSET;
 
 typedef enum
 {
+    ASSET_NONE,
     ASSET_BACKGROUND,
     ASSET_FOREGROUND,
     ASSET_SIGHT,
     ASSET_SHOOT,
+
     ASSET_ENEMY_GREEN_BIG,
-    ASSET_ENEMY_GREEN_BIG_SHOOT,
     ASSET_ENEMY_GREEN_MEDIUM,
-    ASSET_ENEMY_GREEN_MEDIUM_SHOOT,
     ASSET_ENEMY_GREEN_SMALL,
+
+    ASSET_ENEMY_GREEN_BIG_SHOOT,
+    ASSET_ENEMY_GREEN_MEDIUM_SHOOT,
     ASSET_ENEMY_GREEN_SMALL_SHOOT,
+
     ASSET_COUNT
 } Assets;
 
@@ -61,6 +65,8 @@ typedef struct
     int lowerClippingPosition;
     int topLimit;
     int bottomOffset;
+    bool visible;
+    float elapsedStateTime;
     PointI basePosition;
     PointF position;
 } Enemy;
@@ -99,35 +105,50 @@ typedef struct
     Sound sound;
 } Program;
 
-void spritesLoad(Sprite *this)
+void loadAssets(Sprite *_this)
 {
-    this[ASSET_BACKGROUND] = spriteCreate("assets/background.bmp");
-    this[ASSET_FOREGROUND] = spriteCreate("assets/foreground.bmp");
+    _this[ASSET_BACKGROUND] = spriteCreate("assets/background.bmp");
+    _this[ASSET_FOREGROUND] = spriteCreate("assets/foreground.bmp");
 
-    this[ASSET_SIGHT] = spriteCreate("assets/aimcross.png");
+    _this[ASSET_SIGHT] = spriteCreate("assets/aimcross.png");
 
-    this[ASSET_SHOOT] = spriteCreate("assets/shoot.bmp");
-    this[ASSET_SHOOT].animated = true;
-    this[ASSET_SHOOT].animation.frameCount = 4;
-    this[ASSET_SHOOT].animation.currentFrame = 0;
-    this[ASSET_SHOOT].animation.frameWidth = 55;
-    this[ASSET_SHOOT].animation.frameRate = 10.;
+    _this[ASSET_SHOOT] = spriteCreate("assets/shoot.bmp");
+    _this[ASSET_SHOOT].animated = true;
+    _this[ASSET_SHOOT].animation.frameCount = 4;
+    _this[ASSET_SHOOT].animation.currentFrame = 0;
+    _this[ASSET_SHOOT].animation.frameWidth = 55;
+    _this[ASSET_SHOOT].animation.frameRate = 10.;
 
-    this[ASSET_ENEMY_GREEN_BIG] = spriteCreate("assets/enemyGreenBig2.bmp");
-    this[ASSET_ENEMY_GREEN_BIG_SHOOT] = spriteCreate("assets/enemyGreenBig1.bmp");
+    _this[ASSET_ENEMY_GREEN_BIG] = spriteCreate("assets/enemyGreenBig2.bmp");
+    _this[ASSET_ENEMY_GREEN_BIG_SHOOT] = spriteCreate("assets/enemyGreenBig1.bmp");
 
-    this[ASSET_ENEMY_GREEN_MEDIUM] = spriteCreate("assets/enemyGreenSmall2.bmp");
-    this[ASSET_ENEMY_GREEN_MEDIUM_SHOOT] = spriteCreate("assets/enemyGreenSmall1.bmp");
+    _this[ASSET_ENEMY_GREEN_MEDIUM] = spriteCreate("assets/enemyGreenSmall2.bmp");
+    _this[ASSET_ENEMY_GREEN_MEDIUM_SHOOT] = spriteCreate("assets/enemyGreenSmall1.bmp");
 
-    this[ASSET_ENEMY_GREEN_SMALL] = spriteCreate("assets/enemyGreenTiny2.bmp");
-    this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenTiny1.bmp");
+    _this[ASSET_ENEMY_GREEN_SMALL] = spriteCreate("assets/enemyGreenTiny2.bmp");
+    _this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenTiny1.bmp");
 }
 
-Enemy enemyPassToStateHidden(Enemy this)
+Enemy enemyPassToStateHidden(Enemy _this)
 {
-    this.state = ENEMY_STATE_HIDDEN;
-    this.position.y = this.basePosition.y + ENEMY_DOWN_OFFSET;
-    return this;
+    _this.visible = true;
+    _this.state = ENEMY_STATE_HIDDEN;
+    _this.position.y = _this.basePosition.y + ENEMY_DOWN_OFFSET;
+    if (_this.spriteId > ASSET_ENEMY_GREEN_SMALL)
+        _this.spriteId -= 3;
+    return _this;
+}
+
+Enemy enemyPassToStateDead(Enemy _this)
+{
+    if (_this.state == ENEMY_STATE_DEAD)
+        return _this;
+
+    _this.state = ENEMY_STATE_DEAD;
+    _this.spriteId += 3;
+    _this.elapsedStateTime = 0;
+
+    return _this;
 }
 
 Enemy enemyPassToStateGoingUp(Enemy _this)
@@ -137,10 +158,10 @@ Enemy enemyPassToStateGoingUp(Enemy _this)
     return _this;
 }
 
-Enemy enemyPassToStateGoingDown(Enemy this)
+Enemy enemyPassToStateGoingDown(Enemy _this)
 {
-    this.state = ENEMY_STATE_GOING_DOWN;
-    return this;
+    _this.state = ENEMY_STATE_GOING_DOWN;
+    return _this;
 }
 
 void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime)
@@ -173,7 +194,31 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime)
     }
 }
 
-void level1SetPositions(PointI *positions)
+void enemyProcessStateDead(Enemy *enemies, float deltaTime)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        if (enemies[i].state != ENEMY_STATE_DEAD)
+            continue;
+
+        enemies[i].elapsedStateTime += deltaTime;
+
+        if (enemies[i].elapsedStateTime > 1)
+        {
+            enemies[i] = enemyPassToStateHidden(enemies[i]);
+            continue;
+        }
+
+        int reminder = (int)floorf(enemies[i].elapsedStateTime * 1000) % 2;
+
+        if (reminder == 0)
+            enemies[i].visible = false;
+        else
+            enemies[i].visible = true;
+    }
+}
+
+void level1InitPositions(PointI *positions)
 {
     positions[QPOS_TOP_LEFT].x = 42;
     positions[QPOS_TOP_LEFT].y = 55;
@@ -188,13 +233,13 @@ void level1SetPositions(PointI *positions)
     positions[QPOS_RIGHT].y = 130;
 
     positions[QPOS_BOTTOM_RIGHT].x = 225;
-    positions[QPOS_BOTTOM_RIGHT].y = 180;
+    positions[QPOS_BOTTOM_RIGHT].y = 200;
 
     positions[QPOS_BOTTOM].x = 125;
-    positions[QPOS_BOTTOM].y = 180;
+    positions[QPOS_BOTTOM].y = 200;
 
     positions[QPOS_BOTTOM_LEFT].x = 60;
-    positions[QPOS_BOTTOM_LEFT].y = 180;
+    positions[QPOS_BOTTOM_LEFT].y = 200;
 
     positions[QPOS_LEFT].x = 55;
     positions[QPOS_LEFT].y = 125;
@@ -216,6 +261,7 @@ static Level1 level1InitEnemies(Level1 _this)
 
     for (int i = 0; i < 8; i++)
     {
+        _this.enemies[i].visible = true;
         _this.enemies[i].position.x = _this.enemies[i].basePosition.x = (int)_this.positions[i].x + ENEMY_OFFSET.x;
         _this.enemies[i].position.y = _this.enemies[i].basePosition.y = (int)_this.positions[i].y + ENEMY_OFFSET.y;
         _this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
@@ -313,7 +359,7 @@ Level1 level1Create(Graphics graphics, Sprite *sprites, Sound sound)
 {
     Level1 _this = {0};
 
-    level1SetPositions(_this.positions);
+    level1InitPositions(_this.positions);
 
     _this.sound = sound;
     _this.graphics = graphics;
@@ -341,10 +387,12 @@ void level1EnemiesDraw(Level1 _this)
 {
     for (int i = 0; i < 8; i++)
     {
-        if (_this.enemies[i].state == ENEMY_STATE_HIDDEN)
+        if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
             continue;
+
         _this.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
         _this.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
+
         spriteDrawTransparentClippedLowerLine(_this.sprites[_this.enemies[i].spriteId], _this.graphics.imageData, _this.enemies[i].lowerClippingPosition);
     };
 }
@@ -357,7 +405,6 @@ Level1 level1Update(Level1 _this)
     while (shouldContinue && !_this.shouldQuit)
     {
         float dt = getDeltaTime();
-        graphicsClear(_this.graphics.imageData);
 
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
         spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
@@ -373,6 +420,7 @@ Level1 level1Update(Level1 _this)
 
         enemyProcessStateGoingDown(_this.enemies, dt);
         enemyProcessStateGoingUp(_this.enemies, dt);
+        enemyProcessStateDead(_this.enemies, dt);
 
         level1EnemiesDraw(_this);
 
@@ -392,6 +440,9 @@ Level1 level1Update(Level1 _this)
                 _this.sprites[ASSET_SHOOT].position.y -= _this.sprites[ASSET_SIGHT].size.y / 2;
 
                 spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_SHOOT], _this.graphics.imageData, dt);
+
+                _this.enemies[_this.quadPosition] = enemyPassToStateDead(_this.enemies[_this.quadPosition]);
+
                 soundPlaySfx(_this.sound, SFX_SHOOT_HERO);
             }
         }
@@ -408,38 +459,38 @@ Level1 level1Update(Level1 _this)
 Program programCreate()
 {
     staticAllocatorInit(100092024);
-    Program this = {0};
-    this.graphics = graphicsCreate(320, 240);
-    this.sound = soundCreate();
-    spritesLoad(this.sprites);
-    Soloud_setGlobalVolume(this.sound.soloud, 1.);
-    this.mainMenu = level1Create(this.graphics, this.sprites, this.sound);
+    Program _this = {0};
+    _this.graphics = graphicsCreate(320, 240);
+    _this.sound = soundCreate();
+    loadAssets(_this.sprites);
+    Soloud_setGlobalVolume(_this.sound.soloud, 1.);
+    _this.mainMenu = level1Create(_this.graphics, _this.sprites, _this.sound);
 
-    return this;
+    return _this;
 }
 
-void programMainLoop(Program this)
+void programMainLoop(Program _this)
 {
-    while (!this.mainMenu.shouldQuit)
+    while (!_this.mainMenu.shouldQuit)
     {
-        this.mainMenu = level1Update(this.mainMenu);
-        if (this.mainMenu.shouldQuit)
+        _this.mainMenu = level1Update(_this.mainMenu);
+        if (_this.mainMenu.shouldQuit)
             return;
     }
 }
 
-void programDestroy(Program this)
+void programDestroy(Program _this)
 {
-    graphicsDestroy(this.graphics);
+    graphicsDestroy(_this.graphics);
     staticAllocatorDestroy();
 }
 
 int main(void)
 {
 
-    Program this = programCreate();
-    programMainLoop(this);
-    programDestroy(this);
+    Program _this = programCreate();
+    programMainLoop(_this);
+    programDestroy(_this);
 
     return 0;
 }
