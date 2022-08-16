@@ -62,6 +62,8 @@ typedef enum
     ASSET_SIGHT,
     ASSET_SHOOT,
 
+    ASSET_HOW_TO_PLAY,
+
     ASSET_ENEMY_GREEN_BIG,
     ASSET_ENEMY_GREEN_MEDIUM,
     ASSET_ENEMY_GREEN_SMALL,
@@ -188,6 +190,14 @@ void loadAssets(Sprite *_this)
 {
     _this[ASSET_BACKGROUND] = spriteCreate("assets/background.bmp");
     _this[ASSET_FOREGROUND] = spriteCreate("assets/foreground.bmp");
+
+    _this[ASSET_HOW_TO_PLAY] = spriteCreate("assets/howToPlay.bmp");
+    _this[ASSET_HOW_TO_PLAY].position.x = 119;
+    _this[ASSET_HOW_TO_PLAY].position.y = 130;
+    _this[ASSET_HOW_TO_PLAY].animated = true;
+    _this[ASSET_HOW_TO_PLAY].animation.frameCount = 5;
+    _this[ASSET_HOW_TO_PLAY].animation.frameRate = 5;
+    _this[ASSET_HOW_TO_PLAY].animation.frameWidth = 82;
 
     _this[ASSET_SIGHT] = spriteCreate("assets/aimcross.png");
 
@@ -536,6 +546,7 @@ Level1 level1Update(Level1 _this)
         }
 
         spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
+        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_HOW_TO_PLAY], _this.graphics.imageData, dt);
         printFPS(_this.graphics, dt);
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
