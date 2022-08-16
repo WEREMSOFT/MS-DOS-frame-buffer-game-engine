@@ -79,6 +79,7 @@ typedef enum
 {
     ENEMY_STATE_HIDDEN,
     ENEMY_STATE_GOING_UP,
+    ENEMY_STATE_WAIT_UP,
     ENEMY_STATE_GOING_DOWN,
     ENEMY_STATE_DEAD,
     ENEMY_STATE_COUNT
@@ -252,6 +253,15 @@ Enemy enemyPassToStateGoingDown(Enemy _this)
     return _this;
 }
 
+Enemy enemyPassToStateWaitingUp(Enemy _this)
+{
+    if (_this.state == ENEMY_STATE_WAIT_UP)
+        return _this;
+    _this.state = ENEMY_STATE_WAIT_UP;
+    _this.elapsedStateTime = 0;
+    return _this;
+}
+
 #define SARASA                                     \
     if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT) \
         speedMultiplier = .47;                     \
@@ -286,6 +296,21 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpe
     }
 }
 
+void enemyProcessStateWaitingUp(Enemy *enemies, float deltaTime)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        if (enemies[i].state != ENEMY_STATE_WAIT_UP)
+            continue;
+        enemies[i].elapsedStateTime += deltaTime;
+
+        if (enemies[i].elapsedStateTime > .5)
+        {
+            enemies[i] = enemyPassToStateGoingDown(enemies[i]);
+        }
+    }
+}
+
 void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime, double enemySpeed)
 {
     float speedMultiplier = 1.;
@@ -295,7 +320,7 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime, double enemySpeed
             continue;
         if (enemies[i].position.y < enemies[i].topLimit)
         {
-            enemies[i] = enemyPassToStateGoingDown(enemies[i]);
+            enemies[i] = enemyPassToStateWaitingUp(enemies[i]);
             continue;
         }
 
@@ -392,7 +417,7 @@ static Level1 level1InitEnemies(Level1 _this)
             _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_BIG;
 
         _this.enemies[i].bottomOffset = _this.enemies[i].lowerClippingPosition;
-        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - _this.sprites[_this.enemies[i].spriteId].size.y;
+        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - _this.sprites[_this.enemies[i].spriteId].size.y + 1;
     }
 
     return _this;
@@ -539,6 +564,7 @@ Level1 level1Update(Level1 _this)
 
         enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
+        enemyProcessStateWaitingUp(_this.enemies, dt);
 
         level1EnemiesDraw(_this);
 
