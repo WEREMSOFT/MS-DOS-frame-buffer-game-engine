@@ -252,8 +252,17 @@ Enemy enemyPassToStateGoingDown(Enemy _this)
     return _this;
 }
 
+#define SARASA                                     \
+    if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT) \
+        speedMultiplier = .47;                     \
+    else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)    \
+        speedMultiplier = .74;                     \
+    else                                           \
+        speedMultiplier = 1.;
+
 void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed)
 {
+    float speedMultiplier = 1.;
     for (int i = 0; i < 8; i++)
     {
         if (enemies[i].state != ENEMY_STATE_GOING_DOWN)
@@ -263,12 +272,23 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpe
             enemies[i] = enemyPassToStateHidden(enemies[i]);
             continue;
         }
-        enemies[i].position.y += enemySpeed * deltaTime;
+
+        SARASA
+
+        // if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT)
+        //     speedMultiplier = .47;
+        // else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)
+        //     speedMultiplier = .6;
+        // else
+        //     speedMultiplier = 1.;
+
+        enemies[i].position.y += speedMultiplier * enemySpeed * deltaTime;
     }
 }
 
 void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime, double enemySpeed)
 {
+    float speedMultiplier = 1.;
     for (int i = 0; i < 8; i++)
     {
         if (enemies[i].state != ENEMY_STATE_GOING_UP)
@@ -278,7 +298,17 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime, double enemySpeed
             enemies[i] = enemyPassToStateGoingDown(enemies[i]);
             continue;
         }
-        enemies[i].position.y -= enemySpeed * deltaTime;
+
+        SARASA
+
+        // if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT)
+        //     speedMultiplier = .47;
+        // else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)
+        //     speedMultiplier = .6;
+        // else
+        //     speedMultiplier = 1.;
+
+        enemies[i].position.y -= speedMultiplier * enemySpeed * deltaTime;
     }
 }
 
@@ -492,6 +522,50 @@ Level1 level1Update(Level1 _this)
     double elapsedTime = glfwGetTime();
     double gameElapsedTime = 0;
     double enemySpeed = 100.;
+
+    for (int i = 0; i < 8; i++)
+    {
+        _this.enemies[i] = enemyPassToStateGoingUp(_this.enemies[i]);
+    }
+
+    // Tutorial Loop
+    while (shouldContinue && !_this.shouldQuit)
+    {
+        int hiddenEnemies = 0;
+        float dt = getDeltaTime();
+        _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
+
+        spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
+
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed);
+        enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
+
+        level1EnemiesDraw(_this);
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (_this.enemies[i].state == ENEMY_STATE_HIDDEN)
+                hiddenEnemies++;
+        }
+
+        // if (hiddenEnemies == 8)
+        //     shouldContinue = false;
+        if (hiddenEnemies == 8)
+            for (int i = 0; i < 8; i++)
+            {
+                _this.enemies[i] = enemyPassToStateGoingUp(_this.enemies[i]);
+            }
+
+        spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
+        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_HOW_TO_PLAY], _this.graphics.imageData, dt);
+        printFPS(_this.graphics, dt);
+        graphicsSwapBuffers(_this.graphics);
+        glfwPollEvents();
+    }
+
+    shouldContinue = true;
+
+    // Game
     while (shouldContinue && !_this.shouldQuit)
     {
         float dt = getDeltaTime();
@@ -508,6 +582,7 @@ Level1 level1Update(Level1 _this)
             if (_this.enemies[enemyToDisplay].state == ENEMY_STATE_HIDDEN)
                 _this.enemies[enemyToDisplay] = enemyPassToStateGoingUp(_this.enemies[enemyToDisplay]);
         }
+
         // Rise the difficulty by ramping the speed of the enemies
         gameElapsedTime += dt;
 
@@ -546,7 +621,6 @@ Level1 level1Update(Level1 _this)
         }
 
         spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
-        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_HOW_TO_PLAY], _this.graphics.imageData, dt);
         printFPS(_this.graphics, dt);
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
