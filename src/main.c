@@ -79,7 +79,6 @@ typedef enum
 {
     ENEMY_STATE_HIDDEN,
     ENEMY_STATE_GOING_UP,
-    ENEMY_STATE_WAIT_UP,
     ENEMY_STATE_GOING_DOWN,
     ENEMY_STATE_DEAD,
     ENEMY_STATE_COUNT
@@ -94,6 +93,7 @@ typedef struct
     int bottomOffset;
     bool visible;
     float elapsedStateTime;
+    float speedMultiplicator;
     PointI basePosition;
     PointF position;
 } Enemy;
@@ -122,6 +122,7 @@ typedef struct
     bool shouldQuit;
     Enemy enemies[8];
     PointI positions[QPOS_COUNT];
+    int remainingEnemies
 } Level1;
 
 typedef struct
@@ -253,24 +254,7 @@ Enemy enemyPassToStateGoingDown(Enemy _this)
     return _this;
 }
 
-Enemy enemyPassToStateWaitingUp(Enemy _this)
-{
-    if (_this.state == ENEMY_STATE_WAIT_UP)
-        return _this;
-    _this.state = ENEMY_STATE_WAIT_UP;
-    _this.elapsedStateTime = 0;
-    return _this;
-}
-
-#define SARASA                                     \
-    if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT) \
-        speedMultiplier = .47;                     \
-    else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)    \
-        speedMultiplier = .74;                     \
-    else                                           \
-        speedMultiplier = 1.;
-
-void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed)
+void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed, int *remainingEnemies)
 {
     float speedMultiplier = 1.;
     for (int i = 0; i < 8; i++)
@@ -280,34 +264,12 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpe
         if (enemies[i].position.y > enemies[i].lowerClippingPosition)
         {
             enemies[i] = enemyPassToStateHidden(enemies[i]);
+            if (remainingEnemies != NULL)
+                *remainingEnemies -= 1;
             continue;
         }
 
-        SARASA
-
-        // if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT)
-        //     speedMultiplier = .47;
-        // else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)
-        //     speedMultiplier = .6;
-        // else
-        //     speedMultiplier = 1.;
-
-        enemies[i].position.y += speedMultiplier * enemySpeed * deltaTime;
-    }
-}
-
-void enemyProcessStateWaitingUp(Enemy *enemies, float deltaTime)
-{
-    for (int i = 0; i < 8; i++)
-    {
-        if (enemies[i].state != ENEMY_STATE_WAIT_UP)
-            continue;
-        enemies[i].elapsedStateTime += deltaTime;
-
-        if (enemies[i].elapsedStateTime > .5)
-        {
-            enemies[i] = enemyPassToStateGoingDown(enemies[i]);
-        }
+        enemies[i].position.y += enemies[i].speedMultiplicator * enemySpeed * deltaTime;
     }
 }
 
@@ -320,20 +282,11 @@ void enemyProcessStateGoingUp(Enemy *enemies, float deltaTime, double enemySpeed
             continue;
         if (enemies[i].position.y < enemies[i].topLimit)
         {
-            enemies[i] = enemyPassToStateWaitingUp(enemies[i]);
+            enemies[i] = enemyPassToStateGoingDown(enemies[i]);
             continue;
         }
 
-        SARASA
-
-        // if (i >= QPOS_TOP_LEFT && i <= QPOS_TOP_RIGHT)
-        //     speedMultiplier = .47;
-        // else if (i >= QPOS_LEFT && i <= QPOS_RIGHT)
-        //     speedMultiplier = .6;
-        // else
-        //     speedMultiplier = 1.;
-
-        enemies[i].position.y -= speedMultiplier * enemySpeed * deltaTime;
+        enemies[i].position.y -= enemies[i].speedMultiplicator * enemySpeed * deltaTime;
     }
 }
 
@@ -417,7 +370,8 @@ static Level1 level1InitEnemies(Level1 _this)
             _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_BIG;
 
         _this.enemies[i].bottomOffset = _this.enemies[i].lowerClippingPosition;
-        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - _this.sprites[_this.enemies[i].spriteId].size.y + 1;
+        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - _this.sprites[_this.enemies[i].spriteId].size.y;
+        _this.enemies[i].speedMultiplicator = (float)_this.sprites[_this.enemies[i].spriteId].size.y / (float)_this.sprites[ASSET_ENEMY_GREEN_BIG].size.y;
     }
 
     return _this;
@@ -562,9 +516,8 @@ Level1 level1Update(Level1 _this)
 
         spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
-        enemyProcessStateWaitingUp(_this.enemies, dt);
 
         level1EnemiesDraw(_this);
 
@@ -574,13 +527,8 @@ Level1 level1Update(Level1 _this)
                 hiddenEnemies++;
         }
 
-        // if (hiddenEnemies == 8)
-        //     shouldContinue = false;
         if (hiddenEnemies == 8)
-            for (int i = 0; i < 8; i++)
-            {
-                _this.enemies[i] = enemyPassToStateGoingUp(_this.enemies[i]);
-            }
+            shouldContinue = false;
 
         spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
         spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_HOW_TO_PLAY], _this.graphics.imageData, dt);
@@ -590,6 +538,8 @@ Level1 level1Update(Level1 _this)
     }
 
     shouldContinue = true;
+    char *remainingEnemies[100] = {0};
+    _this.remainingEnemies = 99;
 
     // Game
     while (shouldContinue && !_this.shouldQuit)
@@ -614,7 +564,7 @@ Level1 level1Update(Level1 _this)
 
         enemySpeed = fminf(100 + gameElapsedTime, 175);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.remainingEnemies);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
         enemyProcessStateDead(_this.enemies, dt);
 
@@ -640,6 +590,7 @@ Level1 level1Update(Level1 _this)
                 if (_this.enemies[_this.quadPosition].state != ENEMY_STATE_HIDDEN && _this.enemies[_this.quadPosition].state != ENEMY_STATE_DEAD)
                 {
                     soundPlaySpeech(_this.sound, SPEECH_NOOO);
+                    _this.remainingEnemies--;
                     _this.enemies[_this.quadPosition] = enemyPassToStateDead(_this.enemies[_this.quadPosition]);
                 }
                 soundPlaySfx(_this.sound, SFX_SHOOT_HERO);
@@ -648,6 +599,8 @@ Level1 level1Update(Level1 _this)
 
         spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
         printFPS(_this.graphics, dt);
+        snprintf(remainingEnemies, 100, "remaining enemies: %d", _this.remainingEnemies);
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 10}, remainingEnemies, (Color){0xFF, 0xFF, 0xFF});
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
     }
