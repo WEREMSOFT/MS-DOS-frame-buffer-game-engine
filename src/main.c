@@ -35,6 +35,7 @@ typedef enum GaneSfx
 {
     SFX_SELECT,
     SFX_SHOOT_HERO,
+    SFX_ENEMY_ESCAPED,
     SFX_BLIP,
     SFX_COUNT
 } GaneSfx;
@@ -155,6 +156,7 @@ Sound soundCreate()
     Sfxr_loadPreset(this.sfx[SFX_BLIP], SFXR_BLIP, 3247);
     Sfxr_loadPreset(this.sfx[SFX_SELECT], SFXR_POWERUP, 3247);
     Sfxr_loadPreset(this.sfx[SFX_SHOOT_HERO], SFXR_EXPLOSION, 3247);
+    Sfxr_loadPreset(this.sfx[SFX_ENEMY_ESCAPED], SFXR_HURT, 3247);
 
     Soloud_initEx(this.soloud, SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
                   SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
@@ -258,7 +260,7 @@ Enemy enemyPassToStateGoingDown(Enemy _this)
     return _this;
 }
 
-void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed, int *enemiesRemaining)
+void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed, int *enemiesRemaining, Sound sound)
 {
     float speedMultiplier = 1.;
     for (int i = 0; i < 8; i++)
@@ -268,6 +270,7 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpe
         if (enemies[i].position.y > enemies[i].lowerClippingPosition)
         {
             enemies[i] = enemyPassToStateHidden(enemies[i]);
+            soundPlaySfx(sound, SFX_ENEMY_ESCAPED);
             if (enemiesRemaining != NULL)
                 *enemiesRemaining -= 1;
             continue;
@@ -521,7 +524,7 @@ Level1 level1Update(Level1 _this)
         spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
         spriteDrawClipped(_this.sprites[ASSET_TOP_SCORE_SQUARE], _this.graphics.imageData);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL, _this.sound);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
 
         level1EnemiesDraw(_this);
@@ -558,7 +561,7 @@ Level1 level1Update(Level1 _this)
         spriteDrawClipped(_this.sprites[ASSET_TOP_SCORE_SQUARE], _this.graphics.imageData);
 
         // Enemy selection and trigger to attack
-        if (glfwGetTime() - elapsedTime > 1.)
+        if (glfwGetTime() - elapsedTime > .5)
         {
             elapsedTime = glfwGetTime();
             int enemyToDisplay = rand() % 8;
@@ -570,9 +573,9 @@ Level1 level1Update(Level1 _this)
         // Rise the difficulty by ramping the speed of the enemies
         gameElapsedTime += dt;
 
-        enemySpeed = fminf(100 + gameElapsedTime, 200);
+        enemySpeed = fminf(100 + gameElapsedTime, 300);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.enemiesRemaining);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.enemiesRemaining, _this.sound);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
         enemyProcessStateDead(_this.enemies, dt);
 
