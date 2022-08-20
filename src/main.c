@@ -59,6 +59,7 @@ typedef enum
     ASSET_NONE,
     ASSET_BACKGROUND,
     ASSET_FOREGROUND,
+    ASSET_TOP_SCORE_SQUARE,
     ASSET_SIGHT,
     ASSET_SHOOT,
 
@@ -193,6 +194,8 @@ void loadAssets(Sprite *_this)
 {
     _this[ASSET_BACKGROUND] = spriteCreate("assets/background.bmp");
     _this[ASSET_FOREGROUND] = spriteCreate("assets/foreground.bmp");
+    _this[ASSET_TOP_SCORE_SQUARE] = spriteCreate("assets/topScoreSquare.bmp");
+    _this[ASSET_TOP_SCORE_SQUARE].position.x = 32;
 
     _this[ASSET_HOW_TO_PLAY] = spriteCreate("assets/howToPlay.bmp");
     _this[ASSET_HOW_TO_PLAY].position.x = 119;
@@ -516,6 +519,7 @@ Level1 level1Update(Level1 _this)
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
 
         spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
+        spriteDrawClipped(_this.sprites[ASSET_TOP_SCORE_SQUARE], _this.graphics.imageData);
 
         enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
@@ -545,12 +549,13 @@ Level1 level1Update(Level1 _this)
     _this.enemiesRemaining = 99;
 
     // Game
-    while (shouldContinue && !_this.shouldQuit)
+    while (shouldContinue && !_this.shouldQuit && _this.enemiesRemaining > 0)
     {
         float dt = getDeltaTime();
 
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
         spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
+        spriteDrawClipped(_this.sprites[ASSET_TOP_SCORE_SQUARE], _this.graphics.imageData);
 
         // Enemy selection and trigger to attack
         if (glfwGetTime() - elapsedTime > 1.)
@@ -610,6 +615,37 @@ Level1 level1Update(Level1 _this)
         graphicsPrintString(_this.graphics.imageData, (PointI){100, 10}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
         graphicsPrintString(_this.graphics.imageData, (PointI){100, 20}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsPrintString(_this.graphics.imageData, (PointI){100, 30}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsSwapBuffers(_this.graphics);
+        glfwPollEvents();
+    }
+
+    // End game loop
+    float statisticsOffset = 0.;
+    while (shouldContinue && !_this.shouldQuit)
+    {
+        float statisticsSpeed = 100.;
+        float dt = getDeltaTime();
+        _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
+
+        spriteDrawClipped(_this.sprites[ASSET_BACKGROUND], _this.graphics.imageData);
+
+        level1EnemiesDraw(_this);
+
+        spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
+        printFPS(_this.graphics, dt);
+
+        statisticsOffset = fminf(statisticsOffset + statisticsSpeed * dt, 100.);
+
+        if (statisticsOffset == 100.)
+        {
+            _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) || _this.shouldQuit;
+        }
+
+        _this.sprites[ASSET_TOP_SCORE_SQUARE].position.y = statisticsOffset;
+        spriteDrawClipped(_this.sprites[ASSET_TOP_SCORE_SQUARE], _this.graphics.imageData);
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 10 + statisticsOffset}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 20 + statisticsOffset}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 30 + statisticsOffset}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
     }
