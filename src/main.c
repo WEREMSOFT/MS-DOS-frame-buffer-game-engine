@@ -570,7 +570,7 @@ Level1 level1Update(Level1 _this)
         // Rise the difficulty by ramping the speed of the enemies
         gameElapsedTime += dt;
 
-        enemySpeed = fminf(100 + gameElapsedTime, 175);
+        enemySpeed = fminf(100 + gameElapsedTime, 200);
 
         enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.enemiesRemaining);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
