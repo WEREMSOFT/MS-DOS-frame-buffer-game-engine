@@ -122,7 +122,8 @@ typedef struct
     bool shouldQuit;
     Enemy enemies[8];
     PointI positions[QPOS_COUNT];
-    int remainingEnemies
+    int enemiesRemaining;
+    int enemiesKilled;
 } Level1;
 
 typedef struct
@@ -254,7 +255,7 @@ Enemy enemyPassToStateGoingDown(Enemy _this)
     return _this;
 }
 
-void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed, int *remainingEnemies)
+void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed, int *enemiesRemaining)
 {
     float speedMultiplier = 1.;
     for (int i = 0; i < 8; i++)
@@ -264,8 +265,8 @@ void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpe
         if (enemies[i].position.y > enemies[i].lowerClippingPosition)
         {
             enemies[i] = enemyPassToStateHidden(enemies[i]);
-            if (remainingEnemies != NULL)
-                *remainingEnemies -= 1;
+            if (enemiesRemaining != NULL)
+                *enemiesRemaining -= 1;
             continue;
         }
 
@@ -538,8 +539,10 @@ Level1 level1Update(Level1 _this)
     }
 
     shouldContinue = true;
-    char *remainingEnemies[100] = {0};
-    _this.remainingEnemies = 99;
+    char *enemiesRemaining[100] = {0};
+    char *enemiesKilled[100] = {0};
+    char *percentageKilled[100] = {0};
+    _this.enemiesRemaining = 99;
 
     // Game
     while (shouldContinue && !_this.shouldQuit)
@@ -564,7 +567,7 @@ Level1 level1Update(Level1 _this)
 
         enemySpeed = fminf(100 + gameElapsedTime, 175);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.remainingEnemies);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.enemiesRemaining);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
         enemyProcessStateDead(_this.enemies, dt);
 
@@ -590,7 +593,8 @@ Level1 level1Update(Level1 _this)
                 if (_this.enemies[_this.quadPosition].state != ENEMY_STATE_HIDDEN && _this.enemies[_this.quadPosition].state != ENEMY_STATE_DEAD)
                 {
                     soundPlaySpeech(_this.sound, SPEECH_NOOO);
-                    _this.remainingEnemies--;
+                    _this.enemiesRemaining--;
+                    _this.enemiesKilled++;
                     _this.enemies[_this.quadPosition] = enemyPassToStateDead(_this.enemies[_this.quadPosition]);
                 }
                 soundPlaySfx(_this.sound, SFX_SHOOT_HERO);
@@ -599,8 +603,13 @@ Level1 level1Update(Level1 _this)
 
         spriteDrawTransparentClipped(_this.sprites[ASSET_FOREGROUND], _this.graphics.imageData);
         printFPS(_this.graphics, dt);
-        snprintf(remainingEnemies, 100, "remaining enemies: %d", _this.remainingEnemies);
-        graphicsPrintString(_this.graphics.imageData, (PointI){100, 10}, remainingEnemies, (Color){0xFF, 0xFF, 0xFF});
+        snprintf(enemiesRemaining, 100, "enemies remaining: %d", _this.enemiesRemaining);
+        snprintf(enemiesKilled, 100, "enemies killed: %d", _this.enemiesKilled);
+        float enemiesKilledPercentage = _this.enemiesKilled / (100. - _this.enemiesRemaining) * 100.;
+        snprintf(percentageKilled, 100, "hit percentage: %.0f%%", enemiesKilledPercentage);
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 10}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 20}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(_this.graphics.imageData, (PointI){100, 30}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
     }

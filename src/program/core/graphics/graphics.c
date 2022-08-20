@@ -261,16 +261,24 @@ void graphicsPrintString(ImageData this, PointI topLeftCorner, char *string, Col
 
     for (size_t i = 0; i < stringLen; i++)
     {
+        if (string[i] == '%')
+        {
+            int charOffset = 'z' - 'a' + 11;
+            graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+            continue;
+        }
 
         if (string[i] >= '0' && string[i] <= '9')
         {
             graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
+            continue;
         }
 
-        else if (string[i] >= 'a' && string[i] <= 'z')
+        if (string[i] >= 'a' && string[i] <= 'z')
         {
             int charOffset = string[i] - 'a' + 10;
             graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+            continue;
         }
     }
 }
