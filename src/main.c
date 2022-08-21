@@ -37,6 +37,7 @@ typedef enum GaneSfx
     SFX_SHOOT_HERO,
     SFX_ENEMY_ESCAPED,
     SFX_BLIP,
+    SFX_HERO_JUMP,
     SFX_COUNT
 } GaneSfx;
 
@@ -73,6 +74,12 @@ typedef enum
     ASSET_ENEMY_GREEN_BIG_SHOOT,
     ASSET_ENEMY_GREEN_MEDIUM_SHOOT,
     ASSET_ENEMY_GREEN_SMALL_SHOOT,
+
+    ASSET_LEVEL2_HERO_GREEEN,
+    ASSET_LEVEL2_HERO_RED,
+    ASSET_LEVEL2_HERO_BLUE,
+    ASSET_LEVEL2_HERO_YELLOW,
+    ASSET_LEVEL2_BACKGROUND,
 
     ASSET_COUNT
 } Assets;
@@ -131,7 +138,16 @@ typedef struct
 typedef struct
 {
     Graphics graphics;
-    Level1 mainMenu;
+    Sprite sprites[ASSET_COUNT];
+    Sound sound;
+    bool shouldQuit;
+} Level2;
+
+typedef struct
+{
+    Graphics graphics;
+    Level1 level1;
+    Level2 level2;
     Sprite sprites[ASSET_COUNT];
     Sound sound;
 } Program;
@@ -157,6 +173,7 @@ Sound soundCreate()
     Sfxr_loadPreset(this.sfx[SFX_SELECT], SFXR_POWERUP, 3247);
     Sfxr_loadPreset(this.sfx[SFX_SHOOT_HERO], SFXR_EXPLOSION, 3247);
     Sfxr_loadPreset(this.sfx[SFX_ENEMY_ESCAPED], SFXR_HURT, 3247);
+    Sfxr_loadPreset(this.sfx[SFX_HERO_JUMP], SFXR_JUMP, 3247);
 
     Soloud_initEx(this.soloud, SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
                   SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
@@ -224,6 +241,13 @@ void loadAssets(Sprite *_this)
 
     _this[ASSET_ENEMY_GREEN_SMALL] = spriteCreate("assets/enemyGreenTiny2.bmp");
     _this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenTiny1.bmp");
+
+    _this[ASSET_LEVEL2_BACKGROUND] = spriteCreate("assets/level2/background.bmp");
+
+    _this[ASSET_LEVEL2_HERO_GREEEN] = spriteCreate("assets/level2/heroGreen.bmp");
+    _this[ASSET_LEVEL2_HERO_RED] = spriteCreate("assets/level2/heroRed.bmp");
+    _this[ASSET_LEVEL2_HERO_BLUE] = spriteCreate("assets/level2/heroBlue.bmp");
+    _this[ASSET_LEVEL2_HERO_YELLOW] = spriteCreate("assets/level2/heroYellow.bmp");
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -656,6 +680,102 @@ Level1 level1Update(Level1 _this)
     return _this;
 }
 
+Level2 level2Create(Graphics graphics, Sprite *sprites, Sound sound)
+{
+    Level2 _this = {0};
+    _this.sound = sound;
+    _this.graphics = graphics;
+    for (int i = ASSET_LEVEL2_HERO_GREEEN; i < ASSET_COUNT; i++)
+    {
+        _this.sprites[i] = sprites[i];
+    }
+    _this.shouldQuit = false;
+    return _this;
+}
+
+Level2 level2Update(Level2 _this)
+{
+    float gravity = 4.;
+    float subpixelPosition[4] = {174., 174., 174., 174.};
+    float backgroundSpeed = -100.;
+    float screenPosition = 0.;
+    float verticalSpeed[4] = {0};
+
+    float elapsedTime = 0;
+
+    _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x = 80;
+    _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = 174;
+    _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animated = true;
+    _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameCount = 6;
+    _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameWidth = 24;
+    _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameRate = 15;
+
+    _this.sprites[ASSET_LEVEL2_HERO_RED].position.x = 60;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = 174;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animated = true;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameCount = 6;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameWidth = 24;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameRate = 15;
+
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 40;
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = 174;
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].animated = true;
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameCount = 6;
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameWidth = 24;
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameRate = 15;
+
+    _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = 20;
+    _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = 174;
+    _this.sprites[ASSET_LEVEL2_HERO_YELLOW].animated = true;
+    _this.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameCount = 6;
+    _this.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameWidth = 24;
+    _this.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameRate = 15;
+
+    while (!_this.shouldQuit)
+    {
+        float deltaTime = getDeltaTime();
+        _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
+        graphicsClear(_this.graphics.imageData);
+        printFPS(_this.graphics, deltaTime);
+
+        screenPosition += backgroundSpeed * deltaTime;
+        screenPosition = screenPosition > -320. ? screenPosition : 0.;
+        _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
+        spriteDrawClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
+        _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
+        spriteDrawClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
+
+        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN], _this.graphics.imageData, deltaTime);
+        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_RED], _this.graphics.imageData, deltaTime);
+        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_BLUE], _this.graphics.imageData, deltaTime);
+        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_YELLOW], _this.graphics.imageData, deltaTime);
+
+        _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = floor(subpixelPosition[0]);
+        _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[1]);
+        _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = floor(subpixelPosition[2]);
+        _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = floor(subpixelPosition[3]);
+
+        if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
+        {
+            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
+            verticalSpeed[0] = -500.;
+            verticalSpeed[1] = -500.;
+            verticalSpeed[2] = -500.;
+            verticalSpeed[3] = -500.;
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            subpixelPosition[i] += (verticalSpeed[i] + gravity) * deltaTime;
+            subpixelPosition[i] = fminf(174., subpixelPosition[i]);
+            verticalSpeed[i] += gravity;
+        }
+
+        graphicsSwapBuffers(_this.graphics);
+        glfwPollEvents();
+    }
+}
+
 Program programCreate()
 {
     staticAllocatorInit(100092024);
@@ -664,17 +784,24 @@ Program programCreate()
     _this.sound = soundCreate();
     loadAssets(_this.sprites);
     Soloud_setGlobalVolume(_this.sound.soloud, 1.);
-    _this.mainMenu = level1Create(_this.graphics, _this.sprites, _this.sound);
-
+    _this.level1 = level1Create(_this.graphics, _this.sprites, _this.sound);
+    _this.level2 = level2Create(_this.graphics, _this.sprites, _this.sound);
     return _this;
 }
 
 void programMainLoop(Program _this)
 {
-    while (!_this.mainMenu.shouldQuit)
+    while (!_this.level2.shouldQuit)
     {
-        _this.mainMenu = level1Update(_this.mainMenu);
-        if (_this.mainMenu.shouldQuit)
+        _this.level2 = level2Update(_this.level2);
+        if (_this.level2.shouldQuit)
+            return;
+    }
+
+    while (!_this.level1.shouldQuit)
+    {
+        _this.level1 = level1Update(_this.level1);
+        if (_this.level1.shouldQuit)
             return;
     }
 }
