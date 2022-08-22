@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdbool.h>
 #include <soloud_c.h>
 #include "program/core/utils/utils.h"
 #include "program/core/graphics/graphics.h"
@@ -76,8 +77,8 @@ typedef enum
     ASSET_ENEMY_GREEN_SMALL_SHOOT,
 
     ASSET_LEVEL2_HERO_GREEEN,
-    ASSET_LEVEL2_HERO_RED,
     ASSET_LEVEL2_HERO_BLUE,
+    ASSET_LEVEL2_HERO_RED,
     ASSET_LEVEL2_HERO_YELLOW,
     ASSET_LEVEL2_BACKGROUND,
 
@@ -695,6 +696,9 @@ Level2 level2Create(Graphics graphics, Sprite *sprites, Sound sound)
 
 Level2 level2Update(Level2 _this)
 {
+    bool commands[4] = {0};
+#define VERTICAL_SPEED -300.
+
     float gravity = 1000.;
     float subpixelPosition[4] = {174., 174., 174., 174.};
     float backgroundSpeed = -100.;
@@ -710,19 +714,19 @@ Level2 level2Update(Level2 _this)
     _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameWidth = 24;
     _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameRate = 15;
 
-    _this.sprites[ASSET_LEVEL2_HERO_RED].position.x = 60;
-    _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = 174;
-    _this.sprites[ASSET_LEVEL2_HERO_RED].animated = true;
-    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameCount = 6;
-    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameWidth = 24;
-    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameRate = 15;
-
-    _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 40;
+    _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 60;
     _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = 174;
     _this.sprites[ASSET_LEVEL2_HERO_BLUE].animated = true;
     _this.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameCount = 6;
     _this.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameWidth = 24;
     _this.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameRate = 15;
+
+    _this.sprites[ASSET_LEVEL2_HERO_RED].position.x = 40;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = 174;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animated = true;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameCount = 6;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameWidth = 24;
+    _this.sprites[ASSET_LEVEL2_HERO_RED].animation.frameRate = 15;
 
     _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = 20;
     _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = 174;
@@ -751,17 +755,41 @@ Level2 level2Update(Level2 _this)
         spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_YELLOW], _this.graphics.imageData, deltaTime);
 
         _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = floor(subpixelPosition[0]);
-        _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[1]);
-        _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = floor(subpixelPosition[2]);
+        _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = floor(subpixelPosition[1]);
+        _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[2]);
         _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = floor(subpixelPosition[3]);
 
         if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
         {
             soundPlaySfx(_this.sound, SFX_HERO_JUMP);
-            verticalSpeed[0] = -300.;
-            verticalSpeed[1] = -290.;
-            verticalSpeed[2] = -280.;
-            verticalSpeed[3] = -270.;
+            verticalSpeed[0] = VERTICAL_SPEED;
+            elapsedTime = 0;
+            commands[1] = true;
+            commands[2] = true;
+            commands[3] = true;
+        }
+
+        elapsedTime += deltaTime;
+
+        if (elapsedTime > 0.1 && commands[1])
+        {
+            verticalSpeed[1] = VERTICAL_SPEED;
+            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
+            commands[1] = false;
+        }
+
+        if (elapsedTime > 0.2 && commands[2])
+        {
+            verticalSpeed[2] = VERTICAL_SPEED;
+            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
+            commands[2] = false;
+        }
+
+        if (elapsedTime > 0.3 && commands[3])
+        {
+            verticalSpeed[3] = VERTICAL_SPEED;
+            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
+            commands[3] = false;
         }
 
         for (int i = 0; i < 4; i++)
