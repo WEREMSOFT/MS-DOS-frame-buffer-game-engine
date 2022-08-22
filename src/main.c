@@ -695,7 +695,7 @@ Level2 level2Create(Graphics graphics, Sprite *sprites, Sound sound)
 
 Level2 level2Update(Level2 _this)
 {
-    float gravity = 15.;
+    float gravity = 1000.;
     float subpixelPosition[4] = {174., 174., 174., 174.};
     float backgroundSpeed = -100.;
     float screenPosition = 0.;
@@ -758,16 +758,16 @@ Level2 level2Update(Level2 _this)
         if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
         {
             soundPlaySfx(_this.sound, SFX_HERO_JUMP);
-            verticalSpeed[0] = -20.;
-            verticalSpeed[1] = -19.;
-            verticalSpeed[2] = -18.;
-            verticalSpeed[3] = -17.;
+            verticalSpeed[0] = -300.;
+            verticalSpeed[1] = -290.;
+            verticalSpeed[2] = -280.;
+            verticalSpeed[3] = -270.;
         }
 
         for (int i = 0; i < 4; i++)
         {
             verticalSpeed[i] += gravity * deltaTime;
-            subpixelPosition[i] += verticalSpeed[i] + gravity;
+            subpixelPosition[i] += verticalSpeed[i] * deltaTime;
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
 
