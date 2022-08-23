@@ -86,6 +86,10 @@ typedef enum
     ASSET_LEVEL2_CLOUD_2,
     ASSET_LEVEL2_CLOUD_3,
 
+    ASSET_LEVEL2_TREE_1,
+    ASSET_LEVEL2_TREE_2,
+    ASSET_LEVEL2_TREE_3,
+
     ASSET_COUNT
 } Assets;
 
@@ -256,6 +260,10 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL2_HERO_RED] = spriteCreate("assets/level2/heroRed.bmp");
     _this[ASSET_LEVEL2_HERO_BLUE] = spriteCreate("assets/level2/heroBlue.bmp");
     _this[ASSET_LEVEL2_HERO_YELLOW] = spriteCreate("assets/level2/heroYellow.bmp");
+
+    _this[ASSET_LEVEL2_TREE_1] = spriteCreate("assets/level2/tree1.bmp");
+    _this[ASSET_LEVEL2_TREE_2] = spriteCreate("assets/level2/tree2.bmp");
+    _this[ASSET_LEVEL2_TREE_3] = spriteCreate("assets/level2/tree3.bmp");
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -827,6 +835,8 @@ Level2 level2Update(Level2 _this)
             subpixelPosition[i] += verticalSpeed[i] * deltaTime;
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
+
+        spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_TREE_1], _this.graphics.imageData);
 
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
