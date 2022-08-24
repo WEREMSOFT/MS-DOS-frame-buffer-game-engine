@@ -85,10 +85,11 @@ typedef enum
     ASSET_LEVEL2_CLOUD_1,
     ASSET_LEVEL2_CLOUD_2,
     ASSET_LEVEL2_CLOUD_3,
+    ASSET_LEVEL2_CLOUD_4,
 
-    ASSET_LEVEL2_TREE_1,
-    ASSET_LEVEL2_TREE_2,
-    ASSET_LEVEL2_TREE_3,
+    ASSET_LEVEL2_OBSTACLE_1,
+    ASSET_LEVEL2_OBSTACLE_2,
+    ASSET_LEVEL2_OBSTACLE_3,
 
     ASSET_COUNT
 } Assets;
@@ -252,18 +253,19 @@ void loadAssets(Sprite *_this)
     _this[ASSET_ENEMY_GREEN_SMALL_SHOOT] = spriteCreate("assets/enemyGreenTiny1.bmp");
 
     _this[ASSET_LEVEL2_BACKGROUND] = spriteCreate("assets/level2/background.bmp");
-    _this[ASSET_LEVEL2_CLOUD_1] = spriteCreate("assets/level2/cloud1.bmp");
+    _this[ASSET_LEVEL2_CLOUD_1] = spriteCreate("assets/level2/cloud3.bmp");
     _this[ASSET_LEVEL2_CLOUD_2] = spriteCreate("assets/level2/cloud2.bmp");
-    _this[ASSET_LEVEL2_CLOUD_3] = spriteCreate("assets/level2/cloud3.bmp");
+    _this[ASSET_LEVEL2_CLOUD_3] = spriteCreate("assets/level2/cloud1.bmp");
+    _this[ASSET_LEVEL2_CLOUD_4] = spriteCreate("assets/level2/cloud0.bmp");
 
     _this[ASSET_LEVEL2_HERO_GREEEN] = spriteCreate("assets/level2/heroGreen.bmp");
     _this[ASSET_LEVEL2_HERO_RED] = spriteCreate("assets/level2/heroRed.bmp");
     _this[ASSET_LEVEL2_HERO_BLUE] = spriteCreate("assets/level2/heroBlue.bmp");
     _this[ASSET_LEVEL2_HERO_YELLOW] = spriteCreate("assets/level2/heroYellow.bmp");
 
-    _this[ASSET_LEVEL2_TREE_1] = spriteCreate("assets/level2/tree1.bmp");
-    _this[ASSET_LEVEL2_TREE_2] = spriteCreate("assets/level2/tree2.bmp");
-    _this[ASSET_LEVEL2_TREE_3] = spriteCreate("assets/level2/tree3.bmp");
+    _this[ASSET_LEVEL2_OBSTACLE_1] = spriteCreate("assets/level2/tree1.bmp");
+    _this[ASSET_LEVEL2_OBSTACLE_2] = spriteCreate("assets/level2/tree2.bmp");
+    _this[ASSET_LEVEL2_OBSTACLE_3] = spriteCreate("assets/level2/tree3.bmp");
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -711,24 +713,6 @@ Level2 level2Create(Graphics graphics, Sprite *sprites, Sound sound)
 
 Level2 level2Update(Level2 _this)
 {
-    bool commands[4] = {0};
-#define VERTICAL_SPEED -300.
-
-    float gravity = 1000.;
-    float subpixelPosition[4] = {174., 174., 174., 174.};
-    float backgroundSpeed = -100.;
-    float screenPosition = 0.;
-    float verticalSpeed[4] = {0};
-    float cloudSpeed[] = {-10.,
-                          -25.,
-                          -50.};
-
-    float cloudPosition[] = {30.,
-                             100.,
-                             200.};
-
-    float elapsedTime = 0;
-
     _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x = 80;
     _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = 174;
     _this.sprites[ASSET_LEVEL2_HERO_GREEEN].animated = true;
@@ -757,44 +741,85 @@ Level2 level2Update(Level2 _this)
     _this.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameWidth = 24;
     _this.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameRate = 15;
 
-    _this.sprites[ASSET_LEVEL2_CLOUD_1].position.y = 30;
-    _this.sprites[ASSET_LEVEL2_CLOUD_2].position.y = 50;
-    _this.sprites[ASSET_LEVEL2_CLOUD_3].position.y = 120;
+    _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y = 179;
+
+#define VERTICAL_SPEED -300.
+#define BACKGROUND_SPEED -250.
+
+    bool commands[4] = {0};
+    float gravity = 1000.;
+    float subpixelPosition[4] = {174., 174., 174., 174.};
+    float screenPosition = 0.;
+    float verticalSpeed[4] = {0};
+    float elapsedTime = 0;
+    float cloudSpeed[] = {-10.,
+                          -25.,
+                          -50.,
+                          -55.};
+
+    float cloudPosition[] = {0.,
+                             0.,
+                             0.,
+                             0.};
+
+    float obstaclePosition = 320.;
 
     while (!_this.shouldQuit)
     {
+
         float deltaTime = getDeltaTime();
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
         graphicsClear(_this.graphics.imageData);
         printFPS(_this.graphics, deltaTime);
 
-        screenPosition += backgroundSpeed * deltaTime;
-        screenPosition = screenPosition > -320. ? screenPosition : 0.;
-        _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
-        spriteDrawClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
-        _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
-        spriteDrawClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
-
-        for (int i = 0; i < 3; i++)
+        float backgroundSpeedFrame = BACKGROUND_SPEED * deltaTime;
+        // Clowds movement
         {
-            cloudPosition[i] += cloudSpeed[i] * deltaTime;
-            if (cloudPosition[i] < -_this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
+            for (int i = 0; i < 4; i++)
             {
-                cloudPosition[i] += 320 + rand() % 10 + _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+                cloudPosition[i] += cloudSpeed[i] * deltaTime;
+                if (cloudPosition[i] < -_this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
+                {
+                    cloudPosition[i] = 0.; // 320. + _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+                }
+                _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
+                spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.graphics.imageData);
+                _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i] + _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+                spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.graphics.imageData);
             }
-            _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
-            spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.graphics.imageData);
+        }
+        // Draw Background
+        {
+            screenPosition += backgroundSpeedFrame;
+            screenPosition = screenPosition > -320. ? screenPosition : 0.;
+            _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
+            spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
+            _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
+            spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
         }
 
-        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN], _this.graphics.imageData, deltaTime);
-        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_RED], _this.graphics.imageData, deltaTime);
-        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_BLUE], _this.graphics.imageData, deltaTime);
-        spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_YELLOW], _this.graphics.imageData, deltaTime);
+        // Obstacles
+        {
+            obstaclePosition += backgroundSpeedFrame;
+            _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition;
+            spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
+            if (obstaclePosition < -_this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x)
+                obstaclePosition = 320. + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x;
+        }
+        // Draw Heroes
+        {
+            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN], _this.graphics.imageData, deltaTime);
+            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_RED], _this.graphics.imageData, deltaTime);
+            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_BLUE], _this.graphics.imageData, deltaTime);
+            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_YELLOW], _this.graphics.imageData, deltaTime);
+        }
 
-        _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = floor(subpixelPosition[0]);
-        _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = floor(subpixelPosition[1]);
-        _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[2]);
-        _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = floor(subpixelPosition[3]);
+        {
+            _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = floor(subpixelPosition[0]);
+            _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = floor(subpixelPosition[1]);
+            _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[2]);
+            _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = floor(subpixelPosition[3]);
+        }
 
         if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
         {
@@ -836,7 +861,7 @@ Level2 level2Update(Level2 _this)
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
 
-        spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_TREE_1], _this.graphics.imageData);
+        spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
 
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
