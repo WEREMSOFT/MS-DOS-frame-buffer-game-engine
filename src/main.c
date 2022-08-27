@@ -753,7 +753,8 @@ Level2 level2Update(Level2 _this)
     float subpixelPosition[4] = {174., 174., 174., 174.};
     float screenPosition = 0.;
     float verticalSpeed[4] = {0};
-    float elapsedTime = 0;
+    float elapsedTimeSinceJump = 0;
+    float elapsedTimeSinceHit = 10000;
     float cloudSpeed[] = {-10.,
                           -25.,
                           -50.,
@@ -767,6 +768,7 @@ Level2 level2Update(Level2 _this)
     float obstaclePosition = 320.;
     bool collided = false;
     int livesLost = 0;
+    float elapsedTimeBlink = 0;
     while (!_this.shouldQuit)
     {
         float deltaTime = getDeltaTime();
@@ -825,60 +827,62 @@ Level2 level2Update(Level2 _this)
                         collided = true;
                 }
             }
-            if (collided)
+
+            if (collided && elapsedTimeSinceHit > 1.)
             {
+                elapsedTimeSinceHit = 0;
                 soundPlaySfx(_this.sound, SFX_HERO_HURT);
-                livesLost++;
+                // livesLost++;
                 graphicsDrawSquare(_this.graphics.imageData, _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position, (PointI){_this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].animation.frameWidth, _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].size.y}, (Color){0xFF, 0, 0});
             }
         }
 
         // Draw Heroes
         {
-            for (int i = livesLost; i < 4; i++)
+            elapsedTimeSinceHit += deltaTime;
+            int elapsedTimeSinceHitI = elapsedTimeSinceHit - elapsedTimeSinceHitI * 100;
+            char stringToPrint[200] = {0};
+            sprintf(stringToPrint, "elapsedTimeSinceHit %f", elapsedTimeSinceHit);
+            graphicsPrintString(_this.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 00, 00});
+            if (elapsedTimeSinceHitI % 50 == 0 || elapsedTimeSinceHit > 2.)
             {
-                spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.graphics.imageData, deltaTime);
+                for (int i = livesLost; i < 4; i++)
+                {
+                    spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.graphics.imageData, deltaTime);
+                }
             }
         }
 
         {
-            _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = floor(subpixelPosition[0]);
-            _this.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = floor(subpixelPosition[1]);
-            _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[2]);
-            _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = floor(subpixelPosition[3]);
+            for (int i = livesLost; i < 4; i++)
+            {
+                _this.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
+            }
         }
         // Controls
         if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
         {
-            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
-            verticalSpeed[0] = VERTICAL_SPEED;
-            elapsedTime = 0;
-            commands[1] = true;
-            commands[2] = true;
-            commands[3] = true;
+            elapsedTimeSinceJump = 0;
+            for (int i = livesLost; i < 4; i++)
+            {
+                commands[i] = true;
+            }
         }
-
-        elapsedTime += deltaTime;
-
-        if (elapsedTime > 0.1 && commands[1])
+        // Delayed Jump for Dynos
         {
-            verticalSpeed[1] = VERTICAL_SPEED;
-            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
-            commands[1] = false;
-        }
+            elapsedTimeSinceJump += deltaTime;
 
-        if (elapsedTime > 0.2 && commands[2])
-        {
-            verticalSpeed[2] = VERTICAL_SPEED;
-            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
-            commands[2] = false;
-        }
+            float delayTable[4] = {0, .1, .2, .3};
 
-        if (elapsedTime > 0.3 && commands[3])
-        {
-            verticalSpeed[3] = VERTICAL_SPEED;
-            soundPlaySfx(_this.sound, SFX_HERO_JUMP);
-            commands[3] = false;
+            for (int i = livesLost; i < 4; i++)
+            {
+                if (elapsedTimeSinceJump >= delayTable[i - livesLost] && commands[i])
+                {
+                    verticalSpeed[i] = VERTICAL_SPEED;
+                    soundPlaySfx(_this.sound, SFX_HERO_JUMP);
+                    commands[i] = false;
+                }
+            }
         }
 
         for (int i = 0; i < 4; i++)
