@@ -39,6 +39,7 @@ typedef enum GaneSfx
     SFX_ENEMY_ESCAPED,
     SFX_BLIP,
     SFX_HERO_JUMP,
+    SFX_HERO_HURT,
     SFX_COUNT
 } GaneSfx;
 
@@ -184,6 +185,7 @@ Sound soundCreate()
     Sfxr_loadPreset(this.sfx[SFX_SHOOT_HERO], SFXR_EXPLOSION, 3247);
     Sfxr_loadPreset(this.sfx[SFX_ENEMY_ESCAPED], SFXR_HURT, 3247);
     Sfxr_loadPreset(this.sfx[SFX_HERO_JUMP], SFXR_JUMP, 3247);
+    Sfxr_loadPreset(this.sfx[SFX_HERO_HURT], SFXR_HURT, 3247);
 
     Soloud_initEx(this.soloud, SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
                   SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
@@ -764,6 +766,7 @@ Level2 level2Update(Level2 _this)
 
     float obstaclePosition = 320.;
     bool collided = false;
+    int livesLost = 0;
     while (!_this.shouldQuit)
     {
         float deltaTime = getDeltaTime();
@@ -779,7 +782,7 @@ Level2 level2Update(Level2 _this)
                 cloudPosition[i] += cloudSpeed[i] * deltaTime;
                 if (cloudPosition[i] < -_this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
                 {
-                    cloudPosition[i] = 0.; // 320. + _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+                    cloudPosition[i] = 0.;
                 }
                 _this.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
                 spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.graphics.imageData);
@@ -815,23 +818,27 @@ Level2 level2Update(Level2 _this)
                     _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
                     spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
                     // Collision detection engine
-                    distance.x = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x - _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x;
-                    distance.y = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y - _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y;
+                    distance.x = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x;
+                    distance.y = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y - _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.y;
                     float distanceScalar = distance.x * distance.x + distance.y * distance.y;
                     if (50 > distanceScalar)
                         collided = true;
                 }
             }
             if (collided)
-                graphicsDrawSquare(_this.graphics.imageData, _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position, (PointI){10, 10}, (Color){0xFF, 0, 0});
+            {
+                soundPlaySfx(_this.sound, SFX_HERO_HURT);
+                livesLost++;
+                graphicsDrawSquare(_this.graphics.imageData, _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position, (PointI){_this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].animation.frameWidth, _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].size.y}, (Color){0xFF, 0, 0});
+            }
         }
 
         // Draw Heroes
         {
-            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN], _this.graphics.imageData, deltaTime);
-            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_RED], _this.graphics.imageData, deltaTime);
-            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_BLUE], _this.graphics.imageData, deltaTime);
-            spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_YELLOW], _this.graphics.imageData, deltaTime);
+            for (int i = livesLost; i < 4; i++)
+            {
+                spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.graphics.imageData, deltaTime);
+            }
         }
 
         {
@@ -840,7 +847,7 @@ Level2 level2Update(Level2 _this)
             _this.sprites[ASSET_LEVEL2_HERO_RED].position.y = floor(subpixelPosition[2]);
             _this.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = floor(subpixelPosition[3]);
         }
-
+        // Controls
         if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
         {
             soundPlaySfx(_this.sound, SFX_HERO_JUMP);
