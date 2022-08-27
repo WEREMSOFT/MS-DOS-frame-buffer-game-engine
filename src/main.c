@@ -763,10 +763,9 @@ Level2 level2Update(Level2 _this)
                              0.};
 
     float obstaclePosition = 320.;
-
+    bool collided = false;
     while (!_this.shouldQuit)
     {
-
         float deltaTime = getDeltaTime();
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
         graphicsClear(_this.graphics.imageData);
@@ -800,12 +799,33 @@ Level2 level2Update(Level2 _this)
 
         // Obstacles
         {
+            collided = false;
             obstaclePosition += backgroundSpeedFrame;
-            _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition;
-            spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
-            if (obstaclePosition < -_this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x)
+            char obstacleStream[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0};
+            int matrixSize = sizeof(obstacleStream) / sizeof(obstacleStream[0]);
+
+            if (obstaclePosition < -_this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * matrixSize)
                 obstaclePosition = 320. + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x;
+
+            PointI distance;
+            for (int i = 0; i < matrixSize; i++)
+            {
+                if (obstacleStream[i] == 1)
+                {
+                    _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
+                    spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
+                    // Collision detection engine
+                    distance.x = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x - _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x;
+                    distance.y = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y - _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y;
+                    float distanceScalar = distance.x * distance.x + distance.y * distance.y;
+                    if (50 > distanceScalar)
+                        collided = true;
+                }
+            }
+            if (collided)
+                graphicsDrawSquare(_this.graphics.imageData, _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position, (PointI){10, 10}, (Color){0xFF, 0, 0});
         }
+
         // Draw Heroes
         {
             spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN], _this.graphics.imageData, deltaTime);
@@ -860,8 +880,6 @@ Level2 level2Update(Level2 _this)
             subpixelPosition[i] += verticalSpeed[i] * deltaTime;
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
-
-        spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
 
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
