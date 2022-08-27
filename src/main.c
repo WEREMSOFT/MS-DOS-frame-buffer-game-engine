@@ -824,7 +824,9 @@ Level2 level2Update(Level2 _this)
                     distance.y = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y - _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.y;
                     float distanceScalar = distance.x * distance.x + distance.y * distance.y;
                     if (50 > distanceScalar)
+                    {
                         collided = true;
+                    }
                 }
             }
 
@@ -832,7 +834,8 @@ Level2 level2Update(Level2 _this)
             {
                 elapsedTimeSinceHit = 0;
                 soundPlaySfx(_this.sound, SFX_HERO_HURT);
-                // livesLost++;
+                verticalSpeed[livesLost] = VERTICAL_SPEED;
+                livesLost++;
                 graphicsDrawSquare(_this.graphics.imageData, _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position, (PointI){_this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].animation.frameWidth, _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].size.y}, (Color){0xFF, 0, 0});
             }
         }
@@ -840,11 +843,14 @@ Level2 level2Update(Level2 _this)
         // Draw Heroes
         {
             elapsedTimeSinceHit += deltaTime;
-            int elapsedTimeSinceHitI = elapsedTimeSinceHit - elapsedTimeSinceHitI * 100;
+            int elapsedTimeSinceHitI = elapsedTimeSinceHit;
+            elapsedTimeSinceHitI = (elapsedTimeSinceHit - elapsedTimeSinceHitI) * 100;
+
             char stringToPrint[200] = {0};
-            sprintf(stringToPrint, "elapsedTimeSinceHit %f", elapsedTimeSinceHit);
-            graphicsPrintString(_this.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 00, 00});
-            if (elapsedTimeSinceHitI % 50 == 0 || elapsedTimeSinceHit > 2.)
+            sprintf(stringToPrint, "elapsedTimeSinceHit %d", elapsedTimeSinceHitI);
+
+            graphicsPrintString(_this.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
+            if (elapsedTimeSinceHitI % 10 == 0 || elapsedTimeSinceHit > 2.)
             {
                 for (int i = livesLost; i < 4; i++)
                 {
@@ -860,7 +866,7 @@ Level2 level2Update(Level2 _this)
             }
         }
         // Controls
-        if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[0] == 174.)
+        if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[livesLost] == 174.)
         {
             elapsedTimeSinceJump = 0;
             for (int i = livesLost; i < 4; i++)
@@ -889,7 +895,8 @@ Level2 level2Update(Level2 _this)
         {
             verticalSpeed[i] += gravity * deltaTime;
             subpixelPosition[i] += verticalSpeed[i] * deltaTime;
-            subpixelPosition[i] = fminf(174., subpixelPosition[i]);
+            if (i >= livesLost)
+                subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
 
         graphicsSwapBuffers(_this.graphics);
