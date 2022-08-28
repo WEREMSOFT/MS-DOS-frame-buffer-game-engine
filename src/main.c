@@ -850,12 +850,9 @@ Level2 level2Update(Level2 _this)
             sprintf(stringToPrint, "elapsedTimeSinceHit %d", elapsedTimeSinceHitI);
 
             graphicsPrintString(_this.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
-            if (elapsedTimeSinceHitI % 10 == 0 || elapsedTimeSinceHit > 2.)
+            for (int i = 0; i < 4; i++)
             {
-                for (int i = livesLost; i < 4; i++)
-                {
-                    spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.graphics.imageData, deltaTime);
-                }
+                spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.graphics.imageData, deltaTime);
             }
         }
 
@@ -890,15 +887,17 @@ Level2 level2Update(Level2 _this)
                 }
             }
         }
-
+        // gravity and velocity calculation
         for (int i = 0; i < 4; i++)
         {
             verticalSpeed[i] += gravity * deltaTime;
             subpixelPosition[i] += verticalSpeed[i] * deltaTime;
-            if (i >= livesLost)
-                subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
-
+        // collision with floor
+        for (int i = livesLost; i < 4; i++)
+        {
+            subpixelPosition[i] = fminf(174., subpixelPosition[i]);
+        }
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
     }
