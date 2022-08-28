@@ -767,16 +767,17 @@ Level2 level2Update(Level2 _this)
     bool collided = false;
     int livesLost = 0;
     float elapsedTimeBlink = 0;
-    long int runningDistance = 0;
-
+    double runningDistance = 0;
+    float phase = (3 / 2) * M_PI;
     while (!_this.shouldQuit)
     {
         float deltaTime = getDeltaTime();
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
         graphicsClear(_this.graphics.imageData);
         printFPS(_this.graphics, deltaTime);
-
-        float backgroundSpeedFrame = BACKGROUND_SPEED * deltaTime;
+        printf("%.2f #", (1. + sinf(phase)));
+        float backgroundSpeedFrame = deltaTime * (2. + sinf(phase)) * BACKGROUND_SPEED;
+        phase += deltaTime * .25;
         // Clowds movement
         {
             for (int i = 0; i < 4; i++)
@@ -795,7 +796,6 @@ Level2 level2Update(Level2 _this)
         // Draw Background
         {
             screenPosition += backgroundSpeedFrame;
-            runningDistance += backgroundSpeedFrame;
             screenPosition = screenPosition > -320. ? screenPosition : 0.;
             _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
             spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
@@ -807,7 +807,7 @@ Level2 level2Update(Level2 _this)
         {
             collided = false;
             obstaclePosition += backgroundSpeedFrame;
-            char obstacleStream[] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0};
+            char obstacleStream[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1};
             int matrixSize = sizeof(obstacleStream) / sizeof(obstacleStream[0]);
 
             if (obstaclePosition < -_this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * matrixSize)
@@ -821,7 +821,7 @@ Level2 level2Update(Level2 _this)
                     _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
                     spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.graphics.imageData);
                     // Collision detection engine
-                    distance.x = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x;
+                    distance.x = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x + _this.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.x;
                     distance.y = _this.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y - _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.y;
                     float distanceScalar = distance.x * distance.x + distance.y * distance.y;
                     if (50 > distanceScalar)
@@ -847,10 +847,6 @@ Level2 level2Update(Level2 _this)
             int elapsedTimeSinceHitI = elapsedTimeSinceHit;
             elapsedTimeSinceHitI = (elapsedTimeSinceHit - elapsedTimeSinceHitI) * 100;
 
-            char stringToPrint[200] = {0};
-            sprintf(stringToPrint, "elapsedTimeSinceHit %d", elapsedTimeSinceHitI);
-
-            graphicsPrintString(_this.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
             for (int i = 0; i < 4; i++)
             {
                 spriteDrawTransparentAnimatedClipped(&_this.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.graphics.imageData, deltaTime);
@@ -903,6 +899,14 @@ Level2 level2Update(Level2 _this)
         for (int i = livesLost; i < 4; i++)
         {
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
+        }
+
+        // Draw UI
+        {
+            runningDistance += -backgroundSpeedFrame / 100.;
+            char stringToPrint[200] = {0};
+            snprintf(stringToPrint, 200, "distance %.2f", runningDistance);
+            graphicsPrintString(_this.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
         }
 
         graphicsSwapBuffers(_this.graphics);
