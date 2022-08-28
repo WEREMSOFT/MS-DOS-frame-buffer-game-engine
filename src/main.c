@@ -759,16 +759,16 @@ Level2 level2Update(Level2 _this)
                           -25.,
                           -50.,
                           -55.};
-
     float cloudPosition[] = {0.,
                              0.,
                              0.,
                              0.};
-
     float obstaclePosition = 320.;
     bool collided = false;
     int livesLost = 0;
     float elapsedTimeBlink = 0;
+    long int runningDistance = 0;
+
     while (!_this.shouldQuit)
     {
         float deltaTime = getDeltaTime();
@@ -795,6 +795,7 @@ Level2 level2Update(Level2 _this)
         // Draw Background
         {
             screenPosition += backgroundSpeedFrame;
+            runningDistance += backgroundSpeedFrame;
             screenPosition = screenPosition > -320. ? screenPosition : 0.;
             _this.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
             spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_BACKGROUND], _this.graphics.imageData);
@@ -856,12 +857,6 @@ Level2 level2Update(Level2 _this)
             }
         }
 
-        {
-            for (int i = livesLost; i < 4; i++)
-            {
-                _this.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
-            }
-        }
         // Controls
         if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[livesLost] == 174.)
         {
@@ -871,6 +866,7 @@ Level2 level2Update(Level2 _this)
                 commands[i] = true;
             }
         }
+
         // Delayed Jump for Dynos
         {
             elapsedTimeSinceJump += deltaTime;
@@ -887,17 +883,28 @@ Level2 level2Update(Level2 _this)
                 }
             }
         }
+
+        // Set position from float to int (subpixel estimation)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                _this.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
+            }
+        }
+
         // gravity and velocity calculation
         for (int i = 0; i < 4; i++)
         {
             verticalSpeed[i] += gravity * deltaTime;
             subpixelPosition[i] += verticalSpeed[i] * deltaTime;
         }
+
         // collision with floor
         for (int i = livesLost; i < 4; i++)
         {
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
+
         graphicsSwapBuffers(_this.graphics);
         glfwPollEvents();
     }
@@ -907,7 +914,7 @@ Program programCreate()
 {
     staticAllocatorInit(100092024);
     Program _this = {0};
-    _this.graphics = graphicsCreate(320, 240);
+    _this.graphics = graphicsCreate(320, 240, true);
     _this.sound = soundCreate();
     loadAssets(_this.sprites);
     Soloud_setGlobalVolume(_this.sound.soloud, 1.);

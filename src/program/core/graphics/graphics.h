@@ -38,7 +38,7 @@ typedef struct
     ImageData imageData;
 } Graphics;
 
-Graphics graphicsCreate();
+Graphics graphicsCreate(int width, int height, bool fullScreen);
 void graphicsSwapBuffers(Graphics this);
 void graphicsDestroy(Graphics this);
 void graphicsUpdateMouseCoordinates(Graphics *this);

@@ -65,7 +65,7 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-Graphics graphicsCreate(int width, int height)
+Graphics graphicsCreate(int width, int height, bool fullScreen)
 {
     Graphics this = {0};
     this.imageData.size.x = width;
@@ -81,7 +81,16 @@ Graphics graphicsCreate(int width, int height)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    this.window = glfwCreateWindow(mode->width, mode->height, "Frame Buffer", monitor, NULL);
+    int screenWidth = mode->width;
+    int screenHeight = mode->height;
+
+    if (!fullScreen)
+    {
+        screenWidth /= 2;
+        screenHeight /= 2;
+    }
+
+    this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(this.window);
     loadOpenGLFunctions();
