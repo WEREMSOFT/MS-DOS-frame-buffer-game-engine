@@ -748,6 +748,8 @@ Level2 level2Update(Level2 _this)
 #define VERTICAL_SPEED -300.
 #define BACKGROUND_SPEED -250.
 
+    float backgroundSpeed = BACKGROUND_SPEED;
+    float backgroundAcceleration = -5.0;
     bool commands[4] = {0};
     float gravity = 1000.;
     float subpixelPosition[4] = {174., 174., 174., 174.};
@@ -768,16 +770,17 @@ Level2 level2Update(Level2 _this)
     int livesLost = 0;
     float elapsedTimeBlink = 0;
     double runningDistance = 0;
-    float phase = (3 / 2) * M_PI;
+
     while (!_this.shouldQuit)
     {
         float deltaTime = getDeltaTime();
         _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
+        backgroundSpeed += backgroundAcceleration * deltaTime;
+        float backgroundSpeedFrame = deltaTime * backgroundSpeed;
+
         graphicsClear(_this.graphics.imageData);
         printFPS(_this.graphics, deltaTime);
-        printf("%.2f #", (1. + sinf(phase)));
-        float backgroundSpeedFrame = deltaTime * (2. + sinf(phase)) * BACKGROUND_SPEED;
-        phase += deltaTime * .25;
+
         // Clowds movement
         {
             for (int i = 0; i < 4; i++)
@@ -793,6 +796,7 @@ Level2 level2Update(Level2 _this)
                 spriteDrawTransparentClipped(_this.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.graphics.imageData);
             }
         }
+
         // Draw Background
         {
             screenPosition += backgroundSpeedFrame;
@@ -835,6 +839,7 @@ Level2 level2Update(Level2 _this)
             {
                 elapsedTimeSinceHit = 0;
                 soundPlaySfx(_this.sound, SFX_HERO_HURT);
+                backgroundSpeed = BACKGROUND_SPEED;
                 verticalSpeed[livesLost] = VERTICAL_SPEED;
                 livesLost++;
                 graphicsDrawSquare(_this.graphics.imageData, _this.sprites[ASSET_LEVEL2_HERO_GREEEN].position, (PointI){_this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].animation.frameWidth, _this.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].size.y}, (Color){0xFF, 0, 0});
