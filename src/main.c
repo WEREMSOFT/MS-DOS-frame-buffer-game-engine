@@ -670,6 +670,9 @@ Level1 level1Update(Level1 _this)
         float dt = getDeltaTime();
         _this.header.shouldQuit = isKeyJustPressed(_this.header.graphics.window, GLFW_KEY_ESCAPE);
 
+        if (isKeyJustPressed(_this.header.graphics.window, GLFW_KEY_ENTER))
+            _this.header.shouldContinue = false;
+
         spriteDrawClipped(_this.header.sprites[ASSET_BACKGROUND], _this.header.graphics.imageData);
 
         level1EnemiesDraw(_this);
@@ -693,6 +696,19 @@ Level1 level1Update(Level1 _this)
         glfwPollEvents();
     }
 
+    // Game Score Delay
+    _this.header.shouldContinue = true;
+    float elapsedTimeSinceScoreDisplay = 0;
+    while (_this.header.shouldContinue && !_this.header.shouldQuit && elapsedTimeSinceScoreDisplay < 2.)
+    {
+        float deltaTime = getDeltaTime();
+        _this.header.shouldQuit = isKeyJustPressed(_this.header.graphics.window, GLFW_KEY_ESCAPE);
+        if (isKeyJustPressed(_this.header.graphics.window, GLFW_KEY_ENTER))
+            _this.header.shouldContinue = false;
+        elapsedTimeSinceScoreDisplay += deltaTime;
+        glfwPollEvents();
+    }
+    _this.header.shouldContinue = false;
     return _this;
 }
 
