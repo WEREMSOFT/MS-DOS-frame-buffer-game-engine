@@ -422,81 +422,6 @@ static Level1 level1InitEnemies(Level1 _this, GameState gameState)
     return _this;
 }
 
-// Level1 level1HandleControls(Level1 _this, GameState gameState)
-// {
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
-//         glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_TOP_LEFT;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
-//         glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_TOP_RIGHT;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
-//         glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_BOTTOM_LEFT;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
-//         glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_BOTTOM_RIGHT;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_TOP;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_BOTTOM;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_RIGHT;
-//         return _this;
-//     }
-
-//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
-//     {
-//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
-//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
-//         _this.quadPosition = QPOS_LEFT;
-//         return _this;
-//     }
-
-//     _this.quadPosition = QPOS_NONE;
-//     return _this;
-// }
-
 GameState level1MainLoop(GameState gameState)
 {
     // Initialization
@@ -551,12 +476,8 @@ GameState level1MainLoop(GameState gameState)
         // Draw Enemies
         for (int i = 0; i < 8; i++)
         {
-            if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
-                continue;
-
             gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
             gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
-
             spriteDrawTransparentClippedLowerLine(gameState.sprites[_this.enemies[i].spriteId], gameState.graphics.imageData, _this.enemies[i].lowerClippingPosition);
         };
 
@@ -606,7 +527,7 @@ GameState level1MainLoop(GameState gameState)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
             _this.quadPosition = QPOS_TOP_LEFT;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
@@ -614,7 +535,7 @@ GameState level1MainLoop(GameState gameState)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
             _this.quadPosition = QPOS_TOP_RIGHT;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
@@ -622,7 +543,7 @@ GameState level1MainLoop(GameState gameState)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
             _this.quadPosition = QPOS_BOTTOM_LEFT;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
@@ -630,39 +551,39 @@ GameState level1MainLoop(GameState gameState)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
             _this.quadPosition = QPOS_BOTTOM_RIGHT;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
             _this.quadPosition = QPOS_TOP;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
             _this.quadPosition = QPOS_BOTTOM;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
             _this.quadPosition = QPOS_RIGHT;
-            goto endControls;
+            goto continueControls;
         }
 
         if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
             _this.quadPosition = QPOS_LEFT;
-            goto endControls;
+            goto continueControls;
         }
         else
             _this.quadPosition = QPOS_NONE;
-    endControls:
+    continueControls:
         // DRAW
 
         // Draw Background
@@ -738,9 +659,6 @@ GameState level1MainLoop(GameState gameState)
         // Draw Enemies
         for (int i = 0; i < 8; i++)
         {
-            if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
-                continue;
-
             gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
             gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
 
@@ -759,7 +677,6 @@ GameState level1MainLoop(GameState gameState)
 
         gameState.sprites[ASSET_TOP_SCORE_SQUARE].position.y = statisticsOffset;
         spriteDrawClipped(gameState.sprites[ASSET_TOP_SCORE_SQUARE], gameState.graphics.imageData);
-        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 10 + statisticsOffset}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
         graphicsPrintString(gameState.graphics.imageData, (PointI){100, 20 + statisticsOffset}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsPrintString(gameState.graphics.imageData, (PointI){100, 30 + statisticsOffset}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsSwapBuffers(gameState.graphics);
@@ -793,21 +710,21 @@ GameState level2MainLoop(GameState gameState)
     gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameWidth = 24;
     gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameRate = 15;
 
-    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 60;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 70;
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = 174;
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animated = true;
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameCount = 6;
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameWidth = 24;
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameRate = 15;
 
-    gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = 40;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = 60;
     gameState.sprites[ASSET_LEVEL2_HERO_RED].position.y = 174;
     gameState.sprites[ASSET_LEVEL2_HERO_RED].animated = true;
     gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameCount = 6;
     gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameWidth = 24;
     gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameRate = 15;
 
-    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = 20;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = 50;
     gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = 174;
     gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animated = true;
     gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameCount = 6;
@@ -828,10 +745,12 @@ GameState level2MainLoop(GameState gameState)
     float verticalSpeed[4] = {0};
     float elapsedTimeSinceJump = 0;
     float elapsedTimeSinceHit = 10000;
-    float cloudSpeed[] = {-10.,
-                          -25.,
-                          -50.,
-                          -55.};
+
+    float clowdSpeedRatio[] = {.05,
+                               .1,
+                               .2,
+                               .22};
+
     float cloudPosition[] = {0.,
                              0.,
                              0.,
@@ -851,21 +770,19 @@ GameState level2MainLoop(GameState gameState)
         float backgroundSpeedFrame = deltaTime * backgroundSpeed;
 
         // Clowds movement
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
+            cloudPosition[i] += backgroundSpeedFrame * clowdSpeedRatio[i];
+            if (cloudPosition[i] < -gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
             {
-                cloudPosition[i] += cloudSpeed[i] * deltaTime;
-                if (cloudPosition[i] < -gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
-                {
-                    cloudPosition[i] = 0.;
-                }
+                cloudPosition[i] = 0.;
             }
         }
 
         static char obstacleStream[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1};
         static int matrixSize = sizeof(obstacleStream) / sizeof(obstacleStream[0]);
 
-        // Obstacles
+        // Obstacles & collision
         {
             collided = false;
             obstaclePosition += backgroundSpeedFrame;
@@ -933,11 +850,9 @@ GameState level2MainLoop(GameState gameState)
         }
 
         // Set position from float to int (subpixel estimation)
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
-            {
-                gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
-            }
+            gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
         }
 
         // gravity and velocity calculation
@@ -990,8 +905,11 @@ GameState level2MainLoop(GameState gameState)
             elapsedTimeSinceHit += deltaTime;
             int elapsedTimeSinceHitI = elapsedTimeSinceHit;
             elapsedTimeSinceHitI = (elapsedTimeSinceHit - elapsedTimeSinceHitI) * 100;
-
-            for (int i = 0; i < 4; i++)
+            float distanceBetweenDynos = backgroundSpeed / BACKGROUND_SPEED;
+            gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 10. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 20. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 30. * distanceBetweenDynos;
+            for (int i = 3; i >= 0; i--)
             {
                 spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i], gameState.graphics.imageData, deltaTime);
             }
