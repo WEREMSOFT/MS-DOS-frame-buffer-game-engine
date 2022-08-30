@@ -143,7 +143,6 @@ typedef struct
 
 typedef struct
 {
-    GameState gameState;
     PointI textPosition;
     QuadrantPosition quadPosition;
     Sound sound;
@@ -156,13 +155,6 @@ typedef struct
 typedef struct
 {
     GameState gameState;
-} Level2;
-
-typedef struct
-{
-    GameState gameState;
-    Level1 level1;
-    Level2 level2;
 } Program;
 
 Sound soundCreate()
@@ -397,7 +389,7 @@ void level1InitPositions(PointI *positions)
     positions[QPOS_TOP_LEFT].y = 55;
 }
 
-static Level1 level1InitEnemies(Level1 _this)
+static Level1 level1InitEnemies(Level1 _this, GameState gameState)
 {
     _this.enemies[QPOS_TOP_LEFT].lowerClippingPosition = 92;
     _this.enemies[QPOS_TOP].lowerClippingPosition = 94;
@@ -423,125 +415,107 @@ static Level1 level1InitEnemies(Level1 _this)
             _this.enemies[i].spriteId = ASSET_ENEMY_GREEN_BIG;
 
         _this.enemies[i].bottomOffset = _this.enemies[i].lowerClippingPosition;
-        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - _this.gameState.sprites[_this.enemies[i].spriteId].size.y;
-        _this.enemies[i].speedMultiplicator = (float)_this.gameState.sprites[_this.enemies[i].spriteId].size.y / (float)_this.gameState.sprites[ASSET_ENEMY_GREEN_BIG].size.y;
+        _this.enemies[i].topLimit = _this.enemies[i].lowerClippingPosition - gameState.sprites[_this.enemies[i].spriteId].size.y;
+        _this.enemies[i].speedMultiplicator = (float)gameState.sprites[_this.enemies[i].spriteId].size.y / (float)gameState.sprites[ASSET_ENEMY_GREEN_BIG].size.y;
     }
 
     return _this;
 }
 
-Level1 level1HandleControls(Level1 _this)
+// Level1 level1HandleControls(Level1 _this, GameState gameState)
+// {
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
+//         glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_TOP_LEFT;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
+//         glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_TOP_RIGHT;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
+//         glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_BOTTOM_LEFT;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
+//         glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_BOTTOM_RIGHT;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_TOP;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_BOTTOM;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_RIGHT;
+//         return _this;
+//     }
+
+//     if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
+//     {
+//         gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
+//         spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+//         _this.quadPosition = QPOS_LEFT;
+//         return _this;
+//     }
+
+//     _this.quadPosition = QPOS_NONE;
+//     return _this;
+// }
+
+GameState level1MainLoop(GameState gameState)
 {
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
-        glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_TOP_LEFT;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
-        glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_TOP_RIGHT;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
-        glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_BOTTOM_LEFT;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
-        glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_BOTTOM_RIGHT;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_TOP;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_BOTTOM;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_RIGHT;
-        return _this;
-    }
-
-    if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
-    {
-        _this.gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_SIGHT], _this.gameState.graphics.imageData);
-        _this.quadPosition = QPOS_LEFT;
-        return _this;
-    }
-
-    _this.quadPosition = QPOS_NONE;
-    return _this;
-}
-
-Level1 level1Create(GameState gameState)
-{
+    // Initialization
     Level1 _this = {0};
 
     level1InitPositions(_this.positions);
-    _this.gameState = gameState;
+    gameState = gameState;
 
     ENEMY_OFFSET.y = 0;
     ENEMY_OFFSET.x = -8;
 
-    _this = level1InitEnemies(_this);
+    _this = level1InitEnemies(_this, gameState);
 
     for (int i = 0; i < 8; i++)
     {
         _this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
     }
 
-    return _this;
-}
-
-void level1EnemiesDraw(Level1 _this)
-{
-    for (int i = 0; i < 8; i++)
-    {
-        if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
-            continue;
-
-        _this.gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
-        _this.gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
-
-        spriteDrawTransparentClippedLowerLine(_this.gameState.sprites[_this.enemies[i].spriteId], _this.gameState.graphics.imageData, _this.enemies[i].lowerClippingPosition);
-    };
-}
-
-Level1 level1MainLoop(Level1 _this)
-{
-    soundPlaySpeech(_this.gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
+    soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
     double elapsedTime = glfwGetTime();
     double gameElapsedTime = 0;
     double enemySpeed = 100.;
@@ -552,19 +526,14 @@ Level1 level1MainLoop(Level1 _this)
     }
 
     // Tutorial Loop
-    while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit)
+    while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         int hiddenEnemies = 0;
         float dt = getDeltaTime();
-        _this.gameState.shouldQuit = isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ESCAPE);
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
 
-        spriteDrawClipped(_this.gameState.sprites[ASSET_BACKGROUND], _this.gameState.graphics.imageData);
-        spriteDrawClipped(_this.gameState.sprites[ASSET_TOP_SCORE_SQUARE], _this.gameState.graphics.imageData);
-
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL, _this.gameState.sound);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL, gameState.sound);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
-
-        level1EnemiesDraw(_this);
 
         for (int i = 0; i < 8; i++)
         {
@@ -573,32 +542,45 @@ Level1 level1MainLoop(Level1 _this)
         }
 
         if (hiddenEnemies == 8)
-            _this.gameState.shouldStop = true;
+            gameState.shouldStop = true;
 
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_FOREGROUND], _this.gameState.graphics.imageData);
-        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_HOW_TO_PLAY], _this.gameState.graphics.imageData, dt);
-        printFPS(_this.gameState.graphics, dt);
-        graphicsSwapBuffers(_this.gameState.graphics);
+        // DRAW
+        // Draw Background
+        spriteDrawClipped(gameState.sprites[ASSET_BACKGROUND], gameState.graphics.imageData);
+        spriteDrawClipped(gameState.sprites[ASSET_TOP_SCORE_SQUARE], gameState.graphics.imageData);
+        // Draw Enemies
+        for (int i = 0; i < 8; i++)
+        {
+            if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
+                continue;
+
+            gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
+            gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
+
+            spriteDrawTransparentClippedLowerLine(gameState.sprites[_this.enemies[i].spriteId], gameState.graphics.imageData, _this.enemies[i].lowerClippingPosition);
+        };
+
+        spriteDrawTransparentClipped(gameState.sprites[ASSET_FOREGROUND], gameState.graphics.imageData);
+        spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_HOW_TO_PLAY], gameState.graphics.imageData, dt);
+        printFPS(gameState.graphics, dt);
+        graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
     }
 
-    _this.gameState.shouldStop = false;
+    gameState.shouldStop = false;
     char *enemiesRemaining[100] = {0};
     char *enemiesKilled[100] = {0};
     char *percentageKilled[100] = {0};
     _this.enemiesRemaining = 99;
 
     // Game
-    while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit && _this.enemiesRemaining > 0)
+    while (!gameState.shouldStop && !gameState.shouldQuit && _this.enemiesRemaining > 0)
     {
         float dt = getDeltaTime();
 
-        _this.gameState.shouldQuit = isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ESCAPE);
-        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ENTER))
-            _this.gameState.shouldStop = true;
-
-        spriteDrawClipped(_this.gameState.sprites[ASSET_BACKGROUND], _this.gameState.graphics.imageData);
-        spriteDrawClipped(_this.gameState.sprites[ASSET_TOP_SCORE_SQUARE], _this.gameState.graphics.imageData);
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+            gameState.shouldStop = true;
 
         // Enemy selection and trigger to attack
         if (glfwGetTime() - elapsedTime > .5)
@@ -615,142 +597,224 @@ Level1 level1MainLoop(Level1 _this)
 
         enemySpeed = fminf(100 + gameElapsedTime, 300);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.enemiesRemaining, _this.gameState.sound);
+        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, &_this.enemiesRemaining, gameState.sound);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
         enemyProcessStateDead(_this.enemies, dt);
-
-        level1EnemiesDraw(_this);
-
-        _this = level1HandleControls(_this);
-
-        if (_this.gameState.sprites[ASSET_SHOOT].animation.isPlaying)
+        // Handle Controls
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
+            glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_SHOOT], _this.gameState.graphics.imageData, dt);
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
+            _this.quadPosition = QPOS_TOP_LEFT;
+            goto endControls;
         }
-        else if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
+            glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
+            _this.quadPosition = QPOS_TOP_RIGHT;
+            goto endControls;
+        }
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
+            glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
+            _this.quadPosition = QPOS_BOTTOM_LEFT;
+            goto endControls;
+        }
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
+            glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
+            _this.quadPosition = QPOS_BOTTOM_RIGHT;
+            goto endControls;
+        }
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
+            _this.quadPosition = QPOS_TOP;
+            goto endControls;
+        }
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
+            _this.quadPosition = QPOS_BOTTOM;
+            goto endControls;
+        }
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
+            _this.quadPosition = QPOS_RIGHT;
+            goto endControls;
+        }
+
+        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        {
+            gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
+            _this.quadPosition = QPOS_LEFT;
+            goto endControls;
+        }
+        else
+            _this.quadPosition = QPOS_NONE;
+    endControls:
+        // DRAW
+
+        // Draw Background
+        spriteDrawClipped(gameState.sprites[ASSET_BACKGROUND], gameState.graphics.imageData);
+        spriteDrawClipped(gameState.sprites[ASSET_TOP_SCORE_SQUARE], gameState.graphics.imageData);
+
+        // Draw Sight
+        spriteDrawTransparentClipped(gameState.sprites[ASSET_SIGHT], gameState.graphics.imageData);
+
+        // Draw Enemies
+        for (int i = 0; i < 8; i++)
+        {
+            if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
+                continue;
+
+            gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
+            gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
+
+            spriteDrawTransparentClippedLowerLine(gameState.sprites[_this.enemies[i].spriteId], gameState.graphics.imageData, _this.enemies[i].lowerClippingPosition);
+        };
+
+        if (gameState.sprites[ASSET_SHOOT].animation.isPlaying)
+        {
+            spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_SHOOT], gameState.graphics.imageData, dt);
+        }
+        else if (glfwGetKey(gameState.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
         {
 
             if (_this.quadPosition != QPOS_NONE)
             {
-                _this.gameState.sprites[ASSET_SHOOT].position = _this.gameState.sprites[ASSET_SIGHT].position;
-                _this.gameState.sprites[ASSET_SHOOT].position.x -= _this.gameState.sprites[ASSET_SIGHT].size.x / 2;
-                _this.gameState.sprites[ASSET_SHOOT].position.y -= _this.gameState.sprites[ASSET_SIGHT].size.y / 2;
+                gameState.sprites[ASSET_SHOOT].position = gameState.sprites[ASSET_SIGHT].position;
+                gameState.sprites[ASSET_SHOOT].position.x -= gameState.sprites[ASSET_SIGHT].size.x / 2;
+                gameState.sprites[ASSET_SHOOT].position.y -= gameState.sprites[ASSET_SIGHT].size.y / 2;
 
-                spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_SHOOT], _this.gameState.graphics.imageData, dt);
+                spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_SHOOT], gameState.graphics.imageData, dt);
 
                 if (_this.enemies[_this.quadPosition].state != ENEMY_STATE_HIDDEN && _this.enemies[_this.quadPosition].state != ENEMY_STATE_DEAD)
                 {
-                    soundPlaySpeech(_this.gameState.sound, SPEECH_NOOO);
+                    soundPlaySpeech(gameState.sound, SPEECH_NOOO);
                     _this.enemiesRemaining--;
                     _this.enemiesKilled++;
                     _this.enemies[_this.quadPosition] = enemyPassToStateDead(_this.enemies[_this.quadPosition]);
                 }
-                soundPlaySfx(_this.gameState.sound, SFX_SHOOT_HERO);
+                soundPlaySfx(gameState.sound, SFX_SHOOT_HERO);
             }
         }
 
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_FOREGROUND], _this.gameState.graphics.imageData);
-        printFPS(_this.gameState.graphics, dt);
+        spriteDrawTransparentClipped(gameState.sprites[ASSET_FOREGROUND], gameState.graphics.imageData);
+        printFPS(gameState.graphics, dt);
         snprintf(enemiesRemaining, 100, "enemies remaining: %d", _this.enemiesRemaining);
         snprintf(enemiesKilled, 100, "enemies killed: %d", _this.enemiesKilled);
         float enemiesKilledPercentage = _this.enemiesKilled / (100. - _this.enemiesRemaining) * 100.;
         snprintf(percentageKilled, 100, "hit percentage: %.0f%%", enemiesKilledPercentage);
-        graphicsPrintString(_this.gameState.graphics.imageData, (PointI){100, 10}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
-        graphicsPrintString(_this.gameState.graphics.imageData, (PointI){100, 20}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
-        graphicsPrintString(_this.gameState.graphics.imageData, (PointI){100, 30}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
-        graphicsSwapBuffers(_this.gameState.graphics);
+        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 10}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 20}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 30}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
     }
-    _this.gameState.shouldStop = false;
+    gameState.shouldStop = false;
     // Level Complete Loop
     float statisticsOffset = 0.;
-    while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit)
+    while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         float statisticsSpeed = 100.;
         float dt = getDeltaTime();
-        _this.gameState.shouldQuit = isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ESCAPE);
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
 
-        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ENTER))
-            _this.gameState.shouldStop = true;
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+            gameState.shouldStop = true;
 
-        spriteDrawClipped(_this.gameState.sprites[ASSET_BACKGROUND], _this.gameState.graphics.imageData);
+        spriteDrawClipped(gameState.sprites[ASSET_BACKGROUND], gameState.graphics.imageData);
+        // Draw Enemies
+        for (int i = 0; i < 8; i++)
+        {
+            if (_this.enemies[i].state == ENEMY_STATE_HIDDEN || !_this.enemies[i].visible)
+                continue;
 
-        level1EnemiesDraw(_this);
+            gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
+            gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
 
-        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_FOREGROUND], _this.gameState.graphics.imageData);
-        printFPS(_this.gameState.graphics, dt);
+            spriteDrawTransparentClippedLowerLine(gameState.sprites[_this.enemies[i].spriteId], gameState.graphics.imageData, _this.enemies[i].lowerClippingPosition);
+        };
+
+        spriteDrawTransparentClipped(gameState.sprites[ASSET_FOREGROUND], gameState.graphics.imageData);
+        printFPS(gameState.graphics, dt);
 
         statisticsOffset = fminf(statisticsOffset + statisticsSpeed * dt, 100.);
 
         if (statisticsOffset == 100.)
         {
-            _this.gameState.shouldStop = true;
+            gameState.shouldStop = true;
         }
 
-        _this.gameState.sprites[ASSET_TOP_SCORE_SQUARE].position.y = statisticsOffset;
-        spriteDrawClipped(_this.gameState.sprites[ASSET_TOP_SCORE_SQUARE], _this.gameState.graphics.imageData);
-        graphicsPrintString(_this.gameState.graphics.imageData, (PointI){100, 10 + statisticsOffset}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
-        graphicsPrintString(_this.gameState.graphics.imageData, (PointI){100, 20 + statisticsOffset}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
-        graphicsPrintString(_this.gameState.graphics.imageData, (PointI){100, 30 + statisticsOffset}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
-        graphicsSwapBuffers(_this.gameState.graphics);
+        gameState.sprites[ASSET_TOP_SCORE_SQUARE].position.y = statisticsOffset;
+        spriteDrawClipped(gameState.sprites[ASSET_TOP_SCORE_SQUARE], gameState.graphics.imageData);
+        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 10 + statisticsOffset}, enemiesRemaining, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 20 + statisticsOffset}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPrintString(gameState.graphics.imageData, (PointI){100, 30 + statisticsOffset}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
+        graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
     }
 
     // Game Score Delay
-    _this.gameState.shouldStop = false;
+    gameState.shouldStop = false;
     float elapsedTimeSinceScoreDisplay = 0;
-    while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit && elapsedTimeSinceScoreDisplay < 2.)
+    while (!gameState.shouldStop && !gameState.shouldQuit && elapsedTimeSinceScoreDisplay < 2.)
     {
         float deltaTime = getDeltaTime();
-        _this.gameState.shouldQuit = isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ESCAPE);
-        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ENTER))
-            _this.gameState.shouldStop = true;
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+            gameState.shouldStop = true;
 
         elapsedTimeSinceScoreDisplay += deltaTime;
         glfwPollEvents();
     }
-    _this.gameState.shouldStop = true;
-    return _this;
+    gameState.shouldStop = true;
+    return gameState;
 }
 
-Level2 level2Create(GameState gameState)
+GameState level2MainLoop(GameState gameState)
 {
-    Level2 _this = {0};
-    _this.gameState = gameState;
-    return _this;
-}
 
-Level2 level2MainLoop(Level2 _this)
-{
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x = 80;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = 174;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animated = true;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameCount = 6;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameWidth = 24;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameRate = 15;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x = 80;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = 174;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animated = true;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameCount = 6;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameWidth = 24;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameRate = 15;
 
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 60;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = 174;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animated = true;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameCount = 6;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameWidth = 24;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameRate = 15;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 60;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = 174;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animated = true;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameCount = 6;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameWidth = 24;
+    gameState.sprites[ASSET_LEVEL2_HERO_BLUE].animation.frameRate = 15;
 
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = 40;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_RED].position.y = 174;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_RED].animated = true;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameCount = 6;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameWidth = 24;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameRate = 15;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = 40;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].position.y = 174;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].animated = true;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameCount = 6;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameWidth = 24;
+    gameState.sprites[ASSET_LEVEL2_HERO_RED].animation.frameRate = 15;
 
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = 20;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = 174;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animated = true;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameCount = 6;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameWidth = 24;
-    _this.gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameRate = 15;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = 20;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.y = 174;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animated = true;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameCount = 6;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameWidth = 24;
+    gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].animation.frameRate = 15;
 
-    _this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y = 179;
+    gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].position.y = 179;
 
 #define VERTICAL_SPEED -300.
 #define BACKGROUND_SPEED -250.
@@ -778,13 +842,10 @@ Level2 level2MainLoop(Level2 _this)
     float elapsedTimeBlink = 0;
     double runningDistance = 0;
 
-    while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit)
+    while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         float deltaTime = getDeltaTime();
-        _this.gameState.shouldQuit = isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ESCAPE);
-
-        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_ENTER))
-            _this.gameState.shouldStop = true;
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
 
         backgroundSpeed += backgroundAcceleration * deltaTime;
         float backgroundSpeedFrame = deltaTime * backgroundSpeed;
@@ -794,14 +855,10 @@ Level2 level2MainLoop(Level2 _this)
             for (int i = 0; i < 4; i++)
             {
                 cloudPosition[i] += cloudSpeed[i] * deltaTime;
-                if (cloudPosition[i] < -_this.gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
+                if (cloudPosition[i] < -gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
                 {
                     cloudPosition[i] = 0.;
                 }
-                _this.gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
-                spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.gameState.graphics.imageData);
-                _this.gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i] + _this.gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
-                spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], _this.gameState.graphics.imageData);
             }
         }
 
@@ -813,8 +870,8 @@ Level2 level2MainLoop(Level2 _this)
             collided = false;
             obstaclePosition += backgroundSpeedFrame;
 
-            if (obstaclePosition < -_this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * matrixSize)
-                obstaclePosition = 320. + _this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x;
+            if (obstaclePosition < -gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * matrixSize)
+                obstaclePosition = 320. + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x;
 
             PointI distance;
             for (int i = 0; i < matrixSize; i++)
@@ -822,9 +879,9 @@ Level2 level2MainLoop(Level2 _this)
                 if (obstacleStream[i] == 1)
                 {
                     static PointI obstaclePosV = {0, 174.};
-                    obstaclePosV.x = obstaclePosition + _this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
-                    distance.x = obstaclePosV.x + _this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.x;
-                    distance.y = obstaclePosV.y - _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.y;
+                    obstaclePosV.x = obstaclePosition + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
+                    distance.x = obstaclePosV.x + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.x;
+                    distance.y = obstaclePosV.y - gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.y;
                     float distanceScalar = distance.x * distance.x + distance.y * distance.y;
                     if (50 > distanceScalar)
                     {
@@ -836,15 +893,20 @@ Level2 level2MainLoop(Level2 _this)
             if (collided && elapsedTimeSinceHit > 1.)
             {
                 elapsedTimeSinceHit = 0;
-                soundPlaySfx(_this.gameState.sound, SFX_HERO_HURT);
+                soundPlaySfx(gameState.sound, SFX_HERO_HURT);
                 backgroundSpeed = BACKGROUND_SPEED;
                 verticalSpeed[livesLost] = VERTICAL_SPEED;
                 livesLost++;
             }
         }
 
-        // Controls
-        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[livesLost] == 174.)
+        // Controls & exit conditions
+        gameState.shouldStop = livesLost >= 4;
+
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+            gameState.shouldStop = true;
+
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[livesLost] == 174.)
         {
             elapsedTimeSinceJump = 0;
             for (int i = livesLost; i < 4; i++)
@@ -864,7 +926,7 @@ Level2 level2MainLoop(Level2 _this)
                 if (elapsedTimeSinceJump >= delayTable[i - livesLost] && commands[i])
                 {
                     verticalSpeed[i] = VERTICAL_SPEED;
-                    soundPlaySfx(_this.gameState.sound, SFX_HERO_JUMP);
+                    soundPlaySfx(gameState.sound, SFX_HERO_JUMP);
                     commands[i] = false;
                 }
             }
@@ -874,7 +936,7 @@ Level2 level2MainLoop(Level2 _this)
         {
             for (int i = 0; i < 4; i++)
             {
-                _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
+                gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
             }
         }
 
@@ -891,17 +953,26 @@ Level2 level2MainLoop(Level2 _this)
             subpixelPosition[i] = fminf(174., subpixelPosition[i]);
         }
 
-        // graphicsClear(_this.gameState.graphics.imageData);
-        printFPS(_this.gameState.graphics, deltaTime);
+        // RENDER SECTION
+        // Draw background clouds
+        for (int i = 0; i < 4; i++)
+        {
+            gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i] + gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
+        }
+
+        printFPS(gameState.graphics, deltaTime);
 
         // Draw Background
         {
             screenPosition += backgroundSpeedFrame;
             screenPosition = screenPosition > -320. ? screenPosition : 0.;
-            _this.gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
-            spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL2_BACKGROUND], _this.gameState.graphics.imageData);
-            _this.gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
-            spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL2_BACKGROUND], _this.gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
         }
 
         // Draw Obstacles
@@ -909,8 +980,8 @@ Level2 level2MainLoop(Level2 _this)
         {
             if (obstacleStream[i] == 1)
             {
-                _this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition + _this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
-                spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL2_OBSTACLE_1], _this.gameState.graphics.imageData);
+                gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].position.x = obstaclePosition + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
+                spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_OBSTACLE_1], gameState.graphics.imageData);
             }
         }
 
@@ -922,7 +993,7 @@ Level2 level2MainLoop(Level2 _this)
 
             for (int i = 0; i < 4; i++)
             {
-                spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i], _this.gameState.graphics.imageData, deltaTime);
+                spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i], gameState.graphics.imageData, deltaTime);
             }
         }
 
@@ -931,53 +1002,41 @@ Level2 level2MainLoop(Level2 _this)
             runningDistance += -backgroundSpeedFrame / 100.;
             char stringToPrint[200] = {0};
             snprintf(stringToPrint, 200, "distance %.2f", runningDistance);
-            graphicsPrintString(_this.gameState.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
+            graphicsPrintString(gameState.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
         }
 
-        graphicsSwapBuffers(_this.gameState.graphics);
+        graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
-
-        _this.gameState.shouldStop = livesLost >= 4;
     }
-}
-
-Program programCreate()
-{
-    staticAllocatorInit(100092024);
-    Program _this = {0};
-    _this.gameState.graphics = graphicsCreate(320, 240, true);
-    _this.gameState.sound = soundCreate();
-    loadAssets(_this.gameState.sprites);
-    Soloud_setGlobalVolume(_this.gameState.sound.soloud, 1.);
-    _this.level1 = level1Create(_this.gameState);
-    _this.level2 = level2Create(_this.gameState);
-    return _this;
-}
-
-void programMainLoop(Program _this)
-{
-
-    _this.level1 = level1MainLoop(_this.level1);
-    if (_this.level1.gameState.shouldQuit)
-        return;
-
-    _this.level2 = level2MainLoop(_this.level2);
-    if (_this.level2.gameState.shouldQuit)
-        return;
-}
-
-void programDestroy(Program _this)
-{
-    graphicsDestroy(_this.gameState.graphics);
-    staticAllocatorDestroy();
+    return gameState;
 }
 
 int main(void)
 {
+    // Init memory, load assets and general initialization
+    staticAllocatorInit(100092024);
 
-    Program _this = programCreate();
-    programMainLoop(_this);
-    programDestroy(_this);
+    Program _this = {0};
+    _this.gameState.graphics = graphicsCreate(320, 240, true);
+    _this.gameState.sound = soundCreate();
 
+    loadAssets(_this.gameState.sprites);
+    Soloud_setGlobalVolume(_this.gameState.sound.soloud, 1.);
+
+    // Run levels one after another
+    _this.gameState = level1MainLoop(_this.gameState);
+    if (_this.gameState.shouldQuit)
+        goto Cleanup;
+
+    _this.gameState.shouldStop = false;
+
+    _this.gameState = level2MainLoop(_this.gameState);
+    if (_this.gameState.shouldQuit)
+        goto Cleanup;
+
+// Cleanup
+Cleanup:
+    graphicsDestroy(_this.gameState.graphics);
+    staticAllocatorDestroy();
     return 0;
 }
