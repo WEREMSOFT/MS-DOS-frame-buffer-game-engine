@@ -909,8 +909,10 @@ GameState level2MainLoop(GameState gameState)
             gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 10. * distanceBetweenDynos;
             gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 20. * distanceBetweenDynos;
             gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 30. * distanceBetweenDynos;
+
             for (int i = 3; i >= 0; i--)
             {
+                gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].animation.frameRate = 15. * distanceBetweenDynos;
                 spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i], gameState.graphics.imageData, deltaTime);
             }
         }
