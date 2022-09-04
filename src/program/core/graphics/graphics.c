@@ -8,6 +8,7 @@
 #include "../stackAllocator/staticAlloc.h"
 #include <stb_image.h>
 #include <GL/gl.h>
+#include <SDL.h>
 #define GL_FUNCTION_LOADER__IMPLEMENTATION
 #include "../../glFunctionLoader.h"
 
@@ -66,6 +67,37 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 Graphics graphicsCreate(int width, int height, bool fullScreen)
 {
+
+    SDL_Window *window;
+
+    SDL_Surface *screenSurface;
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        printf("SDL not initialized!!\n");
+    }
+    else
+    {
+        window = SDL_CreateWindow("SDL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        if (!window) /* Die if creation failed */
+            exit("Unable to create window");
+
+        // Get window surface
+        screenSurface = SDL_GetWindowSurface(window);
+
+        SDL_GLContext maincontext = SDL_GL_CreateContext(window);
+        SDL_GL_MakeCurrent(window, maincontext);
+        if (SDL_GL_ExtensionSupported("glUniform1f"))
+        {
+            void *glUniform1f = SDL_GL_GetProcAddress("glUniform1f");
+            printf("pointer: %x\n", glUniform1f);
+        }
+
+        loadOpenGLFunctions();
+    }
+
     Graphics this = {0};
     this.imageData.size.x = width;
     this.imageData.size.y = height;

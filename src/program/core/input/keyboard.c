@@ -1,9 +1,8 @@
 #include "keyboard.h"
-#include <GLFW/glfw3.h>
-
+#include <SDL.h>
 static int keys[255] = {0};
 
-bool isKeyJustPressed(GLFWwindow *window, int key)
+bool isKeyJustPressed(SDL_Window *window, int key)
 {
     int actualKeyState = glfwGetKey(window, key);
 

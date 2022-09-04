@@ -2,8 +2,8 @@
 #define __KEYBOARD_H__
 
 #include <stdbool.h>
-#include <GLFW/glfw3.h>
+#include <SDL.h>
 
-bool isKeyJustPressed(GLFWwindow *window, int key);
+bool isKeyJustPressed(SDL_Window *window, int key);
 
 #endif

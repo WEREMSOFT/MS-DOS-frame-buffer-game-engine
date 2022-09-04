@@ -2,6 +2,7 @@
 #define __GL_FUNCTION_LOADER_H__
 #include <GL/gl.h>
 #include <string.h>
+#include <SDL.h>
 #include "windowsStuff.h"
 extern void (*glDeleteProgram)(GLuint program);
 extern void (*glDeleteBuffers)(GLsizei n,
@@ -63,13 +64,13 @@ extern void (*glUniform3f)(GLuint id, GLfloat x, GLfloat y, GLfloat z);
 extern void (*glUniform4f)(GLuint id, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 extern void (*glUniform2i)(GLuint id, GLuint x, GLuint y);
 extern void (*glUniform1i)(GLuint id, GLint x);
-#define bindFunctionRef(a, b)                 \
-    {                                         \
-        void *p = a;                          \
-        void *fp = (b)glfwGetProcAddress(#a); \
-        p = fp;                               \
+#define bindFunctionRef(a, b)                    \
+    {                                            \
+        void *p = a;                             \
+        void *fp = (b)SDL_GL_GetProcAddress(#a); \
+        p = fp;                                  \
     }
-#define bindFunction(a, b) a = (b)glfwGetProcAddress(#a);
+#define bindFunction(a, b) a = (b)SDL_GL_GetProcAddress(#a);
 /* ############################################## */
 void loadOpenGLFunctions(void);
 #ifdef GL_FUNCTION_LOADER__IMPLEMENTATION
@@ -137,7 +138,7 @@ void loadOpenGLFunctions(void)
 {
     bindFunctionRef(glViewport, void (*)(GLint x, GLint y, GLsizei width, GLsizei height));
     bindFunction(glUniform1i, void (*)(GLuint id, GLint x));
-    bindFunction(glUniform1f, void (*)(GLuint id, GLfloat x));
+    glUniform1f = (void (*)(GLuint id, GLfloat x))SDL_GL_GetProcAddress("glUniform1f");
     bindFunction(glUniform2f, void (*)(GLuint id, GLfloat x, GLfloat y));
     bindFunction(glUniform3f, void (*)(GLuint id, GLfloat x, GLfloat y, GLfloat z));
     bindFunction(glUniform4f, void (*)(GLuint id, GLfloat x, GLfloat y, GLfloat z, GLfloat w));

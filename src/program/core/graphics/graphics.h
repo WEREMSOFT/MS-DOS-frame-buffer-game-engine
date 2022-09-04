@@ -1,7 +1,7 @@
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
-#include <GLFW/glfw3.h>
 #include <stdbool.h>
+#include <SDL.h>
 
 typedef struct
 {
@@ -34,7 +34,7 @@ typedef struct
     unsigned int shaderProgram;
     PointI mousePosition;
     bool mouseRightDown;
-    GLFWwindow *window;
+    SDL_Window *window;
     ImageData imageData;
 } Graphics;
 

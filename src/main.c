@@ -1,4 +1,3 @@
-#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -152,10 +151,17 @@ typedef struct
     int enemiesKilled;
 } Level1;
 
-typedef struct
+GameState pollEvents(GameState _this)
 {
-    GameState gameState;
-} Program;
+    SDL_Event e;
+    while (SDL_PollEvent(&e) != 0)
+    {
+        if (e.type == SDL_QUIT)
+        {
+            _this.shouldQuit = true;
+        }
+    }
+}
 
 Sound soundCreate()
 {
@@ -472,7 +478,7 @@ GameState level1MainLoop(GameState gameState)
     {
         int hiddenEnemies = 0;
         float dt = getDeltaTime();
-        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, SDLK_ESCAPE);
 
         enemyProcessStateGoingDownTutorial(_this.enemies, dt, enemySpeed);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
@@ -516,8 +522,8 @@ GameState level1MainLoop(GameState gameState)
     {
         float dt = getDeltaTime();
 
-        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
-        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, SDLK_ESCAPE);
+        if (isKeyJustPressed(gameState.graphics.window, SDLK_RETURN))
             gameState.shouldStop = true;
 
         // Enemy selection and trigger to attack
@@ -539,60 +545,60 @@ GameState level1MainLoop(GameState gameState)
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
         enemyProcessStateDead(_this.enemies, dt);
         // Handle Controls
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
-            glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_LEFT) &&
+            glfwGetKey(gameState.graphics.window, SDLK_UP))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
             _this.quadPosition = QPOS_TOP_LEFT;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
-            glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_RIGHT) &&
+            glfwGetKey(gameState.graphics.window, SDLK_UP))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
             _this.quadPosition = QPOS_TOP_RIGHT;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS &&
-            glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_LEFT) &&
+            glfwGetKey(gameState.graphics.window, SDLK_DOWN))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
             _this.quadPosition = QPOS_BOTTOM_LEFT;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS &&
-            glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_RIGHT) &&
+            glfwGetKey(gameState.graphics.window, SDLK_DOWN))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
             _this.quadPosition = QPOS_BOTTOM_RIGHT;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_UP))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP];
             _this.quadPosition = QPOS_TOP;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_DOWN))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM];
             _this.quadPosition = QPOS_BOTTOM;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_RIGHT))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_RIGHT];
             _this.quadPosition = QPOS_RIGHT;
             goto continueControls;
         }
 
-        if (glfwGetKey(gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        if (glfwGetKey(gameState.graphics.window, SDLK_LEFT))
         {
             gameState.sprites[ASSET_SIGHT].position = _this.positions[QPOS_LEFT];
             _this.quadPosition = QPOS_LEFT;
@@ -626,7 +632,7 @@ GameState level1MainLoop(GameState gameState)
         {
             spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_SHOOT], gameState.graphics.imageData, dt);
         }
-        else if (glfwGetKey(gameState.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        else if (glfwGetKey(gameState.graphics.window, SDLK_SPACE))
         {
 
             if (_this.quadPosition != QPOS_NONE)
@@ -658,7 +664,7 @@ GameState level1MainLoop(GameState gameState)
         graphicsPrintString(gameState.graphics.imageData, (PointI){100, 20}, enemiesKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsPrintString(gameState.graphics.imageData, (PointI){100, 30}, percentageKilled, (Color){0xFF, 0xFF, 0xFF});
         graphicsSwapBuffers(gameState.graphics);
-        glfwPollEvents();
+        _this = pollEvents(_this);
     }
     gameState.shouldStop = false;
     // Level Complete Loop
@@ -667,9 +673,9 @@ GameState level1MainLoop(GameState gameState)
     {
         float statisticsSpeed = 100.;
         float dt = getDeltaTime();
-        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, SDLK_ESCAPE);
 
-        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+        if (isKeyJustPressed(gameState.graphics.window, SDLK_RETURN))
             gameState.shouldStop = true;
 
         spriteDrawClipped(gameState.sprites[ASSET_BACKGROUND], gameState.graphics.imageData);
@@ -706,8 +712,8 @@ GameState level1MainLoop(GameState gameState)
     while (!gameState.shouldStop && !gameState.shouldQuit && elapsedTimeSinceScoreDisplay < 2.)
     {
         float deltaTime = getDeltaTime();
-        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
-        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, SDLK_ESCAPE);
+        if (isKeyJustPressed(gameState.graphics.window, SDLK_RETURN))
             gameState.shouldStop = true;
 
         elapsedTimeSinceScoreDisplay += deltaTime;
@@ -781,7 +787,7 @@ GameState level2MainLoop(GameState gameState)
     while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         float deltaTime = getDeltaTime();
-        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, SDLK_ESCAPE);
 
         backgroundSpeed += backgroundAcceleration * deltaTime;
         float backgroundSpeedFrame = deltaTime * backgroundSpeed;
@@ -837,10 +843,10 @@ GameState level2MainLoop(GameState gameState)
         // Controls & exit conditions
         gameState.shouldStop = livesLost >= 4;
 
-        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+        if (isKeyJustPressed(gameState.graphics.window, SDLK_RETURN))
             gameState.shouldStop = true;
 
-        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[livesLost] == 174.)
+        if (isKeyJustPressed(gameState.graphics.window, SDLK_SPACE) && subpixelPosition[livesLost] == 174.)
         {
             elapsedTimeSinceJump = 0;
             for (int i = livesLost; i < 4; i++)
@@ -953,27 +959,27 @@ int main(void)
     // Init memory, load assets and general initialization
     staticAllocatorInit(100092024);
 
-    Program _this = {0};
-    _this.gameState.graphics = graphicsCreate(320, 240, true);
-    _this.gameState.sound = soundCreate();
+    GameState _this = {0};
+    _this.graphics = graphicsCreate(320, 240, true);
+    _this.sound = soundCreate();
 
-    loadAssets(_this.gameState.sprites);
-    Soloud_setGlobalVolume(_this.gameState.sound.soloud, 1.);
+    loadAssets(_this.sprites);
+    Soloud_setGlobalVolume(_this.sound.soloud, 1.);
 
     // Run levels one after another
-    _this.gameState = level1MainLoop(_this.gameState);
-    if (_this.gameState.shouldQuit)
+    _this = level1MainLoop(_this);
+    if (_this.shouldQuit)
         goto Cleanup;
 
-    _this.gameState.shouldStop = false;
+    _this.shouldStop = false;
 
-    _this.gameState = level2MainLoop(_this.gameState);
-    if (_this.gameState.shouldQuit)
+    _this = level2MainLoop(_this);
+    if (_this.shouldQuit)
         goto Cleanup;
 
 // Cleanup
 Cleanup:
-    graphicsDestroy(_this.gameState.graphics);
+    graphicsDestroy(_this.graphics);
     staticAllocatorDestroy();
     return 0;
 }
