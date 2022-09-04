@@ -77,7 +77,7 @@ typedef enum
     ASSET_ENEMY_GREEN_MEDIUM_SHOOT,
     ASSET_ENEMY_GREEN_SMALL_SHOOT,
 
-    ASSET_LEVEL2_HERO_GREEEN,
+    ASSET_LEVEL2_HERO_GREEN,
     ASSET_LEVEL2_HERO_BLUE,
     ASSET_LEVEL2_HERO_RED,
     ASSET_LEVEL2_HERO_YELLOW,
@@ -254,7 +254,7 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL2_CLOUD_3] = spriteCreate("assets/level2/cloud1.bmp");
     _this[ASSET_LEVEL2_CLOUD_4] = spriteCreate("assets/level2/cloud0.bmp");
 
-    _this[ASSET_LEVEL2_HERO_GREEEN] = spriteCreate("assets/level2/heroGreen.bmp");
+    _this[ASSET_LEVEL2_HERO_GREEN] = spriteCreate("assets/level2/heroGreen.bmp");
     _this[ASSET_LEVEL2_HERO_RED] = spriteCreate("assets/level2/heroRed.bmp");
     _this[ASSET_LEVEL2_HERO_BLUE] = spriteCreate("assets/level2/heroBlue.bmp");
     _this[ASSET_LEVEL2_HERO_YELLOW] = spriteCreate("assets/level2/heroYellow.bmp");
@@ -703,12 +703,12 @@ GameState level1MainLoop(GameState gameState)
 GameState level2MainLoop(GameState gameState)
 {
 
-    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x = 80;
-    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.y = 174;
-    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animated = true;
-    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameCount = 6;
-    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameWidth = 24;
-    gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].animation.frameRate = 15;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x = 80;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.y = 174;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEN].animated = true;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEN].animation.frameCount = 6;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEN].animation.frameWidth = 24;
+    gameState.sprites[ASSET_LEVEL2_HERO_GREEN].animation.frameRate = 15;
 
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = 70;
     gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.y = 174;
@@ -797,8 +797,8 @@ GameState level2MainLoop(GameState gameState)
                 {
                     static PointI obstaclePosV = {0, 174.};
                     obstaclePosV.x = obstaclePosition + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
-                    distance.x = obstaclePosV.x + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.x;
-                    distance.y = obstaclePosV.y - gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + livesLost].position.y;
+                    distance.x = obstaclePosV.x + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - gameState.sprites[ASSET_LEVEL2_HERO_GREEN + livesLost].position.x;
+                    distance.y = obstaclePosV.y - gameState.sprites[ASSET_LEVEL2_HERO_GREEN + livesLost].position.y;
                     float distanceScalar = distance.x * distance.x + distance.y * distance.y;
                     if (50 > distanceScalar)
                     {
@@ -852,7 +852,7 @@ GameState level2MainLoop(GameState gameState)
         // Set position from float to int (subpixel estimation)
         for (int i = 0; i < 4; i++)
         {
-            gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].position.y = floor(subpixelPosition[i]);
+            gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i].position.y = floor(subpixelPosition[i]);
         }
 
         // gravity and velocity calculation
@@ -906,14 +906,14 @@ GameState level2MainLoop(GameState gameState)
             int elapsedTimeSinceHitI = elapsedTimeSinceHit;
             elapsedTimeSinceHitI = (elapsedTimeSinceHit - elapsedTimeSinceHitI) * 100;
             float distanceBetweenDynos = backgroundSpeed / BACKGROUND_SPEED;
-            gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 10. * distanceBetweenDynos;
-            gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 20. * distanceBetweenDynos;
-            gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEEN].position.x - 30. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x - 10. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x - 20. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x - 30. * distanceBetweenDynos;
 
             for (int i = 3; i >= 0; i--)
             {
-                gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i].animation.frameRate = 15. * distanceBetweenDynos;
-                spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HERO_GREEEN + i], gameState.graphics.imageData, deltaTime);
+                gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i].animation.frameRate = 15. * distanceBetweenDynos;
+                spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i], gameState.graphics.imageData, deltaTime);
             }
         }
 
