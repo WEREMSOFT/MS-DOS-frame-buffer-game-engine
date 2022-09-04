@@ -269,6 +269,13 @@ void graphicsPrintString(ImageData this, PointI topLeftCorner, char *string, Col
 
     for (size_t i = 0; i < stringLen; i++)
     {
+        if (string[i] == '.')
+        {
+            int charOffset = 'z' - 'a' + 12;
+            graphicsDrawCharacter(this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+            continue;
+        }
+
         if (string[i] == '%')
         {
             int charOffset = 'z' - 'a' + 11;

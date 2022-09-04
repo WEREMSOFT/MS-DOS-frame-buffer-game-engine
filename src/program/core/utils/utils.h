@@ -33,7 +33,17 @@ static inline void printFPS(Graphics this, double deltaTime)
         snprintf(text, 1000, "fps: %d", (int)floor(avg));
         graphicsPrintString(this.imageData, (PointI){100, 0}, text, (Color){0, 0xff, 0xff});
     }
+
+    {
+        char text[1000] = {0};
+        snprintf(text, 1000, "ftime:%.4f", deltaTime);
+        graphicsPrintString(this.imageData, (PointI){100, 10}, text, (Color){0, 0xff, 0xff});
+    }
 }
+// The first time is called the deltatime value will be wrong.
+// Call it at least one time before using
+
+#define initDeltaTime() getDeltaTime()
 
 static inline double getDeltaTime()
 {
@@ -41,7 +51,6 @@ static inline double getDeltaTime()
 
     double deltaTime = glfwGetTime() - lastUpdate;
     lastUpdate = glfwGetTime();
-    deltaTime = fmin(.2, deltaTime);
     return deltaTime;
 }
 

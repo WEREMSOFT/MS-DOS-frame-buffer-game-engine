@@ -440,6 +440,7 @@ static Level1 level1InitEnemies(Level1 _this, GameState gameState)
 
 GameState level1MainLoop(GameState gameState)
 {
+    initDeltaTime();
     // Initialization
     Level1 _this = {0};
 
@@ -813,7 +814,7 @@ GameState level2MainLoop(GameState gameState)
                 {
                     static PointI obstaclePosV = {0, 174.};
                     obstaclePosV.x = obstaclePosition + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
-                    distance.x = obstaclePosV.x + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - gameState.sprites[ASSET_LEVEL2_HERO_GREEN + livesLost].position.x;
+                    distance.x = obstaclePosV.x + gameState.sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 - gameState.sprites[ASSET_LEVEL2_HERO_GREEN + livesLost].position.x - gameState.sprites[ASSET_LEVEL2_HERO_GREEN + livesLost].animation.frameWidth;
                     distance.y = obstaclePosV.y - gameState.sprites[ASSET_LEVEL2_HERO_GREEN + livesLost].position.y;
                     float distanceScalar = distance.x * distance.x + distance.y * distance.y;
                     if (50 > distanceScalar)
