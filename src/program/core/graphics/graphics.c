@@ -21,7 +21,6 @@ static void textureCreate(Graphics *this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     this->imageData.bufferSize = this->imageData.size.x * this->imageData.size.y * sizeof(Color);
     this->imageData.data = allocStatic(this->imageData.bufferSize);
-    printf("%p\n", this->imageData.data);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->imageData.size.x, this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, this->imageData.data);
 }
 

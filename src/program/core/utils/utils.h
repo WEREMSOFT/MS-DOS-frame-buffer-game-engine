@@ -41,7 +41,7 @@ static inline double getDeltaTime()
 
     double deltaTime = glfwGetTime() - lastUpdate;
     lastUpdate = glfwGetTime();
-
+    deltaTime = fmin(.2, deltaTime);
     return deltaTime;
 }
 

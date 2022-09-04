@@ -298,6 +298,22 @@ Enemy enemyPassToStateGoingDown(Enemy _this)
     return _this;
 }
 
+void enemyProcessStateGoingDownTutorial(Enemy *enemies, float deltaTime, double enemySpeed)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        if (enemies[i].state != ENEMY_STATE_GOING_DOWN)
+            continue;
+        if (enemies[i].position.y > enemies[i].lowerClippingPosition)
+        {
+            enemies[i] = enemyPassToStateHidden(enemies[i]);
+            continue;
+        }
+
+        enemies[i].position.y += enemies[i].speedMultiplicator * enemySpeed * deltaTime;
+    }
+}
+
 void enemyProcessStateGoingDown(Enemy *enemies, float deltaTime, double enemySpeed, int *enemiesRemaining, Sound sound)
 {
     float speedMultiplier = 1.;
@@ -457,7 +473,7 @@ GameState level1MainLoop(GameState gameState)
         float dt = getDeltaTime();
         gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
 
-        enemyProcessStateGoingDown(_this.enemies, dt, enemySpeed, NULL, gameState.sound);
+        enemyProcessStateGoingDownTutorial(_this.enemies, dt, enemySpeed);
         enemyProcessStateGoingUp(_this.enemies, dt, enemySpeed);
 
         for (int i = 0; i < 8; i++)
