@@ -719,7 +719,6 @@ GameState level1MainLoop(GameState gameState)
 
 GameState level2MainLoop(GameState gameState)
 {
-
     gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x = 80;
     gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.y = 174;
     gameState.sprites[ASSET_LEVEL2_HERO_GREEN].animated = true;
@@ -778,6 +777,7 @@ GameState level2MainLoop(GameState gameState)
     float elapsedTimeBlink = 0;
     double runningDistance = 0;
 
+    // Game Loop
     while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         float deltaTime = getDeltaTime();
@@ -895,8 +895,6 @@ GameState level2MainLoop(GameState gameState)
             spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
         }
 
-        printFPS(gameState.graphics, deltaTime);
-
         // Draw Background
         {
             screenPosition += backgroundSpeedFrame;
@@ -936,11 +934,14 @@ GameState level2MainLoop(GameState gameState)
 
         // Draw UI
         {
+            graphicsDrawSquareFill(gameState.graphics.imageData, (PointI){1, 1}, (PointI){(int)runningDistance, 10}, (Color){0xFF, 0, 0});
+            graphicsDrawSquare(gameState.graphics.imageData, (PointI){1, 1}, (PointI){317, 10}, (Color){0xCC, 0xCC, 0xCC});
             runningDistance += -backgroundSpeedFrame / 100.;
             char stringToPrint[200] = {0};
             snprintf(stringToPrint, 200, "distance %.2f", runningDistance);
-            graphicsPrintString(gameState.graphics.imageData, (PointI){0, 0}, stringToPrint, (Color){0xFF, 0, 0});
+            graphicsPrintString(gameState.graphics.imageData, (PointI){120, 4}, stringToPrint, (Color){0, 0, 0});
         }
+        printFPS(gameState.graphics, deltaTime);
 
         graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
@@ -954,14 +955,14 @@ int main(void)
     staticAllocatorInit(100092024);
 
     Program _this = {0};
-    _this.gameState.graphics = graphicsCreate(320, 240, true);
+    _this.gameState.graphics = graphicsCreate(320, 240, false);
     _this.gameState.sound = soundCreate();
 
     loadAssets(_this.gameState.sprites);
     Soloud_setGlobalVolume(_this.gameState.sound.soloud, 1.);
 
     // Run levels one after another
-    _this.gameState = level1MainLoop(_this.gameState);
+    // _this.gameState = level1MainLoop(_this.gameState);
     if (_this.gameState.shouldQuit)
         goto Cleanup;
 

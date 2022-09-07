@@ -72,6 +72,7 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+
     glfwWindowHint(GLFW_RED_BITS, mode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
@@ -85,8 +86,9 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
 
     if (!fullScreen)
     {
-        screenWidth /= 2;
-        screenHeight /= 2;
+        screenWidth = width * 2;
+        screenHeight = height * 2;
+        monitor = NULL;
     }
 
     this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
@@ -100,7 +102,7 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     // glfwSwapInterval(0);
     glfwSetFramebufferSizeCallback(this.window, framebuffer_size_callback);
 
-    double ratioX = ((float)this.imageData.size.x / (float)this.imageData.size.y) / ((float)mode->width / (float)mode->height);
+    double ratioX = ((float)this.imageData.size.x / (float)this.imageData.size.y) / ((float)screenWidth / (float)screenHeight);
     double ratioY = 1.0;
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
