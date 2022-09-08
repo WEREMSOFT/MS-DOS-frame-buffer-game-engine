@@ -1,7 +1,7 @@
 
 precision mediump float;
 
-uniform vec2 textCoord;
+varying vec2 textCoord;
 
 // texture sampler
 uniform sampler2D texture1;

@@ -11,7 +11,7 @@ FLAGS__DEBUG := -O3
 FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include
 
 # Vars for emscripten build
-EMSC_CFLAGS := -O2 -s -Wall -D_DEFAULT_SOURCE -DWITH_MINIAUDIO=1 -Wno-missing-braces -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s USE_GLFW=3 -sFULL_ES3 -s TOTAL_MEMORY=67108864 --preload-file assets -v -D OS_WEB
+EMSC_CFLAGS := -O2 -s -Wall -D_DEFAULT_SOURCE -DWITH_MINIAUDIO=1 -s MIN_WEBGL_VERSION=2 -Wno-missing-braces -s OFFSCREEN_FRAMEBUFFER=1 -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s USE_GLFW=3 -sFULL_ES3 -s TOTAL_MEMORY=67108864 --preload-file assets -v -D OS_WEB
 EMSC_CC := emcc
 
 TARGET := bin/main.bin
@@ -29,10 +29,8 @@ run_main: all
 %.o: %.cpp
 	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
 
-web: copy_assets
+web:
 	$(EMSC_CC) $(EMSC_CFLAGS) $(FLAGS) -g4 --source-map-base http://127.0.0.1:5500/html/ $(SRC_F) $(SRC_CPP) -o html/index.html
-	cp -r src html/src
-
 
 clean:
 	rm -rf $(OBJ_FOR_CLEAN_F)
