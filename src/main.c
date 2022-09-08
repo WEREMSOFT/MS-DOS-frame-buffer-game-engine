@@ -11,7 +11,7 @@
 #include "program/core/sprite/sprite.h"
 #include "program/core/input/keyboard.h"
 
-#ifdef OS_WEB
+#ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #endif
 
@@ -96,6 +96,8 @@ typedef enum
     ASSET_LEVEL2_OBSTACLE_1,
     ASSET_LEVEL2_OBSTACLE_2,
     ASSET_LEVEL2_OBSTACLE_3,
+
+    ASSET_LEVEL2_HOW_TO_PLAY,
 
     ASSET_COUNT
 } Assets;
@@ -267,6 +269,14 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL2_OBSTACLE_1] = spriteCreate("assets/level2/tree1.bmp");
     _this[ASSET_LEVEL2_OBSTACLE_2] = spriteCreate("assets/level2/tree2.bmp");
     _this[ASSET_LEVEL2_OBSTACLE_3] = spriteCreate("assets/level2/tree3.bmp");
+
+    _this[ASSET_LEVEL2_HOW_TO_PLAY] = spriteCreate("assets/level2/howToPlay.bmp");
+    _this[ASSET_LEVEL2_HOW_TO_PLAY].position.x = 119;
+    _this[ASSET_LEVEL2_HOW_TO_PLAY].position.y = 130;
+    _this[ASSET_LEVEL2_HOW_TO_PLAY].animated = true;
+    _this[ASSET_LEVEL2_HOW_TO_PLAY].animation.frameCount = 2;
+    _this[ASSET_LEVEL2_HOW_TO_PLAY].animation.frameRate = 10;
+    _this[ASSET_LEVEL2_HOW_TO_PLAY].animation.frameWidth = 82;
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -781,6 +791,81 @@ GameState level2MainLoop(GameState gameState)
     int livesLost = 0;
     float elapsedTimeBlink = 0;
     double runningDistance = 0;
+    // Tutorial Loop
+    while (!gameState.shouldStop && !gameState.shouldQuit)
+    {
+        float deltaTime = getDeltaTime();
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+
+        float backgroundSpeedFrame = deltaTime * backgroundSpeed;
+
+        // Clowds movement
+        for (int i = 0; i < 4; i++)
+        {
+            cloudPosition[i] += backgroundSpeedFrame * clowdSpeedRatio[i];
+            if (cloudPosition[i] < -gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
+            {
+                cloudPosition[i] = 0.;
+            }
+        }
+
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_SPACE) && subpixelPosition[livesLost] == 174.)
+        {
+            gameState.shouldStop = true;
+
+            elapsedTimeSinceJump = 0;
+            for (int i = livesLost; i < 4; i++)
+            {
+                commands[i] = true;
+            }
+        }
+
+        // RENDER SECTION
+        // Draw background clouds
+        for (int i = 0; i < 4; i++)
+        {
+            gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i] + gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
+        }
+
+        // Draw Background
+        {
+            screenPosition += backgroundSpeedFrame;
+            screenPosition = screenPosition > -320. ? screenPosition : 0.;
+            gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
+        }
+
+        // Draw Heroes
+        {
+            elapsedTimeSinceHit += deltaTime;
+            int elapsedTimeSinceHitI = elapsedTimeSinceHit;
+            elapsedTimeSinceHitI = (elapsedTimeSinceHit - elapsedTimeSinceHitI) * 100;
+            float distanceBetweenDynos = backgroundSpeed / BACKGROUND_SPEED;
+            gameState.sprites[ASSET_LEVEL2_HERO_BLUE].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x - 10. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_RED].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x - 20. * distanceBetweenDynos;
+            gameState.sprites[ASSET_LEVEL2_HERO_YELLOW].position.x = gameState.sprites[ASSET_LEVEL2_HERO_GREEN].position.x - 30. * distanceBetweenDynos;
+
+            for (int i = 3; i >= 0; i--)
+            {
+                gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i].animation.frameRate = 15. * distanceBetweenDynos;
+                spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i], gameState.graphics.imageData, deltaTime);
+            }
+        }
+
+        // Draw UI
+        spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HOW_TO_PLAY], gameState.graphics.imageData, deltaTime);
+        printFPS(gameState.graphics, deltaTime);
+
+        graphicsSwapBuffers(gameState.graphics);
+        glfwPollEvents();
+    }
+
+    gameState.shouldStop = false;
 
     // Game Loop
     while (!gameState.shouldStop && !gameState.shouldQuit)
