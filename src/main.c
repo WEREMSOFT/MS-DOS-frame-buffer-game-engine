@@ -792,7 +792,6 @@ GameState level2MainLoop(GameState gameState)
     bool collided = false;
     int livesLost = 0;
     float elapsedTimeBlink = 0;
-    double runningDistance = 0;
 
     soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
 
@@ -871,9 +870,10 @@ GameState level2MainLoop(GameState gameState)
     }
 
     gameState.shouldStop = false;
+    double runningDistance = 0;
 
     // Game Loop
-    while (!gameState.shouldStop && !gameState.shouldQuit)
+    while (!gameState.shouldStop && !gameState.shouldQuit && runningDistance < 316)
     {
         float deltaTime = getDeltaTime();
         gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
@@ -1031,24 +1031,33 @@ GameState level2MainLoop(GameState gameState)
         {
             graphicsDrawSquareFill(gameState.graphics.imageData, (PointI){1, 1}, (PointI){(int)runningDistance, 10}, (Color){0xFF, 0, 0});
             graphicsDrawSquare(gameState.graphics.imageData, (PointI){1, 1}, (PointI){317, 10}, (Color){0xCC, 0xCC, 0xCC});
-            runningDistance += -backgroundSpeedFrame / 100.;
+            runningDistance += (-backgroundSpeedFrame / 100.) * 6;
             char stringToPrint[200] = {0};
             snprintf(stringToPrint, 200, "distance %.2f", runningDistance);
             graphicsPrintString(gameState.graphics.imageData, (PointI){120, 4}, stringToPrint, (Color){0, 0, 0});
         }
-        printFPS(gameState.graphics, deltaTime);
 
+        printFPS(gameState.graphics, deltaTime);
         graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
     }
 
     gameState.shouldStop = false;
-
-    // Game End Loop
+    float UIPositionY = 1.;
+    // Level Complete Loop
     while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         float deltaTime = getDeltaTime();
         gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+
+        // Clowds movement
+        for (int i = 0; i < 4; i++)
+        {
+            if (cloudPosition[i] < -gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x)
+            {
+                cloudPosition[i] = 0.;
+            }
+        }
 
         // RENDER SECTION
         // Draw background clouds
@@ -1062,7 +1071,6 @@ GameState level2MainLoop(GameState gameState)
 
         // Draw Background
         {
-            screenPosition = screenPosition > -320. ? screenPosition : 0.;
             gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
             spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
             gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
@@ -1070,10 +1078,35 @@ GameState level2MainLoop(GameState gameState)
         }
 
         // Draw UI
-        spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HOW_TO_PLAY], gameState.graphics.imageData, deltaTime);
-        printFPS(gameState.graphics, deltaTime);
+        {
+            UIPositionY += 100. * deltaTime;
 
+            if (UIPositionY > 120)
+                gameState.shouldStop = true;
+
+            graphicsDrawSquareFill(gameState.graphics.imageData, (PointI){1, 1 + UIPositionY}, (PointI){(int)runningDistance, 10}, (Color){0xFF, 0, 0});
+            graphicsDrawSquare(gameState.graphics.imageData, (PointI){1, 1 + UIPositionY}, (PointI){317, 10}, (Color){0xCC, 0xCC, 0xCC});
+            char stringToPrint[200] = {0};
+            snprintf(stringToPrint, 200, "distance %.2f", runningDistance);
+            graphicsPrintString(gameState.graphics.imageData, (PointI){120, 4 + UIPositionY}, stringToPrint, (Color){0, 0, 0});
+        }
+
+        printFPS(gameState.graphics, deltaTime);
         graphicsSwapBuffers(gameState.graphics);
+        glfwPollEvents();
+    }
+
+    // Game Score Delay
+    gameState.shouldStop = false;
+    float elapsedTimeSinceScoreDisplay = 0;
+    while (!gameState.shouldStop && !gameState.shouldQuit && elapsedTimeSinceScoreDisplay < 2.)
+    {
+        float deltaTime = getDeltaTime();
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+        if (isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ENTER))
+            gameState.shouldStop = true;
+
+        elapsedTimeSinceScoreDisplay += deltaTime;
         glfwPollEvents();
     }
 
