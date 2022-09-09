@@ -50,6 +50,7 @@ typedef enum GaneSfx
 
 typedef enum GameSpeech
 {
+    SPEECH_JUMP_THE_ROCKS,
     SPEECH_SHOOT_THE_BAD_GUYS,
     SPEECH_NOOO,
     SPEECH_GAME_OVER,
@@ -179,6 +180,7 @@ Sound soundCreate()
         this.sfx[i] = Sfxr_create();
     }
 
+    Speech_setText(this.speechs[SPEECH_JUMP_THE_ROCKS], "Jump the rocks!");
     Speech_setText(this.speechs[SPEECH_SHOOT_THE_BAD_GUYS], "Shoot the bad guys!");
     Speech_setText(this.speechs[SPEECH_NOOO], "O!");
     Sfxr_loadPreset(this.sfx[SFX_BLIP], SFXR_BLIP, 3247);
@@ -791,6 +793,9 @@ GameState level2MainLoop(GameState gameState)
     int livesLost = 0;
     float elapsedTimeBlink = 0;
     double runningDistance = 0;
+
+    soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
+
     // Tutorial Loop
     while (!gameState.shouldStop && !gameState.shouldQuit)
     {
@@ -1036,13 +1041,49 @@ GameState level2MainLoop(GameState gameState)
         graphicsSwapBuffers(gameState.graphics);
         glfwPollEvents();
     }
+
+    gameState.shouldStop = false;
+
+    // Game End Loop
+    while (!gameState.shouldStop && !gameState.shouldQuit)
+    {
+        float deltaTime = getDeltaTime();
+        gameState.shouldQuit = isKeyJustPressed(gameState.graphics.window, GLFW_KEY_ESCAPE);
+
+        // RENDER SECTION
+        // Draw background clouds
+        for (int i = 0; i < 4; i++)
+        {
+            gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i];
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].position.x = cloudPosition[i] + gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i].size.x;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_CLOUD_1 + i], gameState.graphics.imageData);
+        }
+
+        // Draw Background
+        {
+            screenPosition = screenPosition > -320. ? screenPosition : 0.;
+            gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
+            gameState.sprites[ASSET_LEVEL2_BACKGROUND].position.x = screenPosition + 320;
+            spriteDrawTransparentClipped(gameState.sprites[ASSET_LEVEL2_BACKGROUND], gameState.graphics.imageData);
+        }
+
+        // Draw UI
+        spriteDrawTransparentAnimatedClipped(&gameState.sprites[ASSET_LEVEL2_HOW_TO_PLAY], gameState.graphics.imageData, deltaTime);
+        printFPS(gameState.graphics, deltaTime);
+
+        graphicsSwapBuffers(gameState.graphics);
+        glfwPollEvents();
+    }
+
     return gameState;
 }
 
 int main(void)
 {
     // Init memory, load assets and general initialization
-    staticAllocatorInit(100092024 / 2);
+    staticAllocatorInit(2859772);
 
     Program _this = {0};
     _this.gameState.graphics = graphicsCreate(320, 240, false);
