@@ -1309,6 +1309,7 @@ int main(void)
         if (_this.gameState.shouldQuit)
             goto Cleanup;
     }
+
     // ============================
     // Level2
     // ============================
@@ -1323,18 +1324,18 @@ int main(void)
         if (_this.gameState.shouldQuit)
             goto Cleanup;
     }
+
     // ============================
     // Level3
     // ============================
     {
         Level3 _this = level3Create();
         _this.gameState = gameState;
-
         _this = level3GameLoop(_this);
-    }
 
-    if (gameState.shouldQuit)
-        goto Cleanup;
+        if (gameState.shouldQuit)
+            goto Cleanup;
+    }
 
 // Cleanup
 Cleanup:
