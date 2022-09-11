@@ -1142,19 +1142,6 @@ Level2 level2GameCompleteLoop(Level2 _this)
     return _this;
 }
 
-// GameState level2MainLoop(GameState gs)
-// {
-//     soundPlaySpeech(gs.sound, SPEECH_JUMP_THE_ROCKS);
-//     Level2 _this = level2Create();
-//     _this.gameState = gs;
-
-//     _this = level2TutorialLoop(_this);
-//     _this = level2GameLoop(_this);
-//     _this = level2GameCompleteLoop(_this);
-
-//     return _this.gameState;
-// }
-
 #define SIDE_LEFT 0b000000010
 #define SIDE_RIGHT 0b000000001
 #define SIDE_TOP 0b00000100
@@ -1243,12 +1230,8 @@ Level3 level3HandleControls(Level3 _this)
     return _this;
 }
 
-GameState level3MainLoop(GameState gameState)
+Level3 level3GameLoop(Level3 _this)
 {
-
-    Level3 _this = level3Create();
-    _this.gameState = gameState;
-
     Tile tiles[] = {
         {.position = (PointI){40, 40},
          .size = (PointI){40, 40},
@@ -1264,16 +1247,15 @@ GameState level3MainLoop(GameState gameState)
          .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM}};
 
     _this.tileSize = sizeof(tiles) / sizeof(Tile);
-
-    while (!(gameState.shouldStop || gameState.shouldQuit))
+    while (!(_this.gameState.shouldStop || _this.gameState.shouldQuit))
     {
-        gameState = gameStateCheckExitKeys(gameState);
+        _this.gameState = gameStateCheckExitKeys(_this.gameState);
 
         _this.deltaTime = getDeltaTime();
 
-        graphicsClear(gameState.graphics.imageData);
+        graphicsClear(_this.gameState.graphics.imageData);
 
-        spriteDraw(gameState.sprites[ASSET_LEVEL3_BACKGROUND], gameState.graphics.imageData);
+        spriteDraw(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND], _this.gameState.graphics.imageData);
         //  Controls
         _this = level3HandleControls(_this);
 
@@ -1281,19 +1263,20 @@ GameState level3MainLoop(GameState gameState)
         for (int i = 0; i < _this.tileSize; i++)
         {
             if (_this.activeTile == i)
-                graphicsDrawSquareFill(gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0, 0});
+                graphicsDrawSquareFill(_this.gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0, 0});
             else
-                graphicsDrawSquare(gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0xFF, 0xFF});
+                graphicsDrawSquare(_this.gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0xFF, 0xFF});
         }
 
         _this = level3CalculateCollisions(_this, tiles);
         _this.position.x = _this.positionF.x;
         _this.position.y = _this.positionF.y;
-        graphicsPutPixel(gameState.graphics.imageData, _this.position, (Color){0, 0xff, 0});
+        graphicsPutPixel(_this.gameState.graphics.imageData, _this.position, (Color){0, 0xff, 0});
 
-        swapBuffersPrintFPSPollEvents(gameState.graphics, _this.deltaTime);
+        swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
-    return gameState;
+
+    return _this;
 }
 
 int main(void)
@@ -1326,8 +1309,9 @@ int main(void)
         if (_this.gameState.shouldQuit)
             goto Cleanup;
     }
-
-    gameState.shouldStop = false;
+    // ============================
+    // Level2
+    // ============================
     {
         soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
         Level2 _this = level2Create();
@@ -1339,8 +1323,15 @@ int main(void)
         if (_this.gameState.shouldQuit)
             goto Cleanup;
     }
+    // ============================
+    // Level3
+    // ============================
+    {
+        Level3 _this = level3Create();
+        _this.gameState = gameState;
 
-    gameState = level3MainLoop(gameState);
+        _this = level3GameLoop(_this);
+    }
 
     if (gameState.shouldQuit)
         goto Cleanup;

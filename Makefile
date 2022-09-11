@@ -15,7 +15,7 @@ EMSC_CFLAGS := -O2 -s -Wall -D_DEFAULT_SOURCE -DWITH_MINIAUDIO=1 -s MIN_WEBGL_VE
 EMSC_CC := emcc
 
 TARGET := bin/main.bin
-.PONY: clean web
+.PONY: clean web statistics
 
 all: clean $(SRC_O) $(SRC_CPP_O) copy_assets
 	gcc $(FLAGS_DEBUG) $(FLAGS) $(SRC_O) $(SRC_CPP_O) -o $(TARGET) $(LIBS)
@@ -44,3 +44,6 @@ deep_clean: clean
 
 copy_assets:
 	cp -r assets bin
+
+statistics:
+	pmccabe -vt src/main.c
