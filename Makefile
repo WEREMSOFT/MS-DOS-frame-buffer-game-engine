@@ -46,4 +46,5 @@ copy_assets:
 	cp -r assets bin
 
 statistics:
+	echo >> metrics.txt
 	pmccabe -vt src/main.c >> metrics.txt
