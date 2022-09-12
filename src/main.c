@@ -1304,7 +1304,6 @@ int main(void)
     // ============================
     // Level1
     // ============================
-    if (0)
     {
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
         Level1 _this = level1Create();
@@ -1323,7 +1322,6 @@ int main(void)
     // ============================
     // Level2
     // ============================
-    if (0)
     {
         soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
         Level2 _this = level2Create();

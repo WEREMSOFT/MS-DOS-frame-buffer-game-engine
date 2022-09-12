@@ -8,6 +8,11 @@ Sprite spriteCreate(char *file)
     Sprite this = {0};
     int nrChannels;
     this.imageData = (Color *)stbi_load(file, &this.size.x, &this.size.y, &nrChannels, 0);
+    if (this.imageData == NULL)
+    {
+        printf("Error loading image %s: %s\n", file, stbi_failure_reason());
+        exit(-1);
+    }
     return this;
 }
 
