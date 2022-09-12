@@ -1178,20 +1178,23 @@ Level3 level3Create()
 Level3 level3CalculateCollisions(Level3 _this, Tile *tiles)
 {
     {
+        int halfWide = 5;
         Tile tile = tiles[_this.activeTile];
 
         // restrict position
         if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-            _this.positionF.x = fmax(tile.position.x, _this.positionF.x);
+            _this.positionF.x = fmax(tile.position.x + halfWide, _this.positionF.x);
 
         if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-            _this.positionF.x = fmin(tile.position.x + tile.size.x, _this.positionF.x);
+            _this.positionF.x = fmin(tile.position.x + tile.size.x - halfWide, _this.positionF.x);
 
         if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-            _this.positionF.y = fmax(tile.position.y, _this.positionF.y);
+            _this.positionF.y = fmax(tile.position.y + halfWide, _this.positionF.y);
 
         if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-            _this.positionF.y = fmin(tile.position.y + tile.size.y, _this.positionF.y);
+            _this.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, _this.positionF.y);
+
+        bool activeTileAssigned = false;
 
         for (int i = 0; i < _this.tileSize; i++)
         {
@@ -1201,8 +1204,14 @@ Level3 level3CalculateCollisions(Level3 _this, Tile *tiles)
                 _this.positionF.y <= tiles[i].position.y + tiles[i].size.y)
             {
                 _this.activeTile = i;
+                activeTileAssigned = true;
                 break;
             }
+        }
+        if (!activeTileAssigned)
+        {
+            _this.positionF.x = fmin(tile.position.x + tile.size.x - halfWide, fmax(tile.position.x + halfWide, _this.positionF.x));
+            _this.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, fmax(tile.position.y + halfWide, _this.positionF.y));
         }
     }
     return _this;
@@ -1267,11 +1276,11 @@ Level3 level3GameLoop(Level3 _this)
             else
                 graphicsDrawSquare(_this.gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0xFF, 0xFF});
         }
-
+        int halfWide = 5;
         _this = level3CalculateCollisions(_this, tiles);
         _this.position.x = _this.positionF.x;
         _this.position.y = _this.positionF.y;
-        graphicsPutPixel(_this.gameState.graphics.imageData, _this.position, (Color){0, 0xff, 0});
+        graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
 
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
@@ -1295,6 +1304,7 @@ int main(void)
     // ============================
     // Level1
     // ============================
+    if (0)
     {
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
         Level1 _this = level1Create();
@@ -1313,6 +1323,7 @@ int main(void)
     // ============================
     // Level2
     // ============================
+    if (0)
     {
         soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
         Level2 _this = level2Create();
