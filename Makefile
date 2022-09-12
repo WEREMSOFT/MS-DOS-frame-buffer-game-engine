@@ -47,4 +47,5 @@ copy_assets:
 
 statistics:
 	echo >> metrics.txt
+	git rev-parse HEAD >> metrics.txt
 	pmccabe -vt src/main.c >> metrics.txt
