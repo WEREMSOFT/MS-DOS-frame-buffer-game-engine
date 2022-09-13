@@ -1155,15 +1155,22 @@ typedef struct
     char sides;
 } Tile;
 
+#define TILES_CAPACITY 100
+
 typedef struct
 {
     PointI position;
     PointF positionF;
-    int tileSize;
     int activeTile;
     float deltaTime;
     float pixelSpeed;
     GameState gameState;
+    struct
+    {
+        int capacity;
+        int size;
+        Tile data[TILES_CAPACITY];
+    } tiles;
 } Level3;
 
 Level3 level3Create()
@@ -1174,14 +1181,15 @@ Level3 level3Create()
     _this.positionF.y = 100.;
     _this.pixelSpeed = 100.;
     _this.activeTile = 0;
+    _this.tiles.capacity = TILES_CAPACITY;
     return _this;
 }
 
-Level3 level3CalculateCollisions(Level3 _this, Tile *tiles)
+Level3 level3CalculateCollisions(Level3 _this)
 {
     {
         int halfWide = 0;
-        Tile tile = tiles[_this.activeTile];
+        Tile tile = _this.tiles.data[_this.activeTile];
 
         // restrict position
         if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
@@ -1198,12 +1206,12 @@ Level3 level3CalculateCollisions(Level3 _this, Tile *tiles)
 
         bool activeTileAssigned = false;
 
-        for (int i = 0; i < _this.tileSize; i++)
+        for (int i = 0; i < _this.tiles.size; i++)
         {
-            if (_this.positionF.x >= tiles[i].position.x &&
-                _this.positionF.x <= tiles[i].position.x + tiles[i].size.x &&
-                _this.positionF.y >= tiles[i].position.y &&
-                _this.positionF.y <= tiles[i].position.y + tiles[i].size.y)
+            if (_this.positionF.x >= _this.tiles.data[i].position.x &&
+                _this.positionF.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
+                _this.positionF.y >= _this.tiles.data[i].position.y &&
+                _this.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
             {
                 _this.activeTile = i;
                 activeTileAssigned = true;
@@ -1243,18 +1251,19 @@ Level3 level3HandleControls(Level3 _this)
 
 Level3 level3GameLoop(Level3 _this)
 {
-    Tile tiles[] = {
-        {.position = (PointI){9, 171},
-         .size = (PointI){86, 51},
-         .sides = SIDE_LEFT | SIDE_BOTTOM | SIDE_TOP},
-        {.position = (PointI){95, 171},
-         .size = (PointI){29, 35},
-         .sides = SIDE_BOTTOM | SIDE_LEFT},
-        {.position = (PointI){56, 141},
-         .size = (PointI){69, 30},
-         .sides = SIDE_BOTTOM | SIDE_LEFT}};
 
-    _this.tileSize = sizeof(tiles) / sizeof(Tile);
+    _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){9, 171},
+                                                  .size = (PointI){86, 51},
+                                                  .sides = SIDE_LEFT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){95, 171},
+                                                  .size = (PointI){29, 35},
+                                                  .sides = SIDE_BOTTOM | SIDE_LEFT};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){56, 141},
+                                                  .size = (PointI){69, 30},
+                                                  .sides = SIDE_BOTTOM | SIDE_LEFT};
+
     float backgroundSpeed = 10.;
     PointF positionF = {
         0.,
@@ -1281,19 +1290,27 @@ Level3 level3GameLoop(Level3 _this)
         _this = level3HandleControls(_this);
 
         // drawing squares
-        for (int i = 0; i < _this.tileSize; i++)
+        for (int i = 0; i < _this.tiles.size; i++)
         {
             if (_this.activeTile == i)
-                graphicsDrawSquareFill(_this.gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0, 0});
+                graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
             else
-                graphicsDrawSquare(_this.gameState.graphics.imageData, tiles[i].position, tiles[i].size, (Color){0xFF, 0xFF, 0xFF});
+                graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
         }
         int halfWide = 5;
-        _this = level3CalculateCollisions(_this, tiles);
+        _this = level3CalculateCollisions(_this);
         _this.position.x = _this.positionF.x;
         _this.position.y = _this.positionF.y;
         graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
+        {
+            double x, y;
+            glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
+            PointI mousePos = {fmax(x, 0.), fmax(y, 0.)};
 
+            graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
+            graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
+            graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
+        }
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
 
