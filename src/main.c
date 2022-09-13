@@ -1157,8 +1157,18 @@ typedef struct
 
 #define TILES_CAPACITY 100
 
+typedef enum
+{
+    LEVEL3_STATE_EDIT,
+    LEVEL3_STATE_EDIT_READY,
+    LEVEL3_STATE_EDIT_DRAWING,
+    LEVEL3_STATE_TEST,
+    LEVEL3_STATE_COUNT
+} Level3StateEnum;
+
 typedef struct
 {
+    Level3StateEnum state;
     PointI position;
     PointF positionF;
     int activeTile;
@@ -1175,13 +1185,13 @@ typedef struct
 
 Level3 level3Create()
 {
-
     Level3 _this = {0};
     _this.positionF.x = 100.;
     _this.positionF.y = 100.;
     _this.pixelSpeed = 100.;
     _this.activeTile = 0;
     _this.tiles.capacity = TILES_CAPACITY;
+    _this.state = LEVEL3_STATE_EDIT_READY;
     return _this;
 }
 
@@ -1246,6 +1256,14 @@ Level3 level3HandleControls(Level3 _this)
     {
         _this.positionF.y -= _this.pixelSpeed * _this.deltaTime;
     }
+
+    if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
+    {
+        if (_this.state == LEVEL3_STATE_EDIT_READY)
+            _this.state = LEVEL3_STATE_EDIT;
+        else
+            _this.state = LEVEL3_STATE_EDIT_READY;
+    }
     return _this;
 }
 
@@ -1289,28 +1307,63 @@ Level3 level3GameLoop(Level3 _this)
         //   Controls
         _this = level3HandleControls(_this);
 
-        // drawing squares
-        for (int i = 0; i < _this.tiles.size; i++)
-        {
-            if (_this.activeTile == i)
-                graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
-            else
-                graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
-        }
         int halfWide = 5;
         _this = level3CalculateCollisions(_this);
-        _this.position.x = _this.positionF.x;
-        _this.position.y = _this.positionF.y;
-        graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
+
+        switch (_this.state)
+        {
+        case LEVEL3_STATE_EDIT:
         {
             double x, y;
             glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
             PointI mousePos = {fmax(x, 0.), fmax(y, 0.)};
 
+            graphicsDrawSquare(_this.gameState.graphics.imageData, (PointI){0}, (PointI){319, 239}, (Color){0xFF, 0, 0});
+            bool activeTileAssigned = false;
+            for (int i = 0; i < _this.tiles.size; i++)
+            {
+                if (mousePos.x >= _this.tiles.data[i].position.x &&
+                    mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
+                    mousePos.y >= _this.tiles.data[i].position.y &&
+                    mousePos.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+                {
+                    _this.activeTile = i;
+                    activeTileAssigned = true;
+                    break;
+                }
+            }
+            if (!activeTileAssigned)
+            {
+                _this.activeTile = -1;
+            }
+            // drawing squares
+            for (int i = 0; i < _this.tiles.size; i++)
+            {
+                if (_this.activeTile == i)
+                    graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                else
+                    graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+            }
             graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
             graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
             graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
         }
+        break;
+        case LEVEL3_STATE_EDIT_READY:
+            // drawing squares
+            for (int i = 0; i < _this.tiles.size; i++)
+            {
+                if (_this.activeTile == i)
+                    graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                else
+                    graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+            }
+            break;
+        }
+        _this.position.x = _this.positionF.x;
+        _this.position.y = _this.positionF.y;
+        graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
+
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
 
