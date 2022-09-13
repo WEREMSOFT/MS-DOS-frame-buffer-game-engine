@@ -1197,6 +1197,8 @@ Level3 level3Create()
 
 Level3 level3CalculateCollisions(Level3 _this)
 {
+    if (_this.activeTile == -1)
+        return;
     {
         int halfWide = 0;
         Tile tile = _this.tiles.data[_this.activeTile];
@@ -1264,6 +1266,7 @@ Level3 level3HandleControls(Level3 _this)
         else
             _this.state = LEVEL3_STATE_EDIT_READY;
     }
+
     return _this;
 }
 
@@ -1322,6 +1325,7 @@ Level3 level3GameLoop(Level3 _this)
             bool activeTileAssigned = false;
             for (int i = 0; i < _this.tiles.size; i++)
             {
+
                 if (mousePos.x >= _this.tiles.data[i].position.x &&
                     mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
                     mousePos.y >= _this.tiles.data[i].position.y &&
@@ -1340,7 +1344,19 @@ Level3 level3GameLoop(Level3 _this)
             for (int i = 0; i < _this.tiles.size; i++)
             {
                 if (_this.activeTile == i)
-                    graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                {
+                    if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_BACKSPACE))
+                    {
+                        for (int j = _this.activeTile; j < _this.tiles.size; j++)
+                        {
+                            _this.tiles.data[j] = _this.tiles.data[j + 1];
+                        }
+                        _this.tiles.size--;
+                        _this.activeTile = -1;
+                    }
+                    else
+                        graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                }
                 else
                     graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
             }
@@ -1360,6 +1376,7 @@ Level3 level3GameLoop(Level3 _this)
             }
             break;
         }
+
         _this.position.x = _this.positionF.x;
         _this.position.y = _this.positionF.y;
         graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
