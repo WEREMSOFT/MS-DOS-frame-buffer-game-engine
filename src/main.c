@@ -1181,6 +1181,10 @@ typedef struct
         int size;
         Tile data[TILES_CAPACITY];
     } tiles;
+    struct
+    {
+        PointI origin, size;
+    } newSquare;
 } Level3;
 
 Level3 level3Create()
@@ -1265,6 +1269,27 @@ Level3 level3HandleControls(Level3 _this)
             _this.state = LEVEL3_STATE_EDIT;
         else
             _this.state = LEVEL3_STATE_EDIT_READY;
+
+        _this.activeTile = 0;
+    }
+
+    if (_this.state == LEVEL3_STATE_EDIT && isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
+    {
+        _this.state = LEVEL3_STATE_EDIT_DRAWING;
+        double x, y;
+        glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
+        _this.newSquare.origin = (PointI){(int)x, (int)y};
+    }
+
+    if (_this.state == LEVEL3_STATE_EDIT_DRAWING && isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
+    {
+        _this.state = LEVEL3_STATE_EDIT;
+
+        double x, y;
+        glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
+        PointI size = (PointI){(int)x - _this.newSquare.origin.x, (int)y - _this.newSquare.origin.y};
+        _this.tiles.data[_this.tiles.size++] = (Tile){.position = _this.newSquare.origin, .size = size, .sides = 0xff};
+        _this.activeTile = _this.tiles.size - 1;
     }
 
     return _this;
@@ -1312,71 +1337,78 @@ Level3 level3GameLoop(Level3 _this)
 
         int halfWide = 5;
         _this = level3CalculateCollisions(_this);
-
-        switch (_this.state)
-        {
-        case LEVEL3_STATE_EDIT:
         {
             double x, y;
             glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
-            PointI mousePos = {fmax(x, 0.), fmax(y, 0.)};
-
-            graphicsDrawSquare(_this.gameState.graphics.imageData, (PointI){0}, (PointI){319, 239}, (Color){0xFF, 0, 0});
-            bool activeTileAssigned = false;
-            for (int i = 0; i < _this.tiles.size; i++)
+            PointI mousePos = {fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
+            switch (_this.state)
             {
-
-                if (mousePos.x >= _this.tiles.data[i].position.x &&
-                    mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
-                    mousePos.y >= _this.tiles.data[i].position.y &&
-                    mousePos.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+            case LEVEL3_STATE_EDIT:
+            {
                 {
-                    _this.activeTile = i;
-                    activeTileAssigned = true;
-                    break;
-                }
-            }
-            if (!activeTileAssigned)
-            {
-                _this.activeTile = -1;
-            }
-            // drawing squares
-            for (int i = 0; i < _this.tiles.size; i++)
-            {
-                if (_this.activeTile == i)
-                {
-                    if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_BACKSPACE))
+                    bool activeTileAssigned = false;
+                    for (int i = 0; i < _this.tiles.size; i++)
                     {
-                        for (int j = _this.activeTile; j < _this.tiles.size; j++)
+                        if (mousePos.x >= _this.tiles.data[i].position.x &&
+                            mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
+                            mousePos.y >= _this.tiles.data[i].position.y &&
+                            mousePos.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
                         {
-                            _this.tiles.data[j] = _this.tiles.data[j + 1];
+                            _this.activeTile = i;
+                            activeTileAssigned = true;
+                            break;
                         }
-                        _this.tiles.size--;
+                    }
+                    if (!activeTileAssigned)
+                    {
                         _this.activeTile = -1;
                     }
-                    else
-                        graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
                 }
-                else
-                    graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
-            }
-            graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
-            graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
-            graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
-        }
-        break;
-        case LEVEL3_STATE_EDIT_READY:
-            // drawing squares
-            for (int i = 0; i < _this.tiles.size; i++)
-            {
-                if (_this.activeTile == i)
-                    graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
-                else
-                    graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+                // drawing squares
+                for (int i = 0; i < _this.tiles.size; i++)
+                {
+                    if (_this.activeTile == i)
+                    {
+                        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_BACKSPACE))
+                        {
+                            for (int j = _this.activeTile; j < _this.tiles.size; j++)
+                            {
+                                _this.tiles.data[j] = _this.tiles.data[j + 1];
+                            }
+                            _this.tiles.size--;
+                            _this.activeTile = -1;
+                        }
+                        else
+                            graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                    }
+                    else
+                        graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+                }
+                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
+                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
+                graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
             }
             break;
+            case LEVEL3_STATE_EDIT_DRAWING:
+            {
+                graphicsDrawSquare(_this.gameState.graphics.imageData, _this.newSquare.origin, (PointI){mousePos.x - _this.newSquare.origin.x, mousePos.y - _this.newSquare.origin.y}, (Color){0xaa, 0xaa, 0xaa});
+                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
+                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
+                graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
+            }
+            break;
+            case LEVEL3_STATE_EDIT_READY:
+                // drawing squares
+                for (int i = 0; i < _this.tiles.size; i++)
+                {
+                    if (_this.activeTile == i)
+                        graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                    else
+                        graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+                }
+                break;
+            }
         }
-
         _this.position.x = _this.positionF.x;
         _this.position.y = _this.positionF.y;
         graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
