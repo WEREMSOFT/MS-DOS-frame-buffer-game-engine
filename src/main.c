@@ -99,6 +99,7 @@ typedef enum
     ASSET_LEVEL2_HOW_TO_PLAY,
 
     ASSET_LEVEL3_BACKGROUND,
+    ASSET_LEVEL3_BACKGROUND_TILED,
 
     ASSET_COUNT
 } Assets;
@@ -335,6 +336,7 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL2_OBSTACLE_1].position.y = 179;
 
     _this[ASSET_LEVEL3_BACKGROUND] = spriteCreate("assets/level3/background.bmp");
+    _this[ASSET_LEVEL3_BACKGROUND_TILED] = spriteCreate("assets/level3/background-tiled.bmp");
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -1178,7 +1180,7 @@ Level3 level3Create()
 Level3 level3CalculateCollisions(Level3 _this, Tile *tiles)
 {
     {
-        int halfWide = 5;
+        int halfWide = 0;
         Tile tile = tiles[_this.activeTile];
 
         // restrict position
@@ -1242,30 +1244,40 @@ Level3 level3HandleControls(Level3 _this)
 Level3 level3GameLoop(Level3 _this)
 {
     Tile tiles[] = {
-        {.position = (PointI){40, 40},
-         .size = (PointI){40, 40},
+        {.position = (PointI){9, 171},
+         .size = (PointI){86, 51},
          .sides = SIDE_LEFT | SIDE_BOTTOM | SIDE_TOP},
-        {.position = (PointI){80, 40},
-         .size = (PointI){50, 40},
-         .sides = SIDE_TOP},
-        {.position = (PointI){130, 40},
-         .size = (PointI){40, 40},
-         .sides = SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP},
-        {.position = (PointI){80, 80},
-         .size = (PointI){50, 80},
-         .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM}};
+        {.position = (PointI){95, 171},
+         .size = (PointI){29, 35},
+         .sides = SIDE_BOTTOM | SIDE_LEFT},
+        {.position = (PointI){56, 141},
+         .size = (PointI){69, 30},
+         .sides = SIDE_BOTTOM | SIDE_LEFT}};
 
     _this.tileSize = sizeof(tiles) / sizeof(Tile);
+    float backgroundSpeed = 10.;
+    PointF positionF = {
+        0.,
+        -64.,
+    };
     while (!(_this.gameState.shouldStop || _this.gameState.shouldQuit))
     {
         _this.gameState = gameStateCheckExitKeys(_this.gameState);
 
         _this.deltaTime = getDeltaTime();
 
-        graphicsClear(_this.gameState.graphics.imageData);
+        positionF.y += backgroundSpeed * _this.deltaTime;
 
-        spriteDraw(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND], _this.gameState.graphics.imageData);
-        //  Controls
+        if (positionF.y > 0)
+        {
+            positionF.y = -64.;
+        }
+
+        _this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED].position.y = (int)positionF.y;
+
+        spriteDrawClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED], _this.gameState.graphics.imageData);
+        spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND], _this.gameState.graphics.imageData);
+        //   Controls
         _this = level3HandleControls(_this);
 
         // drawing squares
@@ -1291,7 +1303,7 @@ Level3 level3GameLoop(Level3 _this)
 int main(void)
 {
     // Init memory, load assets and general initialization
-    staticAllocatorInit(2859772);
+    staticAllocatorInit(2878340 * 2);
 
     GameState gameState = {0};
     gameState.graphics = graphicsCreate(320, 240, false);
@@ -1304,6 +1316,7 @@ int main(void)
     // ============================
     // Level1
     // ============================
+    if (0)
     {
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
         Level1 _this = level1Create();
@@ -1322,6 +1335,7 @@ int main(void)
     // ============================
     // Level2
     // ============================
+    if (0)
     {
         soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
         Level2 _this = level2Create();
