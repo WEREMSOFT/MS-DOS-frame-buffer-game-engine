@@ -1313,18 +1313,85 @@ Level3 level3HandleControls(Level3 _this)
 
 Level3 level3GameLoop(Level3 _this)
 {
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){9, 170},
+        .size = (PointI){47, 52},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
 
-    _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){9, 171},
-                                                  .size = (PointI){86, 51},
-                                                  .sides = SIDE_LEFT | SIDE_BOTTOM | SIDE_TOP};
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){56, 207},
+        .size = (PointI){40, 15},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
 
-    _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){95, 171},
-                                                  .size = (PointI){29, 35},
-                                                  .sides = SIDE_BOTTOM | SIDE_RIGHT};
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){56, 169},
+        .size = (PointI){40, 38},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
 
-    _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){56, 141},
-                                                  .size = (PointI){69, 30},
-                                                  .sides = SIDE_TOP | SIDE_LEFT | SIDE_RIGHT};
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){96, 169},
+        .size = (PointI){28, 37},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){57, 165},
+        .size = (PointI){67, 4},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){56, 140},
+        .size = (PointI){67, 25},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){10, 140},
+        .size = (PointI){46, 25},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){10, 124},
+        .size = (PointI){46, 16},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){9, 48},
+        .size = (PointI){30, 76},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){39, 48},
+        .size = (PointI){17, 76},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){123, 125},
+        .size = (PointI){49, 15},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){55, 48},
+        .size = (PointI){68, 77},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){172, 107},
+        .size = (PointI){31, 18},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){123, 48},
+        .size = (PointI){51, 44},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){123, 92},
+        .size = (PointI){51, 15},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
+
+    _this.tiles.data[_this.tiles.size++] = (Tile){
+        .position = (PointI){123, 107},
+        .size = (PointI){49, 18},
+        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM | SIDE_TOP};
 
     float backgroundSpeed = 10.;
     PointF positionF = {
@@ -1423,10 +1490,15 @@ Level3 level3GameLoop(Level3 _this)
             break;
             case LEVEL3_STATE_EDIT_DRAWING:
             {
-                graphicsDrawSquare(_this.gameState.graphics.imageData, _this.newSquare.origin, (PointI){mousePos.x - _this.newSquare.origin.x, mousePos.y - _this.newSquare.origin.y}, (Color){0xaa, 0xaa, 0xaa});
+                graphicsDrawSquare(_this.gameState.graphics.imageData, _this.newSquare.origin, (PointI){mousePos.x - _this.newSquare.origin.x, mousePos.y - _this.newSquare.origin.y}, (Color){0, 0, 0});
                 graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
                 graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
                 graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
+
+                for (int i = 0; i < _this.tiles.size; i++)
+                {
+                    tileDraw(_this.tiles.data[i], _this.gameState.graphics.imageData, 0);
+                }
             }
             break;
             case LEVEL3_STATE_EDIT_READY:
@@ -1442,6 +1514,30 @@ Level3 level3GameLoop(Level3 _this)
                 break;
             }
         }
+
+        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_Q))
+        {
+            printf("-------\n");
+            for (int i = 0; i < _this.tiles.size; i++)
+            {
+                Tile tile = _this.tiles.data[i];
+                printf("_this.tiles.data[_this.tiles.size++] = (Tile){\n");
+                printf(".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
+                printf(".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
+                printf(".sides = 0 ");
+
+                if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
+                    printf("SIDE_LEFT | ");
+                if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
+                    printf("SIDE_RIGHT | ");
+                if ((tile.sides & SIDE_TOP) == SIDE_TOP)
+                    printf("SIDE_TOP | ");
+                if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
+                    printf("SIDE_LEFT");
+            }
+            printf("}; \n\n ");
+        }
+
         _this.position.x = _this.positionF.x;
         _this.position.y = _this.positionF.y;
         graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
