@@ -1155,6 +1155,31 @@ typedef struct
     char sides;
 } Tile;
 
+#define TILE_SELECTED 0b00000010
+
+void tileDraw(Tile _this, ImageData imageData, char flags)
+{
+    PointI position = _this.position;
+    PointI size = _this.size;
+
+    if ((flags & TILE_SELECTED) == TILE_SELECTED)
+        graphicsDrawSquareFill(imageData, _this.position, _this.size, (Color){0xFF, 0xFF, 0});
+    else
+        graphicsDrawSquare(imageData, _this.position, _this.size, (Color){0xFF, 0xFF, 0xFF});
+
+    if ((_this.sides & SIDE_TOP) == SIDE_TOP)
+        graphicsDrawLine(imageData, position, (PointI){position.x + size.x, position.y}, (Color){0xFF, 0, 0xFF});
+
+    if ((_this.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
+        graphicsDrawLine(imageData, (PointI){position.x, position.y + size.y}, (PointI){position.x + size.x, position.y + size.y}, (Color){0xFF, 0, 0xFF});
+
+    if ((_this.sides & SIDE_LEFT) == SIDE_LEFT)
+        graphicsDrawLine(imageData, (PointI){position.x, position.y}, (PointI){position.x, position.y + size.y}, (Color){0xFF, 0, 0xFF});
+
+    if ((_this.sides & SIDE_RIGHT) == SIDE_RIGHT)
+        graphicsDrawLine(imageData, (PointI){position.x + size.x, position.y}, (PointI){position.x + size.x, position.y + size.y}, (Color){0xFF, 0, 0xFF});
+}
+
 #define TILES_CAPACITY 100
 
 typedef enum
@@ -1201,8 +1226,6 @@ Level3 level3Create()
 
 Level3 level3CalculateCollisions(Level3 _this)
 {
-    if (_this.activeTile == -1)
-        return;
     {
         int halfWide = 0;
         Tile tile = _this.tiles.data[_this.activeTile];
@@ -1220,8 +1243,7 @@ Level3 level3CalculateCollisions(Level3 _this)
         if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
             _this.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, _this.positionF.y);
 
-        bool activeTileAssigned = false;
-
+        _this.activeTile = -1;
         for (int i = 0; i < _this.tiles.size; i++)
         {
             if (_this.positionF.x >= _this.tiles.data[i].position.x &&
@@ -1230,14 +1252,8 @@ Level3 level3CalculateCollisions(Level3 _this)
                 _this.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
             {
                 _this.activeTile = i;
-                activeTileAssigned = true;
                 break;
             }
-        }
-        if (!activeTileAssigned)
-        {
-            _this.positionF.x = fmin(tile.position.x + tile.size.x - halfWide, fmax(tile.position.x + halfWide, _this.positionF.x));
-            _this.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, fmax(tile.position.y + halfWide, _this.positionF.y));
         }
     }
     return _this;
@@ -1304,11 +1320,11 @@ Level3 level3GameLoop(Level3 _this)
 
     _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){95, 171},
                                                   .size = (PointI){29, 35},
-                                                  .sides = SIDE_BOTTOM | SIDE_LEFT};
+                                                  .sides = SIDE_BOTTOM | SIDE_RIGHT};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){.position = (PointI){56, 141},
                                                   .size = (PointI){69, 30},
-                                                  .sides = SIDE_BOTTOM | SIDE_LEFT};
+                                                  .sides = SIDE_TOP | SIDE_LEFT | SIDE_RIGHT};
 
     float backgroundSpeed = 10.;
     PointF positionF = {
@@ -1322,7 +1338,7 @@ Level3 level3GameLoop(Level3 _this)
         _this.deltaTime = getDeltaTime();
 
         positionF.y += backgroundSpeed * _this.deltaTime;
-
+        // baclground endless displacement, if > 0, we start again, seamless scrolling
         if (positionF.y > 0)
         {
             positionF.y = -64.;
@@ -1378,11 +1394,27 @@ Level3 level3GameLoop(Level3 _this)
                             _this.tiles.size--;
                             _this.activeTile = -1;
                         }
+                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_A))
+                        {
+                            _this.tiles.data[i].sides ^= SIDE_LEFT;
+                        }
+                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_D))
+                        {
+                            _this.tiles.data[i].sides ^= SIDE_RIGHT;
+                        }
+                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_W))
+                        {
+                            _this.tiles.data[i].sides ^= SIDE_TOP;
+                        }
+                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_S))
+                        {
+                            _this.tiles.data[i].sides ^= SIDE_BOTTOM;
+                        }
                         else
-                            graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                            tileDraw(_this.tiles.data[i], _this.gameState.graphics.imageData, TILE_SELECTED);
                     }
                     else
-                        graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+                        tileDraw(_this.tiles.data[i], _this.gameState.graphics.imageData, 0);
                 }
                 graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
                 graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
@@ -1402,10 +1434,11 @@ Level3 level3GameLoop(Level3 _this)
                 for (int i = 0; i < _this.tiles.size; i++)
                 {
                     if (_this.activeTile == i)
-                        graphicsDrawSquareFill(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0, 0});
+                        tileDraw(_this.tiles.data[i], _this.gameState.graphics.imageData, TILE_SELECTED);
                     else
-                        graphicsDrawSquare(_this.gameState.graphics.imageData, _this.tiles.data[i].position, _this.tiles.data[i].size, (Color){0xFF, 0xFF, 0xFF});
+                        tileDraw(_this.tiles.data[i], _this.gameState.graphics.imageData, 0);
                 }
+
                 break;
             }
         }
