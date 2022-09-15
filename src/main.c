@@ -1311,7 +1311,7 @@ Level3 level3HandleControls(Level3 _this)
     return _this;
 }
 
-Level3 level3GameLoop(Level3 _this)
+Level3 level3CreateCollisionMaps(Level3 _this)
 {
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){9, 170},
@@ -1393,25 +1393,72 @@ Level3 level3GameLoop(Level3 _this)
         .size = (PointI){49, 18},
         .sides = 0};
 
+    return _this;
+}
+
+Level3 level3MoveBackground(Level3 _this)
+{
     float backgroundSpeed = 10.;
-    PointF positionF = {
+    static PointF positionF = {
         0.,
         -64.,
     };
+
+    positionF.y += backgroundSpeed * _this.deltaTime;
+    // baclground endless displacement, if > 0, we start again, seamless scrolling
+    if (positionF.y > 0)
+    {
+        positionF.y = -64.;
+    }
+    _this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED].position.y = (int)positionF.y;
+
+    return _this;
+}
+
+void level3SerializeLevelCollisions(Level3 _this)
+{
+    printf("-------\n");
+    for (int i = 0; i < _this.tiles.size; i++)
+    {
+        Tile tile = _this.tiles.data[i];
+        printf("_this.tiles.data[_this.tiles.size++] = (Tile){\n");
+        printf(".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
+        printf(".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
+        printf(".sides = 0 ");
+        if ((tile.sides & SIDE_LEFT) != 0)
+        {
+            printf("| ");
+            printf("SIDE_LEFT ");
+        }
+        if ((tile.sides & SIDE_RIGHT) != 0)
+        {
+            printf("| ");
+            printf("SIDE_RIGHT ");
+        }
+        if ((tile.sides & SIDE_TOP) != 0)
+        {
+            printf("| ");
+            printf("SIDE_TOP ");
+        }
+        if ((tile.sides & SIDE_BOTTOM) != 0)
+        {
+            printf("| ");
+            printf("SIDE_BOTTOM");
+        }
+        printf("}; \n\n ");
+    }
+}
+
+Level3 level3GameLoop(Level3 _this)
+{
+    _this = level3CreateCollisionMaps(_this);
+
     while (!(_this.gameState.shouldStop || _this.gameState.shouldQuit))
     {
         _this.gameState = gameStateCheckExitKeys(_this.gameState);
 
+        _this = level3MoveBackground(_this);
         _this.deltaTime = getDeltaTime();
-
-        positionF.y += backgroundSpeed * _this.deltaTime;
-        // baclground endless displacement, if > 0, we start again, seamless scrolling
-        if (positionF.y > 0)
-        {
-            positionF.y = -64.;
-        }
-
-        _this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED].position.y = (int)positionF.y;
 
         spriteDrawClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED], _this.gameState.graphics.imageData);
         spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND], _this.gameState.graphics.imageData);
@@ -1420,10 +1467,12 @@ Level3 level3GameLoop(Level3 _this)
 
         int halfWide = 5;
         _this = level3CalculateCollisions(_this);
+
         {
             double x, y;
             glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
             PointI mousePos = {fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
+
             switch (_this.state)
             {
             case LEVEL3_STATE_EDIT:
@@ -1452,7 +1501,7 @@ Level3 level3GameLoop(Level3 _this)
                 {
                     if (_this.activeTile == i)
                     {
-                        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_BACKSPACE))
+                        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_R))
                         {
                             for (int j = _this.activeTile; j < _this.tiles.size; j++)
                             {
@@ -1517,36 +1566,7 @@ Level3 level3GameLoop(Level3 _this)
 
         if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_Q))
         {
-            printf("-------\n");
-            for (int i = 0; i < _this.tiles.size; i++)
-            {
-                Tile tile = _this.tiles.data[i];
-                printf("_this.tiles.data[_this.tiles.size++] = (Tile){\n");
-                printf(".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
-                printf(".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
-                printf(".sides = 0 ");
-                if ((tile.sides & SIDE_LEFT) != 0)
-                {
-                    printf("| ");
-                    printf("SIDE_LEFT ");
-                }
-                if ((tile.sides & SIDE_RIGHT) != 0)
-                {
-                    printf("| ");
-                    printf("SIDE_RIGHT ");
-                }
-                if ((tile.sides & SIDE_TOP) != 0)
-                {
-                    printf("| ");
-                    printf("SIDE_TOP ");
-                }
-                if ((tile.sides & SIDE_BOTTOM) != 0)
-                {
-                    printf("| ");
-                    printf("SIDE_BOTTOM");
-                }
-                printf("}; \n\n ");
-            }
+            level3SerializeLevelCollisions(_this);
         }
 
         _this.position.x = _this.positionF.x;
