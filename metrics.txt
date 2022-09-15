@@ -1339,3 +1339,93 @@ Modified McCabe Cyclomatic Complexity
 5	5	22	1510	43	src/main.c(1510): level3GameLoop
 6	6	35	1554	66	src/main.c(1554): main
 209	211	860	n/a	1618	Total
+
+37fb911e9f86ee868dfae88df91769cb171fff45
+Modified McCabe Cyclomatic Complexity
+|   Traditional McCabe Cyclomatic Complexity
+|       |    # Statements in function
+|       |        |   First line of function
+|       |        |       |   # lines in function
+|       |        |       |       |  filename(definition line number):function
+|       |        |       |       |           |
+3	3	7	154	14	src/main.c(154): gameStateCheckExitConditions
+1	1	3	169	6	src/main.c(169): swapBuffersPrintFPSPollEvents
+3	3	22	200	32	src/main.c(200): soundCreate
+1	1	1	233	4	src/main.c(233): soundPlaySfx
+1	1	1	238	4	src/main.c(238): soundPlaySpeech
+3	3	10	243	15	src/main.c(243): soundDestroy
+1	1	77	259	96	src/main.c(259): loadAssets
+2	2	6	356	9	src/main.c(356): enemyPassToStateHidden
+3	3	6	366	10	src/main.c(366): enemyPassToStateDead
+1	1	3	377	6	src/main.c(377): enemyPassToStateGoingUp
+1	1	2	384	5	src/main.c(384): enemyPassToStateGoingDown
+4	4	9	390	15	src/main.c(390): enemyProcessStateGoingDownTutorial
+5	5	13	406	19	src/main.c(406): enemyProcessStateGoingDown
+4	4	10	426	16	src/main.c(426): enemyProcessStateGoingUp
+5	5	13	443	23	src/main.c(443): enemyProcessStateDead
+1	1	18	467	29	src/main.c(467): level1InitPositions
+7	7	32	497	40	src/main.c(497): level1InitEnemies
+7	7	26	538	38	src/main.c(538): level1Tutorial
+26	26	83	577	150	src/main.c(577): level1GameLoop
+1	1	7	728	10	src/main.c(728): level1Create
+8	8	32	739	51	src/main.c(739): level1GameCompleteLoop
+1	1	18	814	27	src/main.c(814): level2Create
+11	11	47	842	74	src/main.c(842): level2TutorialLoop
+28	28	107	917	175	src/main.c(917): level2GameLoop
+10	10	37	1093	67	src/main.c(1093): level2GameCompleteLoop
+7	7	17	1212	26	src/main.c(1212): level3DrawTile
+1	1	10	1239	13	src/main.c(1239): level3Create
+12	12	22	1253	39	src/main.c(1253): level3CalculateCollisions
+10	10	24	1293	47	src/main.c(1293): level3HandleControls
+1	1	1	1341	6	src/main.c(1341): level3CreateCollisionMaps
+2	2	7	1348	18	src/main.c(1348): level3MoveBackground
+6	6	25	1367	37	src/main.c(1367): level3SerializeLevelCollisions
+19	21	56	1405	97	src/main.c(1405): level3LevelEditorLogic
+5	5	22	1503	43	src/main.c(1503): level3GameLoop
+6	6	35	1547	66	src/main.c(1547): main
+207	209	855	n/a	1611	Total
+
+37fb911e9f86ee868dfae88df91769cb171fff45
+Modified McCabe Cyclomatic Complexity
+|   Traditional McCabe Cyclomatic Complexity
+|       |    # Statements in function
+|       |        |   First line of function
+|       |        |       |   # lines in function
+|       |        |       |       |  filename(definition line number):function
+|       |        |       |       |           |
+3	3	7	155	14	src/main.c(155): gameStateCheckExitConditions
+1	1	3	170	6	src/main.c(170): swapBuffersPrintFPSPollEvents
+3	3	22	201	32	src/main.c(201): soundCreate
+1	1	1	234	4	src/main.c(234): soundPlaySfx
+1	1	1	239	4	src/main.c(239): soundPlaySpeech
+3	3	10	244	15	src/main.c(244): soundDestroy
+1	1	84	260	104	src/main.c(260): loadAssets
+2	2	6	365	9	src/main.c(365): enemyPassToStateHidden
+3	3	6	375	10	src/main.c(375): enemyPassToStateDead
+1	1	3	386	6	src/main.c(386): enemyPassToStateGoingUp
+1	1	2	393	5	src/main.c(393): enemyPassToStateGoingDown
+4	4	9	399	15	src/main.c(399): enemyProcessStateGoingDownTutorial
+5	5	13	415	19	src/main.c(415): enemyProcessStateGoingDown
+4	4	10	435	16	src/main.c(435): enemyProcessStateGoingUp
+5	5	13	452	23	src/main.c(452): enemyProcessStateDead
+1	1	18	476	29	src/main.c(476): level1InitPositions
+7	7	32	506	40	src/main.c(506): level1InitEnemies
+7	7	26	547	38	src/main.c(547): level1Tutorial
+26	26	83	586	150	src/main.c(586): level1GameLoop
+1	1	7	737	10	src/main.c(737): level1Create
+8	8	32	748	51	src/main.c(748): level1GameCompleteLoop
+1	1	18	823	27	src/main.c(823): level2Create
+11	11	47	851	74	src/main.c(851): level2TutorialLoop
+28	28	107	926	175	src/main.c(926): level2GameLoop
+10	10	37	1102	67	src/main.c(1102): level2GameCompleteLoop
+7	7	17	1231	26	src/main.c(1231): level3DrawTile
+1	1	11	1258	14	src/main.c(1258): level3Create
+12	12	22	1273	39	src/main.c(1273): level3CalculateCollisions
+12	12	28	1313	56	src/main.c(1313): level3HandleControls
+1	1	1	1370	6	src/main.c(1370): level3CreateCollisionMaps
+2	2	7	1377	18	src/main.c(1377): level3MoveBackground
+6	6	25	1396	37	src/main.c(1396): level3SerializeLevelCollisions
+19	21	56	1434	97	src/main.c(1434): level3LevelEditorLogic
+5	5	22	1532	42	src/main.c(1532): level3GameLoop
+6	6	35	1575	66	src/main.c(1575): main
+209	211	868	n/a	1639	Total

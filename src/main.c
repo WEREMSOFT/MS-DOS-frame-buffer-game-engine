@@ -100,7 +100,8 @@ typedef enum
 
     ASSET_LEVEL3_BACKGROUND,
     ASSET_LEVEL3_BACKGROUND_TILED,
-    ASSET_LEVEL3_PLAYER_RUN,
+    ASSET_LEVEL3_HERO_RUN,
+    ASSET_LEVEL3_HERO_IDLE,
 
     ASSET_COUNT
 } Assets;
@@ -344,13 +345,21 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL3_BACKGROUND] = spriteCreate("assets/level3/background.bmp");
     _this[ASSET_LEVEL3_BACKGROUND_TILED] = spriteCreate("assets/level3/background-tiled.bmp");
 
-    _this[ASSET_LEVEL3_PLAYER_RUN] = spriteCreate("assets/level3/playerRun.bmp");
-    _this[ASSET_LEVEL3_PLAYER_RUN].position.x = 0;
-    _this[ASSET_LEVEL3_PLAYER_RUN].position.y = 0;
-    _this[ASSET_LEVEL3_PLAYER_RUN].animated = true;
-    _this[ASSET_LEVEL3_PLAYER_RUN].animation.frameCount = 12;
-    _this[ASSET_LEVEL3_PLAYER_RUN].animation.frameWidth = 32;
-    _this[ASSET_LEVEL3_PLAYER_RUN].animation.frameRate = 10;
+    _this[ASSET_LEVEL3_HERO_RUN] = spriteCreate("assets/level3/playerRun.bmp");
+    _this[ASSET_LEVEL3_HERO_RUN].position.x = 0;
+    _this[ASSET_LEVEL3_HERO_RUN].position.y = 0;
+    _this[ASSET_LEVEL3_HERO_RUN].animated = true;
+    _this[ASSET_LEVEL3_HERO_RUN].animation.frameCount = 12;
+    _this[ASSET_LEVEL3_HERO_RUN].animation.frameWidth = 32;
+    _this[ASSET_LEVEL3_HERO_RUN].animation.frameRate = 15;
+
+    _this[ASSET_LEVEL3_HERO_IDLE] = spriteCreate("assets/level3/playerIdle.bmp");
+    _this[ASSET_LEVEL3_HERO_IDLE].position.x = 0;
+    _this[ASSET_LEVEL3_HERO_IDLE].position.y = 0;
+    _this[ASSET_LEVEL3_HERO_IDLE].animated = true;
+    _this[ASSET_LEVEL3_HERO_IDLE].animation.frameCount = 11;
+    _this[ASSET_LEVEL3_HERO_IDLE].animation.frameWidth = 32;
+    _this[ASSET_LEVEL3_HERO_IDLE].animation.frameRate = 15;
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -1182,6 +1191,14 @@ typedef enum
     LEVEL3_STATE_COUNT
 } Level3StateEnum;
 
+typedef enum
+{
+    LEVEL3_HERO_STATE_IDLE,
+    LEVEL3_HERO_STATE_WALING,
+    LEVEL3_HERO_STATE_JUMPING,
+    LEVEL3_HERO_STATE_COUNT
+} Level3HeroState;
+
 typedef struct
 {
     Level3StateEnum state;
@@ -1200,11 +1217,15 @@ typedef struct
     {
         PointI origin, size;
     } newSquare;
+    struct
+    {
+        float gravity;
+        float jumpSpeed;
+        PointF speed;
+        Level3HeroState state;
+        int spriteId;
+    } hero;
     bool hideCollisions;
-    float gravity;
-    float heroSpeed;
-    float jumpSpeed;
-    float speed;
 } Level3;
 
 void level3DrawTile(Level3 _this, int tileId, char flags)
@@ -1237,11 +1258,12 @@ void level3DrawTile(Level3 _this, int tileId, char flags)
 Level3 level3Create()
 {
     Level3 _this = {0};
-    _this.gravity = 1000.;
+    _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
+    _this.hero.gravity = 1000.;
     _this.positionF.x = 100.;
     _this.positionF.y = 100.;
-    _this.heroSpeed = 100.;
-    _this.jumpSpeed = -350.;
+    _this.hero.speed.x = 100.;
+    _this.hero.jumpSpeed = -350.;
     _this.activeTile = 0;
     _this.tiles.capacity = TILES_CAPACITY;
     _this.state = LEVEL3_STATE_EDIT_READY;
@@ -1283,7 +1305,7 @@ Level3 level3CalculateCollisions(Level3 _this)
     }
 
     if (positionY != _this.positionF.y)
-        _this.speed = 0.;
+        _this.hero.speed.y = 0.;
 
     return _this;
 }
@@ -1292,20 +1314,20 @@ Level3 level3HandleControls(Level3 _this)
 {
     if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        _this.positionF.x += _this.heroSpeed * _this.deltaTime;
+        _this.positionF.x += _this.hero.speed.x * _this.deltaTime;
     }
     else if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        _this.positionF.x -= _this.heroSpeed * _this.deltaTime;
+        _this.positionF.x -= _this.hero.speed.x * _this.deltaTime;
     }
 
     if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        _this.positionF.y += _this.heroSpeed * _this.deltaTime;
+        _this.positionF.y += _this.hero.speed.y * _this.deltaTime;
     }
     else if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        _this.positionF.y -= _this.heroSpeed * _this.deltaTime;
+        _this.positionF.y -= _this.hero.speed.y * _this.deltaTime;
     }
 
     if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
@@ -1520,17 +1542,16 @@ Level3 level3GameLoop(Level3 _this)
 
         spriteDrawClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED], _this.gameState.graphics.imageData);
         spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND], _this.gameState.graphics.imageData);
-        //   Controls
         _this = level3HandleControls(_this);
 
         if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
         {
-            _this.speed = _this.jumpSpeed;
+            _this.hero.speed.y = _this.hero.jumpSpeed;
             soundPlaySfx(_this.gameState.sound, SFX_HERO_JUMP);
         }
 
-        _this.speed += _this.gravity * _this.deltaTime;
-        _this.positionF.y += _this.speed * _this.deltaTime;
+        _this.hero.speed.y += _this.hero.gravity * _this.deltaTime;
+        _this.positionF.y += _this.hero.speed.y * _this.deltaTime;
         _this = level3CalculateCollisions(_this);
 
         _this = level3LevelEditorLogic(_this);
@@ -1540,10 +1561,10 @@ Level3 level3GameLoop(Level3 _this)
             level3SerializeLevelCollisions(_this);
         }
 
-        _this.gameState.sprites[ASSET_LEVEL3_PLAYER_RUN].position.x = _this.positionF.x - 16.;
-        _this.gameState.sprites[ASSET_LEVEL3_PLAYER_RUN].position.y = _this.positionF.y - 32.;
+        _this.gameState.sprites[_this.hero.spriteId].position.x = _this.positionF.x - 16.;
+        _this.gameState.sprites[_this.hero.spriteId].position.y = _this.positionF.y - 32.;
 
-        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_LEVEL3_PLAYER_RUN], _this.gameState.graphics.imageData, _this.deltaTime);
+        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
 
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
