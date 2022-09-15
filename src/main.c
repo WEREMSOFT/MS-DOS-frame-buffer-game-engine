@@ -100,6 +100,7 @@ typedef enum
 
     ASSET_LEVEL3_BACKGROUND,
     ASSET_LEVEL3_BACKGROUND_TILED,
+    ASSET_LEVEL3_PLAYER_RUN,
 
     ASSET_COUNT
 } Assets;
@@ -337,6 +338,14 @@ void loadAssets(Sprite *_this)
 
     _this[ASSET_LEVEL3_BACKGROUND] = spriteCreate("assets/level3/background.bmp");
     _this[ASSET_LEVEL3_BACKGROUND_TILED] = spriteCreate("assets/level3/background-tiled.bmp");
+
+    _this[ASSET_LEVEL3_PLAYER_RUN] = spriteCreate("assets/level3/playerRun.bmp");
+    _this[ASSET_LEVEL3_PLAYER_RUN].position.x = 0;
+    _this[ASSET_LEVEL3_PLAYER_RUN].position.y = 0;
+    _this[ASSET_LEVEL3_PLAYER_RUN].animated = true;
+    _this[ASSET_LEVEL3_PLAYER_RUN].animation.frameCount = 12;
+    _this[ASSET_LEVEL3_PLAYER_RUN].animation.frameWidth = 32;
+    _this[ASSET_LEVEL3_PLAYER_RUN].animation.frameRate = 10;
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -1336,7 +1345,7 @@ Level3 level3MoveBackground(Level3 _this)
     };
 
     positionF.y += backgroundSpeed * _this.deltaTime;
-    // baclground endless displacement, if > 0, we start again, seamless scrolling
+
     if (positionF.y > 0)
     {
         positionF.y = -64.;
@@ -1504,9 +1513,10 @@ Level3 level3GameLoop(Level3 _this)
             level3SerializeLevelCollisions(_this);
         }
 
-        _this.position.x = _this.positionF.x;
-        _this.position.y = _this.positionF.y;
-        graphicsDrawSquareFill(_this.gameState.graphics.imageData, (PointI){_this.position.x - halfWide, _this.position.y - halfWide}, (PointI){halfWide * 2, halfWide * 2}, (Color){0, 0xff, 0});
+        _this.gameState.sprites[ASSET_LEVEL3_PLAYER_RUN].position.x = _this.positionF.x - 16.;
+        _this.gameState.sprites[ASSET_LEVEL3_PLAYER_RUN].position.y = _this.positionF.y - 32.;
+
+        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_LEVEL3_PLAYER_RUN], _this.gameState.graphics.imageData, _this.deltaTime);
 
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
