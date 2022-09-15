@@ -1,0 +1,32 @@
+//-------
+_this.tiles.data[_this.tiles.size++] = (Tile){
+.position = (PointI){72, 40},
+.size = (PointI){54, 78},
+.sides = 0 | SIDE_LEFT | SIDE_TOP | SIDE_BOTTOM}; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.position = (PointI){197, 40},
+.size = (PointI){78, 78},
+.sides = 0 | SIDE_TOP | SIDE_BOTTOM}; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.position = (PointI){126, 118},
+.size = (PointI){71, 39},
+.sides = 0 | SIDE_LEFT | SIDE_BOTTOM}; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.position = (PointI){126, 14},
+.size = (PointI){71, 26},
+.sides = 0 | SIDE_LEFT | SIDE_TOP }; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.position = (PointI){150, 71},
+.size = (PointI){20, 39},
+.sides = 0 | SIDE_LEFT | SIDE_RIGHT }; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.position = (PointI){141, 50},
+.size = (PointI){44, 12},
+.sides = 0 | SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM}; 
+
+ 
