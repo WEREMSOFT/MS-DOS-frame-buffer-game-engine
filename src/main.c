@@ -1316,87 +1316,82 @@ Level3 level3GameLoop(Level3 _this)
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){9, 170},
         .size = (PointI){47, 52},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_LEFT | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){56, 207},
         .size = (PointI){40, 15},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){56, 169},
         .size = (PointI){40, 38},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){96, 169},
         .size = (PointI){28, 37},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){57, 165},
         .size = (PointI){67, 4},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){56, 140},
         .size = (PointI){67, 25},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT | SIDE_TOP};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){10, 140},
         .size = (PointI){46, 25},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_LEFT | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){10, 124},
         .size = (PointI){46, 16},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_LEFT | SIDE_RIGHT};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){9, 48},
         .size = (PointI){30, 76},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_LEFT | SIDE_TOP};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){39, 48},
         .size = (PointI){17, 76},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_TOP};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){123, 125},
         .size = (PointI){49, 15},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){55, 48},
         .size = (PointI){68, 77},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_TOP | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){172, 107},
         .size = (PointI){31, 18},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){123, 48},
         .size = (PointI){51, 44},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT | SIDE_TOP};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){123, 92},
         .size = (PointI){51, 15},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
+        .sides = 0 | SIDE_RIGHT};
 
     _this.tiles.data[_this.tiles.size++] = (Tile){
         .position = (PointI){123, 107},
         .size = (PointI){49, 18},
-        .sides = SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM};
-
-    _this.tiles.data[_this.tiles.size++] = (Tile){
-        .position = (PointI){212, 42},
-        .size = (PointI){57, 42},
-        .sides = SIDE_LEFT | SIDE_TOP};
+        .sides = 0};
 
     float backgroundSpeed = 10.;
     PointF positionF = {
@@ -1529,37 +1524,25 @@ Level3 level3GameLoop(Level3 _this)
                 printf("_this.tiles.data[_this.tiles.size++] = (Tile){\n");
                 printf(".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
                 printf(".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
-                printf(".sides = ");
-                bool firstFlag = true;
+                printf(".sides = 0 ");
                 if ((tile.sides & SIDE_LEFT) != 0)
                 {
-                    firstFlag = false;
+                    printf("| ");
                     printf("SIDE_LEFT ");
                 }
                 if ((tile.sides & SIDE_RIGHT) != 0)
                 {
-                    if (!firstFlag)
-                    {
-                        printf("| ");
-                    }
-                    firstFlag = false;
+                    printf("| ");
                     printf("SIDE_RIGHT ");
                 }
                 if ((tile.sides & SIDE_TOP) != 0)
                 {
-                    if (!firstFlag)
-                    {
-                        printf("| ");
-                    }
-                    firstFlag = false;
+                    printf("| ");
                     printf("SIDE_TOP ");
                 }
                 if ((tile.sides & SIDE_BOTTOM) != 0)
                 {
-                    if (!firstFlag)
-                    {
-                        printf("| ");
-                    }
+                    printf("| ");
                     printf("SIDE_BOTTOM");
                 }
                 printf("}; \n\n ");
