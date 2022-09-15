@@ -135,13 +135,8 @@ _this.tiles.data[_this.tiles.size++] = (Tile){
 .sides = 0 | SIDE_LEFT | SIDE_RIGHT | SIDE_BOTTOM}; 
 
  _this.tiles.data[_this.tiles.size++] = (Tile){
-.position = (PointI){254, 146},
-.size = (PointI){57, 14},
-.sides = 0 | SIDE_RIGHT | SIDE_TOP }; 
-
- _this.tiles.data[_this.tiles.size++] = (Tile){
-.position = (PointI){301, 160},
-.size = (PointI){10, 16},
+.position = (PointI){300, 146},
+.size = (PointI){11, 30},
 .sides = 0 | SIDE_RIGHT }; 
 
  

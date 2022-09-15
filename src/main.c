@@ -151,8 +151,13 @@ typedef struct
     bool shouldStop;
 } GameState;
 
-GameState gameStateCheckExitKeys(GameState _this)
+GameState gameStateCheckExitConditions(GameState _this)
 {
+    if (glfwWindowShouldClose(_this.graphics.window))
+    {
+        _this.shouldQuit = true;
+        return _this;
+    }
 
     _this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
     if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_ENTER))
@@ -536,7 +541,7 @@ Level1 level1Tutorial(Level1 _this)
     {
         int hiddenEnemies = 0;
         float dt = getDeltaTime();
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         enemyProcessStateGoingDownTutorial(_this.enemies, dt, _this.enemySpeed);
         enemyProcessStateGoingUp(_this.enemies, dt, _this.enemySpeed);
@@ -577,7 +582,7 @@ Level1 level1GameLoop(Level1 _this)
     {
         float dt = getDeltaTime();
 
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         // Enemy selection and trigger to attack
         if (glfwGetTime() - _this.elapsedTime > .5)
@@ -739,7 +744,7 @@ Level1 level1GameCompleteLoop(Level1 _this)
     {
         float statisticsSpeed = 100.;
         float dt = getDeltaTime();
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         spriteDrawClipped(_this.gameState.sprites[ASSET_BACKGROUND], _this.gameState.graphics.imageData);
         // Draw Enemies
@@ -774,7 +779,7 @@ Level1 level1GameCompleteLoop(Level1 _this)
     while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit && elapsedTimeSinceScoreDisplay < 2.)
     {
         float deltaTime = getDeltaTime();
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         elapsedTimeSinceScoreDisplay += deltaTime;
         glfwPollEvents();
@@ -839,7 +844,7 @@ Level2 level2TutorialLoop(Level2 _this)
     while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit)
     {
         float deltaTime = getDeltaTime();
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         float backgroundSpeedFrame = deltaTime * _this.backgroundSpeed;
 
@@ -914,7 +919,7 @@ Level2 level2GameLoop(Level2 _this)
     while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit && _this.runningDistance < 316)
     {
         float deltaTime = getDeltaTime();
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         _this.backgroundSpeed += _this.backgroundAcceleration * deltaTime;
         float backgroundSpeedFrame = deltaTime * _this.backgroundSpeed;
@@ -1144,7 +1149,7 @@ Level2 level2GameCompleteLoop(Level2 _this)
     while (!(_this.gameState.shouldStop || _this.gameState.shouldQuit) && elapsedTimeSinceScoreDisplay < 2.)
     {
         float deltaTime = getDeltaTime();
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         elapsedTimeSinceScoreDisplay += deltaTime;
         glfwPollEvents();
@@ -1184,7 +1189,6 @@ typedef struct
     PointF positionF;
     int activeTile;
     float deltaTime;
-    float pixelSpeed;
     GameState gameState;
     struct
     {
@@ -1197,6 +1201,10 @@ typedef struct
         PointI origin, size;
     } newSquare;
     bool hideCollisions;
+    float gravity;
+    float heroSpeed;
+    float jumpSpeed;
+    float speed;
 } Level3;
 
 void level3DrawTile(Level3 _this, int tileId, char flags)
@@ -1229,9 +1237,11 @@ void level3DrawTile(Level3 _this, int tileId, char flags)
 Level3 level3Create()
 {
     Level3 _this = {0};
+    _this.gravity = 1000.;
     _this.positionF.x = 100.;
     _this.positionF.y = 100.;
-    _this.pixelSpeed = 100.;
+    _this.heroSpeed = 100.;
+    _this.jumpSpeed = -350.;
     _this.activeTile = 0;
     _this.tiles.capacity = TILES_CAPACITY;
     _this.state = LEVEL3_STATE_EDIT_READY;
@@ -1241,6 +1251,8 @@ Level3 level3Create()
 Level3 level3CalculateCollisions(Level3 _this)
 {
     int halfWide = 0;
+    double positionY = _this.positionF.y;
+
     if (_this.activeTile != -1)
     {
         Tile tile = _this.tiles.data[_this.activeTile];
@@ -1269,6 +1281,10 @@ Level3 level3CalculateCollisions(Level3 _this)
             break;
         }
     }
+
+    if (positionY != _this.positionF.y)
+        _this.speed = 0.;
+
     return _this;
 }
 
@@ -1276,20 +1292,20 @@ Level3 level3HandleControls(Level3 _this)
 {
     if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        _this.positionF.x += _this.pixelSpeed * _this.deltaTime;
+        _this.positionF.x += _this.heroSpeed * _this.deltaTime;
     }
     else if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        _this.positionF.x -= _this.pixelSpeed * _this.deltaTime;
+        _this.positionF.x -= _this.heroSpeed * _this.deltaTime;
     }
 
     if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        _this.positionF.y += _this.pixelSpeed * _this.deltaTime;
+        _this.positionF.y += _this.heroSpeed * _this.deltaTime;
     }
     else if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        _this.positionF.y -= _this.pixelSpeed * _this.deltaTime;
+        _this.positionF.y -= _this.heroSpeed * _this.deltaTime;
     }
 
     if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
@@ -1302,7 +1318,7 @@ Level3 level3HandleControls(Level3 _this)
         _this.activeTile = 0;
     }
 
-    if (_this.state == LEVEL3_STATE_EDIT && isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
+    if (_this.state == LEVEL3_STATE_EDIT && isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_TAB))
     {
         _this.state = LEVEL3_STATE_EDIT_DRAWING;
         double x, y;
@@ -1310,7 +1326,7 @@ Level3 level3HandleControls(Level3 _this)
         _this.newSquare.origin = (PointI){(int)x, (int)y};
     }
 
-    if (_this.state == LEVEL3_STATE_EDIT_DRAWING && isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
+    if (_this.state == LEVEL3_STATE_EDIT_DRAWING && isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_TAB))
     {
         _this.state = LEVEL3_STATE_EDIT;
 
@@ -1393,13 +1409,111 @@ void level3SerializeLevelCollisions(Level3 _this)
     printf("level saved\n");
 }
 
+Level3 level3LevelEditorLogic(Level3 _this)
+{
+    double x, y;
+    glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
+    PointI mousePos = {fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
+
+    switch (_this.state)
+    {
+    case LEVEL3_STATE_EDIT:
+    {
+        {
+            bool activeTileAssigned = false;
+            for (int i = 0; i < _this.tiles.size; i++)
+            {
+                if (mousePos.x >= _this.tiles.data[i].position.x &&
+                    mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
+                    mousePos.y >= _this.tiles.data[i].position.y &&
+                    mousePos.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+                {
+                    _this.activeTile = i;
+                    activeTileAssigned = true;
+                    break;
+                }
+            }
+            if (!activeTileAssigned)
+            {
+                _this.activeTile = -1;
+            }
+        }
+
+        for (int i = 0; i < _this.tiles.size; i++)
+        {
+            if (_this.activeTile == i)
+            {
+                if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_R))
+                {
+                    for (int j = _this.activeTile; j < _this.tiles.size; j++)
+                    {
+                        _this.tiles.data[j] = _this.tiles.data[j + 1];
+                    }
+                    _this.tiles.size--;
+                    _this.activeTile = -1;
+                }
+                else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_A))
+                {
+                    _this.tiles.data[i].sides ^= SIDE_LEFT;
+                }
+                else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_D))
+                {
+                    _this.tiles.data[i].sides ^= SIDE_RIGHT;
+                }
+                else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_W))
+                {
+                    _this.tiles.data[i].sides ^= SIDE_TOP;
+                }
+                else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_S))
+                {
+                    _this.tiles.data[i].sides ^= SIDE_BOTTOM;
+                }
+                else
+                    level3DrawTile(_this, i, TILE_SELECTED);
+            }
+            else
+                level3DrawTile(_this, i, 0);
+        }
+        graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
+        graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
+    }
+    break;
+    case LEVEL3_STATE_EDIT_DRAWING:
+    {
+        graphicsDrawSquare(_this.gameState.graphics.imageData, _this.newSquare.origin, (PointI){mousePos.x - _this.newSquare.origin.x, mousePos.y - _this.newSquare.origin.y}, (Color){0xff, 0, 0});
+        graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
+        graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
+        graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
+
+        for (int i = 0; i < _this.tiles.size; i++)
+        {
+            level3DrawTile(_this, i, 0);
+        }
+    }
+    break;
+    case LEVEL3_STATE_EDIT_READY:
+        // drawing squares
+        for (int i = 0; i < _this.tiles.size; i++)
+        {
+            if (_this.activeTile == i)
+                level3DrawTile(_this, i, TILE_SELECTED);
+            else
+                level3DrawTile(_this, i, 0);
+        }
+
+        break;
+    }
+    return _this;
+}
+
 Level3 level3GameLoop(Level3 _this)
 {
     _this = level3CreateCollisionMaps(_this);
 
     while (!(_this.gameState.shouldStop || _this.gameState.shouldQuit))
     {
-        _this.gameState = gameStateCheckExitKeys(_this.gameState);
+        _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
         _this = level3MoveBackground(_this);
         _this.deltaTime = getDeltaTime();
@@ -1409,104 +1523,17 @@ Level3 level3GameLoop(Level3 _this)
         //   Controls
         _this = level3HandleControls(_this);
 
-        int halfWide = 5;
+        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
+        {
+            _this.speed = _this.jumpSpeed;
+            soundPlaySfx(_this.gameState.sound, SFX_HERO_JUMP);
+        }
+
+        _this.speed += _this.gravity * _this.deltaTime;
+        _this.positionF.y += _this.speed * _this.deltaTime;
         _this = level3CalculateCollisions(_this);
 
-        {
-            double x, y;
-            glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
-            PointI mousePos = {fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
-
-            switch (_this.state)
-            {
-            case LEVEL3_STATE_EDIT:
-            {
-                {
-                    bool activeTileAssigned = false;
-                    for (int i = 0; i < _this.tiles.size; i++)
-                    {
-                        if (mousePos.x >= _this.tiles.data[i].position.x &&
-                            mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
-                            mousePos.y >= _this.tiles.data[i].position.y &&
-                            mousePos.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
-                        {
-                            _this.activeTile = i;
-                            activeTileAssigned = true;
-                            break;
-                        }
-                    }
-                    if (!activeTileAssigned)
-                    {
-                        _this.activeTile = -1;
-                    }
-                }
-                // drawing squares
-                for (int i = 0; i < _this.tiles.size; i++)
-                {
-                    if (_this.activeTile == i)
-                    {
-                        if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_R))
-                        {
-                            for (int j = _this.activeTile; j < _this.tiles.size; j++)
-                            {
-                                _this.tiles.data[j] = _this.tiles.data[j + 1];
-                            }
-                            _this.tiles.size--;
-                            _this.activeTile = -1;
-                        }
-                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_A))
-                        {
-                            _this.tiles.data[i].sides ^= SIDE_LEFT;
-                        }
-                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_D))
-                        {
-                            _this.tiles.data[i].sides ^= SIDE_RIGHT;
-                        }
-                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_W))
-                        {
-                            _this.tiles.data[i].sides ^= SIDE_TOP;
-                        }
-                        else if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_S))
-                        {
-                            _this.tiles.data[i].sides ^= SIDE_BOTTOM;
-                        }
-                        else
-                            level3DrawTile(_this, i, TILE_SELECTED);
-                    }
-                    else
-                        level3DrawTile(_this, i, 0);
-                }
-                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
-                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
-                graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
-            }
-            break;
-            case LEVEL3_STATE_EDIT_DRAWING:
-            {
-                graphicsDrawSquare(_this.gameState.graphics.imageData, _this.newSquare.origin, (PointI){mousePos.x - _this.newSquare.origin.x, mousePos.y - _this.newSquare.origin.y}, (Color){0xff, 0, 0});
-                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, mousePos.y}, (PointI){319, mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
-                graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){mousePos.x, 0}, (PointI){mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
-                graphicsPutPixel(_this.gameState.graphics.imageData, mousePos, (Color){0xFF, 0, 0});
-
-                for (int i = 0; i < _this.tiles.size; i++)
-                {
-                    level3DrawTile(_this, i, 0);
-                }
-            }
-            break;
-            case LEVEL3_STATE_EDIT_READY:
-                // drawing squares
-                for (int i = 0; i < _this.tiles.size; i++)
-                {
-                    if (_this.activeTile == i)
-                        level3DrawTile(_this, i, TILE_SELECTED);
-                    else
-                        level3DrawTile(_this, i, 0);
-                }
-
-                break;
-            }
-        }
+        _this = level3LevelEditorLogic(_this);
 
         if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_Q))
         {
