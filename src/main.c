@@ -1201,8 +1201,6 @@ typedef enum
 typedef struct
 {
     Level3StateEnum state;
-    PointI position;
-    PointF positionF;
     int activeTile;
     float deltaTime;
     GameState gameState;
@@ -1218,11 +1216,14 @@ typedef struct
     } newSquare;
     struct
     {
-        float gravity;
-        float jumpSpeed;
+        PointI position;
+        PointF positionF;
         PointF speed;
         Level3HeroState state;
         int spriteId;
+        float gravity;
+        float jumpSpeed;
+        bool isFlipped;
     } hero;
     bool hideCollisions;
     PointI mousePos;
@@ -1260,8 +1261,8 @@ Level3 level3Create()
     Level3 _this = {0};
     _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
     _this.hero.gravity = 1000.;
-    _this.positionF.x = 100.;
-    _this.positionF.y = 100.;
+    _this.hero.positionF.x = 100.;
+    _this.hero.positionF.y = 100.;
     _this.hero.speed.x = 100.;
     _this.hero.jumpSpeed = -350.;
     _this.activeTile = 0;
@@ -1270,41 +1271,41 @@ Level3 level3Create()
     return _this;
 }
 
-Level3 level3CalculateCollisions(Level3 _this)
+Level3 level3HandleCollisions(Level3 _this)
 {
     int halfWide = 0;
-    double positionY = _this.positionF.y;
+    double positionY = _this.hero.positionF.y;
 
     if (_this.activeTile != -1)
     {
         Tile tile = _this.tiles.data[_this.activeTile];
         // restrict position
         if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-            _this.positionF.x = fmax(tile.position.x + halfWide, _this.positionF.x);
+            _this.hero.positionF.x = fmax(tile.position.x + halfWide, _this.hero.positionF.x);
 
         if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-            _this.positionF.x = fmin(tile.position.x + tile.size.x - halfWide, _this.positionF.x);
+            _this.hero.positionF.x = fmin(tile.position.x + tile.size.x - halfWide, _this.hero.positionF.x);
 
         if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-            _this.positionF.y = fmax(tile.position.y + halfWide, _this.positionF.y);
+            _this.hero.positionF.y = fmax(tile.position.y + halfWide, _this.hero.positionF.y);
 
         if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-            _this.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, _this.positionF.y);
+            _this.hero.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, _this.hero.positionF.y);
     }
     _this.activeTile = -1;
     for (int i = 0; i < _this.tiles.size; i++)
     {
-        if (_this.positionF.x >= _this.tiles.data[i].position.x &&
-            _this.positionF.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
-            _this.positionF.y >= _this.tiles.data[i].position.y &&
-            _this.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+        if (_this.hero.positionF.x >= _this.tiles.data[i].position.x &&
+            _this.hero.positionF.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
+            _this.hero.positionF.y >= _this.tiles.data[i].position.y &&
+            _this.hero.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
         {
             _this.activeTile = i;
             break;
         }
     }
 
-    if (positionY != _this.positionF.y)
+    if (positionY != _this.hero.positionF.y)
         _this.hero.speed.y = 0.;
 
     return _this;
@@ -1397,11 +1398,19 @@ Level3 level3GameLoop(Level3 _this)
         {
         case LEVEL3_STATE_PLAYING:
         {
+            double lastPositionX = _this.hero.positionF.x;
+
             if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-                _this.positionF.x += _this.hero.speed.x * _this.deltaTime;
+                _this.hero.positionF.x += _this.hero.speed.x * _this.deltaTime;
 
             if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
-                _this.positionF.x -= _this.hero.speed.x * _this.deltaTime;
+                _this.hero.positionF.x -= _this.hero.speed.x * _this.deltaTime;
+
+            if (lastPositionX - _this.hero.positionF.x > 0)
+                _this.hero.isFlipped = true;
+
+            if (lastPositionX - _this.hero.positionF.x < 0)
+                _this.hero.isFlipped = false;
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
                 _this.state = LEVEL3_STATE_EDIT;
@@ -1424,8 +1433,8 @@ Level3 level3GameLoop(Level3 _this)
             }
 
             _this.hero.speed.y += _this.hero.gravity * _this.deltaTime;
-            _this.positionF.y += _this.hero.speed.y * _this.deltaTime;
-            _this = level3CalculateCollisions(_this);
+            _this.hero.positionF.y += _this.hero.speed.y * _this.deltaTime;
+            _this = level3HandleCollisions(_this);
         }
         break;
         case LEVEL3_STATE_EDIT_DRAWING:
@@ -1459,10 +1468,10 @@ Level3 level3GameLoop(Level3 _this)
             }
 
             if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-                _this.positionF.x += _this.hero.speed.x * _this.deltaTime;
+                _this.hero.positionF.x += _this.hero.speed.x * _this.deltaTime;
 
             if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
-                _this.positionF.x -= _this.hero.speed.x * _this.deltaTime;
+                _this.hero.positionF.x -= _this.hero.speed.x * _this.deltaTime;
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
                 _this.state = LEVEL3_STATE_PLAYING;
@@ -1528,8 +1537,10 @@ Level3 level3GameLoop(Level3 _this)
         if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_Q))
             level3SerializeLevelCollisions(_this);
 
-        _this.gameState.sprites[_this.hero.spriteId].position.x = _this.positionF.x - 16.;
-        _this.gameState.sprites[_this.hero.spriteId].position.y = _this.positionF.y - 32.;
+        _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x - 16.;
+        _this.gameState.sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y - 32.;
+
+        _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
 
         spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
 

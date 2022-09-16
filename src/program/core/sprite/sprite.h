@@ -17,6 +17,7 @@ typedef struct
 typedef struct
 {
     bool animated;
+    bool isFlipped;
     Animation animation;
     PointI position;
     PointI size;
