@@ -1465,10 +1465,7 @@ Level3 level3GameLoop(Level3 _this)
                 _this.positionF.x -= _this.hero.speed.x * _this.deltaTime;
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
-            {
                 _this.state = LEVEL3_STATE_PLAYING;
-                _this.activeTile = 0;
-            }
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_H))
                 _this.hideCollisions = !_this.hideCollisions;
