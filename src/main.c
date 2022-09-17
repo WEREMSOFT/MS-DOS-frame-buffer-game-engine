@@ -357,7 +357,7 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL3_HERO_IDLE].position.x = 0;
     _this[ASSET_LEVEL3_HERO_IDLE].position.y = 0;
     _this[ASSET_LEVEL3_HERO_IDLE].animated = true;
-    _this[ASSET_LEVEL3_HERO_IDLE].animation.frameCount = 11;
+    _this[ASSET_LEVEL3_HERO_IDLE].animation.frameCount = 12;
     _this[ASSET_LEVEL3_HERO_IDLE].animation.frameWidth = 32;
     _this[ASSET_LEVEL3_HERO_IDLE].animation.frameRate = 15;
 }
@@ -1223,6 +1223,8 @@ typedef struct
         int spriteId;
         float gravity;
         float jumpSpeed;
+        bool isWalking;
+        bool isInFloor;
         bool isFlipped;
     } hero;
     bool hideCollisions;
@@ -1274,7 +1276,9 @@ Level3 level3Create()
 Level3 level3HandleCollisions(Level3 _this)
 {
     int halfWide = 0;
-    double positionY = _this.hero.positionF.y;
+    PointF lastPosition = _this.hero.positionF;
+
+    _this.hero.isInFloor = false;
 
     if (_this.activeTile != -1)
     {
@@ -1305,8 +1309,11 @@ Level3 level3HandleCollisions(Level3 _this)
         }
     }
 
-    if (positionY != _this.hero.positionF.y)
+    if (lastPosition.y != _this.hero.positionF.y)
+    {
+        _this.hero.isInFloor = true;
         _this.hero.speed.y = 0.;
+    }
 
     return _this;
 }
@@ -1398,6 +1405,7 @@ Level3 level3GameLoop(Level3 _this)
         {
         case LEVEL3_STATE_PLAYING:
         {
+            _this.hero.isWalking = false;
             double lastPositionX = _this.hero.positionF.x;
 
             if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -1411,6 +1419,9 @@ Level3 level3GameLoop(Level3 _this)
 
             if (lastPositionX - _this.hero.positionF.x < 0)
                 _this.hero.isFlipped = false;
+
+            if (lastPositionX != _this.hero.positionF.x)
+                _this.hero.isWalking = true;
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_E))
                 _this.state = LEVEL3_STATE_EDIT;
@@ -1537,8 +1548,18 @@ Level3 level3GameLoop(Level3 _this)
         if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_Q))
             level3SerializeLevelCollisions(_this);
 
-        _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x - 16.;
+        _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
+
+        if (_this.hero.isWalking)
+        {
+            _this.hero.spriteId = ASSET_LEVEL3_HERO_RUN;
+        }
+
+        // TODO: for some reason the sprite is out of center when flipped;
+        _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x; // + (_this.hero.isFlipped ? -48. : -16.);
         _this.gameState.sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y - 32.;
+
+        graphicsPutPixel(_this.gameState.graphics.imageData, (PointI){_this.hero.positionF.x, _this.hero.positionF.y}, (Color){0, 0, 0});
 
         _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
 
