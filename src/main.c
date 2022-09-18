@@ -101,6 +101,8 @@ typedef enum
     ASSET_LEVEL3_BACKGROUND,
     ASSET_LEVEL3_BACKGROUND_TILED,
     ASSET_LEVEL3_HERO_RUN,
+    ASSET_LEVEL3_HERO_JUMP,
+    ASSET_LEVEL3_HERO_FALL,
     ASSET_LEVEL3_HERO_IDLE,
 
     ASSET_COUNT
@@ -344,6 +346,9 @@ void loadAssets(Sprite *_this)
 
     _this[ASSET_LEVEL3_BACKGROUND] = spriteCreate("assets/level3/background.bmp");
     _this[ASSET_LEVEL3_BACKGROUND_TILED] = spriteCreate("assets/level3/background-tiled.bmp");
+
+    _this[ASSET_LEVEL3_HERO_JUMP] = spriteCreate("assets/level3/playerJump.bmp");
+    _this[ASSET_LEVEL3_HERO_FALL] = spriteCreate("assets/level3/playerFall.bmp");
 
     _this[ASSET_LEVEL3_HERO_RUN] = spriteCreate("assets/level3/playerRun.bmp");
     _this[ASSET_LEVEL3_HERO_RUN].position.x = 0;
@@ -1227,13 +1232,13 @@ typedef struct
         bool isInFloor;
         bool isFlipped;
     } hero;
-    bool hideCollisions;
+    bool showCollisions;
     PointI mousePos;
 } Level3;
 
 void level3DrawTile(Level3 _this, int tileId, char flags)
 {
-    if (_this.hideCollisions)
+    if (!_this.showCollisions)
         return;
     Tile tile = _this.tiles.data[tileId];
     ImageData imageData = _this.gameState.graphics.imageData;
@@ -1296,6 +1301,7 @@ Level3 level3HandleCollisions(Level3 _this)
         if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
             _this.hero.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, _this.hero.positionF.y);
     }
+
     _this.activeTile = -1;
     for (int i = 0; i < _this.tiles.size; i++)
     {
@@ -1427,7 +1433,7 @@ Level3 level3GameLoop(Level3 _this)
                 _this.state = LEVEL3_STATE_EDIT;
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_H))
-                _this.hideCollisions = !_this.hideCollisions;
+                _this.showCollisions = !_this.showCollisions;
 
             for (int i = 0; i < _this.tiles.size; i++)
             {
@@ -1437,7 +1443,7 @@ Level3 level3GameLoop(Level3 _this)
                     level3DrawTile(_this, i, 0);
             }
 
-            if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE))
+            if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_SPACE) && _this.hero.isInFloor)
             {
                 _this.hero.speed.y = _this.hero.jumpSpeed;
                 soundPlaySfx(_this.gameState.sound, SFX_HERO_JUMP);
@@ -1488,7 +1494,7 @@ Level3 level3GameLoop(Level3 _this)
                 _this.state = LEVEL3_STATE_PLAYING;
 
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_H))
-                _this.hideCollisions = !_this.hideCollisions;
+                _this.showCollisions = !_this.showCollisions;
 
             {
                 bool activeTileAssigned = false;
@@ -1555,21 +1561,26 @@ Level3 level3GameLoop(Level3 _this)
             _this.hero.spriteId = ASSET_LEVEL3_HERO_RUN;
         }
 
-        // _this.hero.spriteId = ASSET_ENEMY_GREEN_SMALL;
+        if (!_this.hero.isInFloor)
+        {
+            if (_this.hero.speed.y < 0)
+                _this.hero.spriteId = ASSET_LEVEL3_HERO_JUMP;
+            else
+                _this.hero.spriteId = ASSET_LEVEL3_HERO_FALL;
+        }
 
-        // TODO: for some reason the sprite is out of center when flipped;
-        _this.gameState.sprites[_this.hero.spriteId].center.x = _this.gameState.sprites[_this.hero.spriteId].animation.frameWidth / -2;
-        _this.gameState.sprites[_this.hero.spriteId].center.y = -_this.gameState.sprites[_this.hero.spriteId].size.y;
+        _this.gameState.sprites[_this.hero.spriteId].center.x = -16;
+        _this.gameState.sprites[_this.hero.spriteId].center.y = -32;
 
         _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
         _this.gameState.sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y;
 
-        graphicsPutPixel(_this.gameState.graphics.imageData, (PointI){_this.hero.positionF.x, _this.hero.positionF.y}, (Color){0, 0, 0});
-
         _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
 
-        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
-        // spriteDrawClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
+        if (_this.gameState.sprites[_this.hero.spriteId].animated)
+            spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
+        else
+            spriteDrawTransparentClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
 
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
