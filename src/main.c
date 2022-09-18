@@ -348,7 +348,12 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL3_BACKGROUND_TILED] = spriteCreate("assets/level3/background-tiled.bmp");
 
     _this[ASSET_LEVEL3_HERO_JUMP] = spriteCreate("assets/level3/playerJump.bmp");
+    _this[ASSET_LEVEL3_HERO_JUMP].center.x = -16;
+    _this[ASSET_LEVEL3_HERO_JUMP].center.y = -32;
+
     _this[ASSET_LEVEL3_HERO_FALL] = spriteCreate("assets/level3/playerFall.bmp");
+    _this[ASSET_LEVEL3_HERO_FALL].center.x = -16;
+    _this[ASSET_LEVEL3_HERO_FALL].center.y = -32;
 
     _this[ASSET_LEVEL3_HERO_RUN] = spriteCreate("assets/level3/playerRun.bmp");
     _this[ASSET_LEVEL3_HERO_RUN].position.x = 0;
@@ -357,6 +362,8 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL3_HERO_RUN].animation.frameCount = 12;
     _this[ASSET_LEVEL3_HERO_RUN].animation.frameWidth = 32;
     _this[ASSET_LEVEL3_HERO_RUN].animation.frameRate = 15;
+    _this[ASSET_LEVEL3_HERO_RUN].center.x = -16;
+    _this[ASSET_LEVEL3_HERO_RUN].center.y = -32;
 
     _this[ASSET_LEVEL3_HERO_IDLE] = spriteCreate("assets/level3/playerIdle.bmp");
     _this[ASSET_LEVEL3_HERO_IDLE].position.x = 0;
@@ -365,6 +372,8 @@ void loadAssets(Sprite *_this)
     _this[ASSET_LEVEL3_HERO_IDLE].animation.frameCount = 12;
     _this[ASSET_LEVEL3_HERO_IDLE].animation.frameWidth = 32;
     _this[ASSET_LEVEL3_HERO_IDLE].animation.frameRate = 15;
+    _this[ASSET_LEVEL3_HERO_IDLE].center.x = -16;
+    _this[ASSET_LEVEL3_HERO_IDLE].center.y = -32;
 }
 
 Enemy enemyPassToStateHidden(Enemy _this)
@@ -1568,9 +1577,6 @@ Level3 level3GameLoop(Level3 _this)
             else
                 _this.hero.spriteId = ASSET_LEVEL3_HERO_FALL;
         }
-
-        _this.gameState.sprites[_this.hero.spriteId].center.x = -16;
-        _this.gameState.sprites[_this.hero.spriteId].center.y = -32;
 
         _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
         _this.gameState.sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y;
