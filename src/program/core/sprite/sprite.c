@@ -72,7 +72,7 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
 {
     if (_this.isFlipped)
     {
-        int clippedWidth = fmin(_this.position.x + _this.center.x + _this.size.y, _this.size.x);
+        int clippedWidth = fmin(_this.position.x - _this.center.x, _this.size.x);
         int clippedHeight = fmin(_this.size.y,
                                  fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
 
@@ -93,9 +93,9 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
     else
     {
         int clippedWidth = fmin(_this.size.x,
-                                fmax(0, _this.size.x - (_this.size.x + _this.position.x - imageData.size.x)));
+                                fmax(0, _this.size.x - (_this.size.x + _this.position.x - imageData.size.x + _this.center.x)));
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + _this.position.y - imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y + _this.position.y - imageData.size.y + _this.center.y)));
 
         int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
         int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
