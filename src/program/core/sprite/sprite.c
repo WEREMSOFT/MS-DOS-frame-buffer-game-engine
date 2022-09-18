@@ -72,9 +72,9 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
 {
     if (_this.isFlipped)
     {
-        int clippedWidth = fmin(_this.position.x + _this.size.y, _this.size.x);
+        int clippedWidth = fmin(_this.position.x + _this.center.x + _this.size.y, _this.size.x);
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + _this.position.y - imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
 
         int clippedX = 0;
         int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
@@ -85,7 +85,8 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
             {
                 Color color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                    graphicsPutPixel(imageData, (PointI){_this.position.x + _this.size.x - i, _this.position.y + j}, color);
+                    graphicsPutPixel(imageData, (PointI){_this.position.x - _this.center.x - i, _this.position.y + _this.center.y + j}, color);
+                // graphicsPutPixel(imageData, (PointI){_this.position.x + _this.size.x - i, _this.position.y - 1 + j}, color);
             }
         }
     }
@@ -105,7 +106,7 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
             {
                 Color color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                    graphicsPutPixel(imageData, (PointI){_this.position.x + i, _this.position.y + j}, color);
+                    graphicsPutPixel(imageData, (PointI){_this.position.x + _this.center.x + i, _this.position.y + _this.center.y + j}, color);
             }
         }
     }

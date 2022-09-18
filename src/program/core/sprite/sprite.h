@@ -20,6 +20,7 @@ typedef struct
     bool isFlipped;
     Animation animation;
     PointI position;
+    PointI center;
     PointI size;
     Color *imageData;
 } Sprite;
