@@ -50,7 +50,12 @@ static inline double getDeltaTime()
     static double lastUpdate = 0;
 
     double deltaTime = glfwGetTime() - lastUpdate;
+
+    // if the framerate is > 30 fps, probably the game is paused.
+    deltaTime = deltaTime > 0.03 ? 0 : deltaTime;
+
     lastUpdate = glfwGetTime();
+
     return deltaTime;
 }
 

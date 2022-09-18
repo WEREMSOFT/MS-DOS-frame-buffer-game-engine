@@ -30,16 +30,45 @@ void spriteDraw(Sprite _this, ImageData imageData)
 
 void spriteDrawClipped(Sprite _this, ImageData imageData)
 {
-    int clippedWidth = fmin(_this.size.x, fmax(0, _this.size.x - (_this.size.x + _this.position.x - imageData.size.x)));
-    int clippedHeight = fmin(_this.size.y, fmax(0, _this.size.y - (_this.size.y + _this.position.y - imageData.size.y)));
-    int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
-    int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
-    for (int i = clippedX; i < clippedWidth; i++)
+    if (_this.isFlipped)
     {
-        for (int j = clippedY; j < clippedHeight; j++)
+        PointI adjustedPosition = {_this.position.x - _this.center.x, _this.position.y + _this.center.y};
+
+        int clippedWidth = fmin(adjustedPosition.x, _this.size.x);
+        int clippedHeight = fmin(_this.size.y,
+                                 fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
+
+        int clippedX = 0;
+        int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
+
+        for (int i = clippedX; i < clippedWidth; i++)
         {
-            Color color = _this.imageData[j * _this.size.x + i];
-            graphicsPutPixel(imageData, (PointI){_this.position.x + i, _this.position.y + j}, color);
+            for (int j = clippedY; j < clippedHeight; j++)
+            {
+                Color color = _this.imageData[j * _this.size.x + i];
+                graphicsPutPixel(imageData, (PointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
+            }
+        }
+    }
+    else
+    {
+        PointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
+
+        int clippedWidth = fmin(_this.size.x,
+                                fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - imageData.size.x)));
+        int clippedHeight = fmin(_this.size.y,
+                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - imageData.size.y)));
+
+        int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
+        int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
+
+        for (int i = clippedX; i < clippedWidth; i++)
+        {
+            for (int j = clippedY; j < clippedHeight; j++)
+            {
+                Color color = _this.imageData[j * _this.size.x + i];
+                graphicsPutPixel(imageData, (PointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
+            }
         }
     }
 }
@@ -72,12 +101,14 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
 {
     if (_this.isFlipped)
     {
-        int clippedWidth = fmin(_this.position.x - _this.center.x, _this.size.x);
+        PointI adjustedPosition = {_this.position.x - _this.center.x, _this.position.y + _this.center.y};
+
+        int clippedWidth = fmin(adjustedPosition.x, _this.size.x);
         int clippedHeight = fmin(_this.size.y,
                                  fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
 
         int clippedX = 0;
-        int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
+        int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
         for (int i = clippedX; i < clippedWidth; i++)
         {
@@ -85,20 +116,21 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
             {
                 Color color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                    graphicsPutPixel(imageData, (PointI){_this.position.x - _this.center.x - i, _this.position.y + _this.center.y + j}, color);
-                // graphicsPutPixel(imageData, (PointI){_this.position.x + _this.size.x - i, _this.position.y - 1 + j}, color);
+                    graphicsPutPixel(imageData, (PointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
             }
         }
     }
     else
     {
-        int clippedWidth = fmin(_this.size.x,
-                                fmax(0, _this.size.x - (_this.size.x + _this.position.x - imageData.size.x + _this.center.x)));
-        int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + _this.position.y - imageData.size.y + _this.center.y)));
+        PointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
 
-        int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
-        int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
+        int clippedWidth = fmin(_this.size.x,
+                                fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - imageData.size.x)));
+        int clippedHeight = fmin(_this.size.y,
+                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - imageData.size.y)));
+
+        int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
+        int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
         for (int i = clippedX; i < clippedWidth; i++)
         {
@@ -106,7 +138,7 @@ void spriteDrawTransparentClipped(Sprite _this, ImageData imageData)
             {
                 Color color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                    graphicsPutPixel(imageData, (PointI){_this.position.x + _this.center.x + i, _this.position.y + _this.center.y + j}, color);
+                    graphicsPutPixel(imageData, (PointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
             }
         }
     }
@@ -191,13 +223,15 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, do
 
     if (_this.isFlipped)
     {
+        PointI adjustedPosition = {_this.position.x - _this.center.x, _this.position.y + _this.center.y};
+
         int clippedWidth = fmin(_this.position.x + _this.size.y, _this.animation.frameWidth);
 
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + _this.position.y -
-                                                         imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
+
         int clippedX = 0;
-        int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
+        int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
         for (int i = clippedX; i < clippedWidth; i++)
         {
@@ -206,22 +240,23 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, do
                 Color color = _this.imageData[j * _this.size.x + i +
                                               _this.animation.currentFrame * _this.animation.frameWidth];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                    graphicsPutPixel(imageData,
-                                     (PointI){_this.position.x + _this.size.x - i, _this.position.y + j},
-                                     color);
+                    graphicsPutPixel(imageData, (PointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
             }
         }
     }
     else
     {
+        PointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
+
         int clippedWidth = fmin(_this.animation.frameWidth,
-                                fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + _this.position.x -
+                                fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + adjustedPosition.x -
                                                                       imageData.size.x)));
+
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + _this.position.y -
-                                                         imageData.size.y)));
-        int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
-        int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
+                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - imageData.size.y)));
+
+        int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
+        int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
         for (int i = clippedX; i < clippedWidth; i++)
         {
@@ -230,10 +265,58 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, do
                 Color color = _this.imageData[j * _this.size.x + i +
                                               _this.animation.currentFrame * _this.animation.frameWidth];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                    graphicsPutPixel(imageData,
-                                     (PointI){_this.position.x + i, _this.position.y + j},
-                                     color);
+                    graphicsPutPixel(imageData, (PointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
             }
         }
     }
+
+    /*
+        if (_this.isFlipped)
+        {
+            int clippedWidth = fmin(_this.position.x + _this.size.y, _this.animation.frameWidth);
+
+            int clippedHeight = fmin(_this.size.y,
+                                     fmax(0, _this.size.y - (_this.size.y + _this.position.y -
+                                                             imageData.size.y)));
+            int clippedX = 0;
+            int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
+
+            for (int i = clippedX; i < clippedWidth; i++)
+            {
+                for (int j = clippedY; j < clippedHeight; j++)
+                {
+                    Color color = _this.imageData[j * _this.size.x + i +
+                                                  _this.animation.currentFrame * _this.animation.frameWidth];
+                    if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
+                        graphicsPutPixel(imageData,
+                                         (PointI){_this.position.x + _this.size.x - i, _this.position.y + j},
+                                         color);
+                }
+            }
+        }
+        else
+        {
+            int clippedWidth = fmin(_this.animation.frameWidth,
+                                    fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + _this.position.x -
+                                                                          imageData.size.x)));
+            int clippedHeight = fmin(_this.size.y,
+                                     fmax(0, _this.size.y - (_this.size.y + _this.position.y -
+                                                             imageData.size.y)));
+            int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
+            int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
+
+            for (int i = clippedX; i < clippedWidth; i++)
+            {
+                for (int j = clippedY; j < clippedHeight; j++)
+                {
+                    Color color = _this.imageData[j * _this.size.x + i +
+                                                  _this.animation.currentFrame * _this.animation.frameWidth];
+                    if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
+                        graphicsPutPixel(imageData,
+                                         (PointI){_this.position.x + i, _this.position.y + j},
+                                         color);
+                }
+            }
+        }
+        */
 }

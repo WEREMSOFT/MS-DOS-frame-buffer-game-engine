@@ -1555,10 +1555,10 @@ Level3 level3GameLoop(Level3 _this)
             _this.hero.spriteId = ASSET_LEVEL3_HERO_RUN;
         }
 
-        _this.hero.spriteId = ASSET_ENEMY_GREEN_SMALL;
+        // _this.hero.spriteId = ASSET_ENEMY_GREEN_SMALL;
 
         // TODO: for some reason the sprite is out of center when flipped;
-        _this.gameState.sprites[_this.hero.spriteId].center.x = _this.gameState.sprites[_this.hero.spriteId].size.x / -2;
+        _this.gameState.sprites[_this.hero.spriteId].center.x = _this.gameState.sprites[_this.hero.spriteId].animation.frameWidth / -2;
         _this.gameState.sprites[_this.hero.spriteId].center.y = -_this.gameState.sprites[_this.hero.spriteId].size.y;
 
         _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
@@ -1568,8 +1568,8 @@ Level3 level3GameLoop(Level3 _this)
 
         _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
 
-        // spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
-        spriteDrawTransparentClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
+        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
+        // spriteDrawClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
 
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
