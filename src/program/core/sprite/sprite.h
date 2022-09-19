@@ -30,7 +30,7 @@ void spriteDraw(Sprite this, ImageData imageData);
 void spriteDrawClipped(Sprite this, ImageData imageData);
 void spriteDrawTransparent(Sprite this, ImageData ImageData);
 void spriteDrawTransparentClipped(Sprite this, ImageData imageData);
-void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, double deltaTime);
+Sprite spriteDrawTransparentAnimatedClipped(Sprite _this, ImageData imageData, double deltaTime);
 void spriteDestroy(Sprite this);
 Sprite spriteCreateCkeckerBoard(PointI size, int checkerWidth, Color color1, Color color2);
 void spriteDrawTransparentClippedLowerLine(Sprite this, ImageData imageData, int lowerLineHeight);

@@ -591,7 +591,7 @@ Level1 level1Tutorial(Level1 _this)
         };
 
         spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_FOREGROUND], _this.gameState.graphics.imageData);
-        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_HOW_TO_PLAY], _this.gameState.graphics.imageData, dt);
+        _this.gameState.sprites[ASSET_HOW_TO_PLAY] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_HOW_TO_PLAY], _this.gameState.graphics.imageData, dt);
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, dt);
     }
     return _this;
@@ -710,7 +710,7 @@ Level1 level1GameLoop(Level1 _this)
 
         if (_this.gameState.sprites[ASSET_SHOOT].animation.isPlaying)
         {
-            spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_SHOOT], _this.gameState.graphics.imageData, dt);
+            _this.gameState.sprites[ASSET_SHOOT] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_SHOOT], _this.gameState.graphics.imageData, dt);
         }
         else if (glfwGetKey(_this.gameState.graphics.window, GLFW_KEY_SPACE) == GLFW_PRESS)
         {
@@ -721,7 +721,7 @@ Level1 level1GameLoop(Level1 _this)
                 _this.gameState.sprites[ASSET_SHOOT].position.x -= _this.gameState.sprites[ASSET_SIGHT].size.x / 2;
                 _this.gameState.sprites[ASSET_SHOOT].position.y -= _this.gameState.sprites[ASSET_SIGHT].size.y / 2;
 
-                spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_SHOOT], _this.gameState.graphics.imageData, dt);
+                _this.gameState.sprites[ASSET_SHOOT] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_SHOOT], _this.gameState.graphics.imageData, dt);
 
                 if (_this.enemies[_this.quadPosition].state != ENEMY_STATE_HIDDEN && _this.enemies[_this.quadPosition].state != ENEMY_STATE_DEAD)
                 {
@@ -926,11 +926,11 @@ Level2 level2TutorialLoop(Level2 _this)
             for (int i = 3; i >= 0; i--)
             {
                 _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i].animation.frameRate = 15. * distanceBetweenDynos;
-                spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i], _this.gameState.graphics.imageData, deltaTime);
+                _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i], _this.gameState.graphics.imageData, deltaTime);
             }
         }
         // Draw UI
-        spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_LEVEL2_HOW_TO_PLAY], _this.gameState.graphics.imageData, deltaTime);
+        _this.gameState.sprites[ASSET_LEVEL2_HOW_TO_PLAY] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_LEVEL2_HOW_TO_PLAY], _this.gameState.graphics.imageData, deltaTime);
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, deltaTime);
     }
     _this.gameState.shouldStop = false;
@@ -1092,7 +1092,7 @@ Level2 level2GameLoop(Level2 _this)
             for (int i = 3; i >= 0; i--)
             {
                 _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i].animation.frameRate = 15. * distanceBetweenDynos;
-                spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i], _this.gameState.graphics.imageData, deltaTime);
+                _this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_LEVEL2_HERO_GREEN + i], _this.gameState.graphics.imageData, deltaTime);
             }
         }
 
@@ -1584,7 +1584,7 @@ Level3 level3GameLoop(Level3 _this)
         _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
 
         if (_this.gameState.sprites[_this.hero.spriteId].animated)
-            spriteDrawTransparentAnimatedClipped(&_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
+            _this.gameState.sprites[_this.hero.spriteId] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
         else
             spriteDrawTransparentClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
 

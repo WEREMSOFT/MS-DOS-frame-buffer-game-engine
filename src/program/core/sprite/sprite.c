@@ -204,21 +204,20 @@ Sprite spriteCreateCkeckerBoard(PointI size, int checkerWidth, Color color1, Col
     return _this;
 }
 
-void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, double deltaTime)
+Sprite spriteDrawTransparentAnimatedClipped(Sprite _this, ImageData imageData, double deltaTime)
 {
-    Sprite _this = *thisP;
-    if (!thisP->animation.isPlaying)
+    if (!_this.animation.isPlaying)
     {
-        thisP->animation.isPlaying = true;
+        _this.animation.isPlaying = true;
     }
 
-    thisP->animation.frameIncrement += deltaTime * thisP->animation.frameRate;
-    int lastFrame = thisP->animation.currentFrame;
-    thisP->animation.currentFrame = _this.animation.frameIncrement;
-    thisP->animation.currentFrame %= _this.animation.frameCount;
-    if (thisP->animation.currentFrame < lastFrame)
+    _this.animation.frameIncrement += deltaTime * _this.animation.frameRate;
+    int lastFrame = _this.animation.currentFrame;
+    _this.animation.currentFrame = _this.animation.frameIncrement;
+    _this.animation.currentFrame %= _this.animation.frameCount;
+    if (_this.animation.currentFrame < lastFrame)
     {
-        thisP->animation.isPlaying = false;
+        _this.animation.isPlaying = false;
     }
 
     if (_this.isFlipped)
@@ -243,8 +242,9 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, do
                     graphicsPutPixel(imageData, (PointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
             }
         }
+        return _this;
     }
-    else
+
     {
         PointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
 
@@ -268,55 +268,6 @@ void spriteDrawTransparentAnimatedClipped(Sprite *thisP, ImageData imageData, do
                     graphicsPutPixel(imageData, (PointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
             }
         }
+        return _this;
     }
-
-    /*
-        if (_this.isFlipped)
-        {
-            int clippedWidth = fmin(_this.position.x + _this.size.y, _this.animation.frameWidth);
-
-            int clippedHeight = fmin(_this.size.y,
-                                     fmax(0, _this.size.y - (_this.size.y + _this.position.y -
-                                                             imageData.size.y)));
-            int clippedX = 0;
-            int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
-
-            for (int i = clippedX; i < clippedWidth; i++)
-            {
-                for (int j = clippedY; j < clippedHeight; j++)
-                {
-                    Color color = _this.imageData[j * _this.size.x + i +
-                                                  _this.animation.currentFrame * _this.animation.frameWidth];
-                    if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                        graphicsPutPixel(imageData,
-                                         (PointI){_this.position.x + _this.size.x - i, _this.position.y + j},
-                                         color);
-                }
-            }
-        }
-        else
-        {
-            int clippedWidth = fmin(_this.animation.frameWidth,
-                                    fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + _this.position.x -
-                                                                          imageData.size.x)));
-            int clippedHeight = fmin(_this.size.y,
-                                     fmax(0, _this.size.y - (_this.size.y + _this.position.y -
-                                                             imageData.size.y)));
-            int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
-            int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
-
-            for (int i = clippedX; i < clippedWidth; i++)
-            {
-                for (int j = clippedY; j < clippedHeight; j++)
-                {
-                    Color color = _this.imageData[j * _this.size.x + i +
-                                                  _this.animation.currentFrame * _this.animation.frameWidth];
-                    if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-                        graphicsPutPixel(imageData,
-                                         (PointI){_this.position.x + i, _this.position.y + j},
-                                         color);
-                }
-            }
-        }
-        */
 }
