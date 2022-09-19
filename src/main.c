@@ -1592,6 +1592,45 @@ Level3 level3GameLoop(Level3 _this)
     return _this;
 }
 
+Level1 _this = {0};
+
+#ifdef __EMSCRIPTEN__
+void web_main_loop(void)
+{
+    int hiddenEnemies = 0;
+    float dt = getDeltaTime();
+    _this.gameState = gameStateCheckExitConditions(_this.gameState);
+
+    enemyProcessStateGoingDownTutorial(_this.enemies, dt, _this.enemySpeed);
+    enemyProcessStateGoingUp(_this.enemies, dt, _this.enemySpeed);
+
+    for (int i = 0; i < 8; i++)
+    {
+        if (_this.enemies[i].state == ENEMY_STATE_HIDDEN)
+            hiddenEnemies++;
+    }
+
+    if (hiddenEnemies == 8)
+        _this.gameState.shouldStop = true;
+
+    // DRAW
+    // Draw Background
+    spriteDrawClipped(_this.gameState.sprites[ASSET_BACKGROUND], _this.gameState.graphics.imageData);
+    spriteDrawClipped(_this.gameState.sprites[ASSET_TOP_SCORE_SQUARE], _this.gameState.graphics.imageData);
+    // Draw Enemies
+    for (int i = 0; i < 8; i++)
+    {
+        _this.gameState.sprites[_this.enemies[i].spriteId].position.x = (int)_this.enemies[i].position.x;
+        _this.gameState.sprites[_this.enemies[i].spriteId].position.y = (int)_this.enemies[i].position.y;
+        spriteDrawTransparentClippedLowerLine(_this.gameState.sprites[_this.enemies[i].spriteId], _this.gameState.graphics.imageData, _this.enemies[i].lowerClippingPosition);
+    };
+
+    spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_FOREGROUND], _this.gameState.graphics.imageData);
+    _this.gameState.sprites[ASSET_HOW_TO_PLAY] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[ASSET_HOW_TO_PLAY], _this.gameState.graphics.imageData, dt);
+    swapBuffersPrintFPSPollEvents(_this.gameState.graphics, dt);
+}
+#endif
+
 int main(void)
 {
     // Init memory, load assets and general initialization
@@ -1608,17 +1647,24 @@ int main(void)
     // ============================
     // Level1
     // ============================
-    if (0)
+    if (1)
     {
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
-        Level1 _this = level1Create();
+        _this = level1Create();
         _this.gameState = gameState;
         initDeltaTime();
         level1InitPositions(_this.positions);
         _this = level1InitEnemies(_this);
+
+#ifdef __EMSCRIPTEN__
+        // Receives a function to call and some user data to provide it.
+        emscripten_set_main_loop(web_main_loop, 0, 1);
+#else
         _this = level1Tutorial(_this);
-        _this = level1GameLoop(_this);
-        _this = level1GameCompleteLoop(_this);
+#endif
+
+        // _this = level1GameLoop(_this);
+        // _this = level1GameCompleteLoop(_this);
 
         if (_this.gameState.shouldQuit)
             goto Cleanup;
@@ -1642,6 +1688,7 @@ int main(void)
     // ============================
     // Level3
     // ============================
+    if (0)
     {
         Level3 _this = level3Create();
         _this.gameState = gameState;

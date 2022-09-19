@@ -32,6 +32,9 @@ run_main: all
 web:
 	$(EMSC_CC) $(EMSC_CFLAGS) $(FLAGS) -g4 --source-map-base http://127.0.0.1:5500/html/ $(SRC_F) $(SRC_CPP) -o html/index.html
 
+web2:
+	emcc -O2 -Ilibs/include -Ilibs/soloud/include -DWITH_MINIAUDIO=1 -s USE_GLFW=3  -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 --preload-file assets -s MIN_WEBGL_VERSION=2 $(SRC_F) $(SRC_CPP) -o html/index.html
+
 clean:
 	rm -rf $(OBJ_FOR_CLEAN_F)
 	rm -rf $(TARGET)

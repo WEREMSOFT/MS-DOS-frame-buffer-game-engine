@@ -93,7 +93,7 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
 
     glfwMakeContextCurrent(this.window);
     // loadOpenGLFunctions();
-    gladLoadGLLoader(glfwGetProcAddress);
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
     glCreateShader(GL_VERTEX_SHADER);
 
