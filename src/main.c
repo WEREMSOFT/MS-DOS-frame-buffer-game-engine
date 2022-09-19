@@ -864,6 +864,8 @@ Level2 level2Create()
 
 Level2 level2TutorialLoop(Level2 _this)
 {
+    soundPlaySpeech(_this.gameState.sound, SPEECH_JUMP_THE_ROCKS);
+
     while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit)
     {
         float deltaTime = getDeltaTime();
@@ -1287,52 +1289,6 @@ Level3 level3Create()
     return _this;
 }
 
-Level3 level3HandleCollisions(Level3 _this)
-{
-    int halfWide = 0;
-    PointF lastPosition = _this.hero.positionF;
-
-    _this.hero.isInFloor = false;
-
-    if (_this.activeTile != -1)
-    {
-        Tile tile = _this.tiles.data[_this.activeTile];
-        // restrict position
-        if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-            _this.hero.positionF.x = fmax(tile.position.x + halfWide, _this.hero.positionF.x);
-
-        if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-            _this.hero.positionF.x = fmin(tile.position.x + tile.size.x - halfWide, _this.hero.positionF.x);
-
-        if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-            _this.hero.positionF.y = fmax(tile.position.y + halfWide, _this.hero.positionF.y);
-
-        if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-            _this.hero.positionF.y = fmin(tile.position.y + tile.size.y - halfWide, _this.hero.positionF.y);
-    }
-
-    _this.activeTile = -1;
-    for (int i = 0; i < _this.tiles.size; i++)
-    {
-        if (_this.hero.positionF.x >= _this.tiles.data[i].position.x &&
-            _this.hero.positionF.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
-            _this.hero.positionF.y >= _this.tiles.data[i].position.y &&
-            _this.hero.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
-        {
-            _this.activeTile = i;
-            break;
-        }
-    }
-
-    if (lastPosition.y != _this.hero.positionF.y)
-    {
-        _this.hero.isInFloor = true;
-        _this.hero.speed.y = 0.;
-    }
-
-    return _this;
-}
-
 Level3 level3CreateCollisionMaps(Level3 _this)
 {
 #include "level3CollisionDef.txt"
@@ -1359,44 +1315,6 @@ Level3 level3MoveBackground(Level3 _this)
     return _this;
 }
 
-void level3SerializeLevelCollisions(Level3 _this)
-{
-    FILE *fp = fopen("src/level3CollisionDef.txt", "w+");
-
-    fprintf(fp, "//-------\n");
-    for (int i = 0; i < _this.tiles.size; i++)
-    {
-        Tile tile = _this.tiles.data[i];
-        fprintf(fp, "_this.tiles.data[_this.tiles.size++] = (Tile){\n");
-        fprintf(fp, ".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
-        fprintf(fp, ".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
-        fprintf(fp, ".sides = 0 ");
-        if ((tile.sides & SIDE_LEFT) != 0)
-        {
-            fprintf(fp, "| ");
-            fprintf(fp, "SIDE_LEFT ");
-        }
-        if ((tile.sides & SIDE_RIGHT) != 0)
-        {
-            fprintf(fp, "| ");
-            fprintf(fp, "SIDE_RIGHT ");
-        }
-        if ((tile.sides & SIDE_TOP) != 0)
-        {
-            fprintf(fp, "| ");
-            fprintf(fp, "SIDE_TOP ");
-        }
-        if ((tile.sides & SIDE_BOTTOM) != 0)
-        {
-            fprintf(fp, "| ");
-            fprintf(fp, "SIDE_BOTTOM");
-        }
-        fprintf(fp, "}; \n\n ");
-    }
-    fclose(fp);
-    printf("level saved\n");
-}
-
 Level3 level3GameLoop(Level3 _this)
 {
     _this = level3CreateCollisionMaps(_this);
@@ -1411,15 +1329,17 @@ Level3 level3GameLoop(Level3 _this)
         spriteDrawClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND_TILED], _this.gameState.graphics.imageData);
         spriteDrawTransparentClipped(_this.gameState.sprites[ASSET_LEVEL3_BACKGROUND], _this.gameState.graphics.imageData);
 
+        // Get Mouse Position
         {
             double x, y;
             glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
             _this.mousePos = (PointI){fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
         }
+
+        // Level state handling
         switch (_this.state)
         {
         case LEVEL3_STATE_PLAYING:
-        {
             _this.hero.isWalking = false;
             double lastPositionX = _this.hero.positionF.x;
 
@@ -1460,14 +1380,53 @@ Level3 level3GameLoop(Level3 _this)
 
             _this.hero.speed.y += _this.hero.gravity * _this.deltaTime;
             _this.hero.positionF.y += _this.hero.speed.y * _this.deltaTime;
-            _this = level3HandleCollisions(_this);
-        }
-        break;
+            // Handle collisions
+            {
+                PointF lastPosition = _this.hero.positionF;
+
+                _this.hero.isInFloor = false;
+
+                if (_this.activeTile != -1)
+                {
+                    Tile tile = _this.tiles.data[_this.activeTile];
+                    // restrict position
+                    if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
+                        _this.hero.positionF.x = fmax(tile.position.x, _this.hero.positionF.x);
+
+                    if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
+                        _this.hero.positionF.x = fmin(tile.position.x + tile.size.x, _this.hero.positionF.x);
+
+                    if ((tile.sides & SIDE_TOP) == SIDE_TOP)
+                        _this.hero.positionF.y = fmax(tile.position.y, _this.hero.positionF.y);
+
+                    if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
+                        _this.hero.positionF.y = fmin(tile.position.y + tile.size.y, _this.hero.positionF.y);
+                }
+
+                _this.activeTile = -1;
+                for (int i = 0; i < _this.tiles.size; i++)
+                {
+                    if (_this.hero.positionF.x >= _this.tiles.data[i].position.x &&
+                        _this.hero.positionF.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
+                        _this.hero.positionF.y >= _this.tiles.data[i].position.y &&
+                        _this.hero.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+                    {
+                        _this.activeTile = i;
+                        break;
+                    }
+                }
+
+                if (lastPosition.y != _this.hero.positionF.y)
+                {
+                    _this.hero.isInFloor = true;
+                    _this.hero.speed.y = 0.;
+                }
+            }
+            break;
         case LEVEL3_STATE_EDIT_DRAWING:
             if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_TAB))
             {
                 _this.state = LEVEL3_STATE_EDIT;
-
                 double x, y;
                 glfwGetCursorPos(_this.gameState.graphics.window, &x, &y);
                 PointI size = (PointI){(int)x - _this.newSquare.origin.x, (int)y - _this.newSquare.origin.y};
@@ -1556,38 +1515,77 @@ Level3 level3GameLoop(Level3 _this)
             }
             graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){0, _this.mousePos.y}, (PointI){319, _this.mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
             graphicsDrawLine(_this.gameState.graphics.imageData, (PointI){_this.mousePos.x, 0}, (PointI){_this.mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
-            graphicsPutPixel(_this.gameState.graphics.imageData, _this.mousePos, (Color){0xFF, 0, 0});
             break;
         }
 
+        // Serialize the level design into a file
         if (isKeyJustPressed(_this.gameState.graphics.window, GLFW_KEY_Q))
-            level3SerializeLevelCollisions(_this);
-
-        _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
-
-        if (_this.hero.isWalking)
         {
-            _this.hero.spriteId = ASSET_LEVEL3_HERO_RUN;
+            FILE *fp = fopen("src/level3CollisionDef.txt", "w+");
+
+            fprintf(fp, "//-------\n");
+            for (int i = 0; i < _this.tiles.size; i++)
+            {
+                Tile tile = _this.tiles.data[i];
+                fprintf(fp, "_this.tiles.data[_this.tiles.size++] = (Tile){\n");
+                fprintf(fp, ".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
+                fprintf(fp, ".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
+                fprintf(fp, ".sides = 0 ");
+                if ((tile.sides & SIDE_LEFT) != 0)
+                {
+                    fprintf(fp, "| ");
+                    fprintf(fp, "SIDE_LEFT ");
+                }
+                if ((tile.sides & SIDE_RIGHT) != 0)
+                {
+                    fprintf(fp, "| ");
+                    fprintf(fp, "SIDE_RIGHT ");
+                }
+                if ((tile.sides & SIDE_TOP) != 0)
+                {
+                    fprintf(fp, "| ");
+                    fprintf(fp, "SIDE_TOP ");
+                }
+                if ((tile.sides & SIDE_BOTTOM) != 0)
+                {
+                    fprintf(fp, "| ");
+                    fprintf(fp, "SIDE_BOTTOM");
+                }
+                fprintf(fp, "}; \n\n ");
+            }
+            fclose(fp);
+            printf("level saved\n");
         }
 
-        if (!_this.hero.isInFloor)
+        // Determine the hero animation to be displayed
         {
-            if (_this.hero.speed.y < 0)
-                _this.hero.spriteId = ASSET_LEVEL3_HERO_JUMP;
+            _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
+
+            if (_this.hero.isWalking)
+            {
+                _this.hero.spriteId = ASSET_LEVEL3_HERO_RUN;
+            }
+
+            if (!_this.hero.isInFloor)
+            {
+                if (_this.hero.speed.y < 0)
+                    _this.hero.spriteId = ASSET_LEVEL3_HERO_JUMP;
+                else
+                    _this.hero.spriteId = ASSET_LEVEL3_HERO_FALL;
+            }
+        }
+        // setup hero and draw it
+        {
+            _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
+            _this.gameState.sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y;
+
+            _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
+
+            if (_this.gameState.sprites[_this.hero.spriteId].animated)
+                _this.gameState.sprites[_this.hero.spriteId] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
             else
-                _this.hero.spriteId = ASSET_LEVEL3_HERO_FALL;
+                spriteDrawTransparentClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
         }
-
-        _this.gameState.sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
-        _this.gameState.sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y;
-
-        _this.gameState.sprites[_this.hero.spriteId].isFlipped = _this.hero.isFlipped;
-
-        if (_this.gameState.sprites[_this.hero.spriteId].animated)
-            _this.gameState.sprites[_this.hero.spriteId] = spriteDrawTransparentAnimatedClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData, _this.deltaTime);
-        else
-            spriteDrawTransparentClipped(_this.gameState.sprites[_this.hero.spriteId], _this.gameState.graphics.imageData);
-
         swapBuffersPrintFPSPollEvents(_this.gameState.graphics, _this.deltaTime);
     }
 
@@ -1631,7 +1629,6 @@ int main(void)
     // ============================
     if (0)
     {
-        soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
         Level2 _this = level2Create();
         _this.gameState = gameState;
         _this = level2TutorialLoop(_this);
