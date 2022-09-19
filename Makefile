@@ -45,10 +45,15 @@ deep_clean: clean
 copy_assets:
 	cp -r assets bin
 
-statistics:
+statistics_old:
 	echo >> metrics.txt
 	git log -1 --format="%H - %s" >> metrics.txt
 	pmccabe -vt src/main.c >> metrics.txt
+
+statistics:
+	echo >> metrics.txt
+	git log -1 --format="%H - %s" >> metrics.txt
+	complexity --histogram --score --thresh=3 `ls src/*.c` >> metrics.txt
 
 create_report:
 	sed -e '/Total/,/-/!d' metrics.txt 
