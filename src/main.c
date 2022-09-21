@@ -193,6 +193,7 @@ typedef struct
     double elapsedTime;
     double gameElapsedTime;
     PointI enemyOffset;
+    int hiddenEnemies;
 } Level1;
 
 typedef struct
@@ -562,7 +563,6 @@ Level1 level1Tutorial(Level1 _this)
 {
     while (!_this.gameState.shouldStop && !_this.gameState.shouldQuit)
     {
-        int hiddenEnemies = 0;
         float dt = getDeltaTime();
         _this.gameState = gameStateCheckExitConditions(_this.gameState);
 
@@ -572,10 +572,10 @@ Level1 level1Tutorial(Level1 _this)
         for (int i = 0; i < 8; i++)
         {
             if (_this.enemies[i].state == ENEMY_STATE_HIDDEN)
-                hiddenEnemies++;
+                _this.hiddenEnemies++;
         }
 
-        if (hiddenEnemies == 8)
+        if (_this.hiddenEnemies == 8)
             _this.gameState.shouldStop = true;
 
         // DRAW
@@ -1635,7 +1635,7 @@ int main(void)
     // ============================
     // Level1
     // ============================
-    if (0)
+    if (1)
     {
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
         Level1 _this = level1Create();
