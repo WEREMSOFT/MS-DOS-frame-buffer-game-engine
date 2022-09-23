@@ -1669,6 +1669,7 @@ int main(void)
     // ============================
     // Level3
     // ============================
+    if (0)
     {
         Level3 _this = level3Create();
         _this.gameState = gameState;
