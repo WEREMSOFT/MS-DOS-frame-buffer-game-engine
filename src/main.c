@@ -15,6 +15,7 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #endif
 
 #define __STATIC_ALLOC_IMPLEMENTATION__
@@ -160,9 +161,9 @@ typedef struct
     PointI positions[QPOS_COUNT];
     int enemiesRemaining;
     int enemiesKilled;
-    char *enemiesRemainingString[100];
-    char *enemiesKilledString[100];
-    char *percentageKilledString[100];
+    char enemiesRemainingString[100];
+    char enemiesKilledString[100];
+    char percentageKilledString[100];
     double elapsedTime;
     double gameElapsedTime;
     PointI enemyOffset;
@@ -248,6 +249,24 @@ typedef struct
     PointI mousePos;
 } Level3;
 
+typedef enum
+{
+    GAME_STATE_LEVEL1_INIT,
+    GAME_STATE_LEVEL1_TUTORIAL,
+    GAME_STATE_LEVEL1_PLAY,
+    GAME_STATE_LEVEL1_EXIT,
+
+    GAME_STATE_LEVEL2_INIT,
+    GAME_STATE_LEVEL2_TUTORIAL,
+    GAME_STATE_LEVEL2_PLAY,
+    GAME_STATE_LEVEL2_EXIT,
+
+    GAME_STATE_LEVEL3_INIT,
+    GAME_STATE_LEVEL3_PLAY,
+
+    GAME_STATE_COUNT
+} GameStateEnum;
+
 typedef struct GameState
 {
     Graphics graphics;
@@ -256,6 +275,7 @@ typedef struct GameState
     float deltaTime;
     bool shouldQuit;
     bool shouldStop;
+    GameStateEnum gameStateEnum;
     Level1 level1;
     Level2 level2;
     Level3 level3;
@@ -657,9 +677,10 @@ Level1 level1Tutorial(Level1 _this)
             _this.hiddenEnemies++;
     }
 
-    if (_this.hiddenEnemies == 8)
+    if (_this.hiddenEnemies >= 8)
+    {
         _this.gameState->shouldStop = true;
-
+    }
     // DRAW
     // Draw Background
     spriteDrawClipped(_this.gameState->sprites[ASSET_BACKGROUND], _this.gameState->graphics.imageData);
@@ -1558,153 +1579,104 @@ Level3 level3GameLoop(Level3 _this)
 
     // setup hero and draw it
     _this = level3HeroDraw(_this);
-
     return _this;
 }
 
-typedef enum
+GameState gameMainLoop(GameState gameState)
 {
-    GAME_STATE_LEVEL1_INIT,
-    GAME_STATE_LEVEL1_TUTORIAL,
-    GAME_STATE_LEVEL1_PLAY,
-    GAME_STATE_LEVEL1_EXIT,
+    gameState.deltaTime = getDeltaTime();
+    gameState = gameStateCheckExitConditions(gameState);
+    switch (gameState.gameStateEnum)
+    {
+    case GAME_STATE_LEVEL1_INIT:
+        soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
+        gameState.level1 = level1Create();
+        gameState.level1.gameState = &gameState;
+        level1InitPositions(gameState.level1.positions);
+        gameState.level1 = level1InitEnemies(gameState.level1);
+        gameState.gameStateEnum++;
+        initDeltaTime();
+        break;
+    case GAME_STATE_LEVEL1_TUTORIAL:
+        gameState.level1 = level1Tutorial(gameState.level1);
+        break;
+    case GAME_STATE_LEVEL1_PLAY:
+        gameState.level1 = level1GameLoop(gameState.level1);
+        break;
+    case GAME_STATE_LEVEL1_EXIT:
+        gameState.level1 = level1GameCompleteLoop(gameState.level1);
+        break;
+    case GAME_STATE_LEVEL2_INIT:
+        soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
+        gameState.level2 = level2Create();
+        gameState.level2.gameState = &gameState;
+        gameState.gameStateEnum++;
+        break;
+    case GAME_STATE_LEVEL2_TUTORIAL:
+        gameState.level2 = level2TutorialLoop(gameState.level2);
+        break;
+    case GAME_STATE_LEVEL2_PLAY:
+        gameState.level2 = level2GameLoop(gameState.level2);
+        break;
+    case GAME_STATE_LEVEL2_EXIT:
+        gameState.level2 = level2GameCompleteLoop(gameState.level2);
+        break;
+    case GAME_STATE_LEVEL3_INIT:
+        gameState.level3 = level3Create();
+        gameState.level3.gameState = &gameState;
+        gameState.level3 = level3CreateCollisionMaps(gameState.level3);
+        gameState.gameStateEnum++;
+        break;
+    case GAME_STATE_LEVEL3_PLAY:
+        gameState.level3 = level3GameLoop(gameState.level3);
+        break;
+    default:
+        gameState.shouldQuit = true;
+    }
+    swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
+    if (gameState.shouldStop)
+    {
+        gameState.shouldStop = false;
+        gameState.gameStateEnum++;
+    }
 
-    GAME_STATE_LEVEL2_INIT,
-    GAME_STATE_LEVEL2_TUTORIAL,
-    GAME_STATE_LEVEL2_PLAY,
-    GAME_STATE_LEVEL2_EXIT,
+    return gameState;
+}
+#ifdef __EMSCRIPTEN__
+GameState gameState = {0};
 
-    GAME_STATE_LEVEL3_INIT,
-    GAME_STATE_LEVEL3_PLAY,
-
-    GAME_STATE_COUNT
-} GameStateEnum;
+void emscriptenLoopHandler()
+{
+    gameState = gameMainLoop(gameState);
+}
+#endif
 
 int main(void)
 {
     // Init memory, load assets and general initialization
     staticAllocatorInit(2878340 * 2);
+    initDeltaTime();
 
+#ifndef __EMSCRIPTEN__
     GameState gameState = {0};
+#endif
+
     gameState.graphics = graphicsCreate(320, 240, false);
     gameState.sound = soundCreate();
-
     loadAssets(gameState.sprites);
     Soloud_setGlobalVolume(gameState.sound.soloud, 1.);
 
-    GameStateEnum gameStateEnum = GAME_STATE_LEVEL1_INIT;
-
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(emscriptenLoopHandler, 0, false);
+#else
     while (!gameState.shouldStop && !gameState.shouldQuit)
     {
-        gameState.deltaTime = getDeltaTime();
-        gameState = gameStateCheckExitConditions(gameState);
-        switch (gameStateEnum)
-        {
-        case GAME_STATE_LEVEL1_INIT:
-            soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
-            gameState.level1 = level1Create();
-            gameState.level1.gameState = &gameState;
-            initDeltaTime();
-            level1InitPositions(gameState.level1.positions);
-            gameState.level1 = level1InitEnemies(gameState.level1);
-            gameStateEnum++;
-            break;
-        case GAME_STATE_LEVEL1_TUTORIAL:
-            gameState.level1 = level1Tutorial(gameState.level1);
-            break;
-        case GAME_STATE_LEVEL1_PLAY:
-            gameState.level1 = level1GameLoop(gameState.level1);
-            break;
-        case GAME_STATE_LEVEL1_EXIT:
-            gameState.level1 = level1GameCompleteLoop(gameState.level1);
-            break;
-        case GAME_STATE_LEVEL2_INIT:
-            soundPlaySpeech(gameState.sound, SPEECH_JUMP_THE_ROCKS);
-            gameState.level2 = level2Create();
-            gameState.level2.gameState = &gameState;
-            gameStateEnum++;
-            break;
-        case GAME_STATE_LEVEL2_TUTORIAL:
-            gameState.level2 = level2TutorialLoop(gameState.level2);
-            break;
-        case GAME_STATE_LEVEL2_PLAY:
-            gameState.level2 = level2GameLoop(gameState.level2);
-            break;
-        case GAME_STATE_LEVEL2_EXIT:
-            gameState.level2 = level2GameCompleteLoop(gameState.level2);
-            break;
-        case GAME_STATE_LEVEL3_INIT:
-            gameState.level3 = level3Create();
-            gameState.level3.gameState = &gameState;
-            gameState.level3 = level3CreateCollisionMaps(gameState.level3);
-            gameStateEnum++;
-            break;
-        case GAME_STATE_LEVEL3_PLAY:
-            gameState.level3 = level3GameLoop(gameState.level3);
-            break;
-        default:
-            gameState.shouldQuit = true;
-        }
-        swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
-        if (gameState.shouldStop)
-        {
-            gameState.shouldStop = false;
-            gameStateEnum++;
-        }
+        gameState = gameMainLoop(gameState);
     }
-
-    // Run levels one after another
-    // ============================
-    // Level1
-    // ============================
-    // if (0)
-    // {
-    //     soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
-    //     Level1 _this = level1Create();
-    //     _this.gameState = &gameState;
-    //     initDeltaTime();
-    //     level1InitPositions(_this.positions);
-    //     _this = level1InitEnemies(_this);
-
-    //     _this = level1Tutorial(_this);
-    //     _this = level1GameLoop(_this);
-    //     _this = level1GameCompleteLoop(_this);
-
-    //     if (gameState.shouldQuit)
-    //         goto Cleanup;
-    // }
-
-    // ============================
-    // Level2
-    // ============================
-    // if (0)
-    // {
-    //     Level2 _this = level2Create();
-    //     _this.gameState = &gameState;
-    //     _this = level2TutorialLoop(_this);
-    //     _this = level2GameLoop(_this);
-    //     _this = level2GameCompleteLoop(_this);
-
-    //     if (gameState.shouldQuit)
-    //         goto Cleanup;
-    // }
-
-    // ============================
-    // Level3
-    // ============================
-    // if (0)
-    // {
-
-    //     _this = level3GameLoop(_this);
-
-    //     if (gameState.shouldQuit)
-
-    //         goto Cleanup;
-    // }
-
-// Cleanup
+    // Cleanup
 Cleanup:
     graphicsDestroy(gameState.graphics);
     staticAllocatorDestroy();
     return 0;
+#endif
 }

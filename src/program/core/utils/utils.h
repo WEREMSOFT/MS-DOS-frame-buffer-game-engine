@@ -11,8 +11,9 @@ static inline PointF positionUpdateIntoCircularMovenent()
     return this;
 }
 
-static inline void printFPS(Graphics this, double deltaTime)
+static inline void printFPS(Graphics _this, double deltaTime)
 {
+
 #define FPS_HISTORY 10
     static double fpsHistory[FPS_HISTORY] = {0};
     static int counter = 1;
@@ -31,13 +32,13 @@ static inline void printFPS(Graphics this, double deltaTime)
     {
         char text[1000] = {0};
         snprintf(text, 1000, "fps: %d", (int)floor(avg));
-        graphicsPrintString(this.imageData, (PointI){230, 220}, text, (Color){0, 0xff, 0xff});
+        graphicsPrintString(_this.imageData, (PointI){230, 220}, text, (Color){0, 0xff, 0xff});
     }
 
     {
         char text[1000] = {0};
         snprintf(text, 1000, "ftime:%.4f", deltaTime);
-        graphicsPrintString(this.imageData, (PointI){230, 230}, text, (Color){0, 0xff, 0xff});
+        graphicsPrintString(_this.imageData, (PointI){230, 230}, text, (Color){0, 0xff, 0xff});
     }
 }
 // The first time is called the deltatime value will be wrong.
