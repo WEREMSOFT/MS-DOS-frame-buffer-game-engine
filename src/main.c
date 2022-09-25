@@ -786,9 +786,6 @@ continueControls:
     spriteDrawClipped(_this.gameState->sprites[ASSET_BACKGROUND], _this.gameState->graphics.imageData);
     spriteDrawClipped(_this.gameState->sprites[ASSET_TOP_SCORE_SQUARE], _this.gameState->graphics.imageData);
 
-    // Draw Sight
-    spriteDrawTransparentClipped(_this.gameState->sprites[ASSET_SIGHT], _this.gameState->graphics.imageData);
-
     // Draw Enemies
     for (int i = 0; i < 8; i++)
     {
@@ -828,6 +825,9 @@ continueControls:
     }
 
     spriteDrawTransparentClipped(_this.gameState->sprites[ASSET_FOREGROUND], _this.gameState->graphics.imageData);
+    // Draw Sight
+    spriteDrawTransparentClipped(_this.gameState->sprites[ASSET_SIGHT], _this.gameState->graphics.imageData);
+
     snprintf(_this.enemiesRemainingString, 100, "enemies remaining: %d", _this.enemiesRemaining);
     snprintf(_this.enemiesKilledString, 100, "enemies killed: %d", _this.enemiesKilled);
     float enemiesKilledPercentage = _this.enemiesKilled / (100. - _this.enemiesRemaining) * 100.;
