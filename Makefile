@@ -32,7 +32,7 @@ run_main: all
 web:
 	rm -rf docs
 	mkdir docs
-	emcc -O2 -Ilibs/include -Ilibs/soloud/include -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -DWITH_MINIAUDIO=1 -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 --preload-file assets -s MIN_WEBGL_VERSION=2 -g4 --source-map-base https://weremsoft.github.io/MS-DOS-frame-buffer-game-engine/ $(SRC_F) $(SRC_CPP) -o docs/index.html
+	emcc -O0 -g -Ilibs/include -Ilibs/soloud/include -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -DWITH_MINIAUDIO=1 -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 --preload-file assets -s MIN_WEBGL_VERSION=2 -g4 --source-map-base https://weremsoft.github.io/MS-DOS-frame-buffer-game-engine/ $(SRC_F) $(SRC_CPP) -o docs/index.html
 	cp -r src docs
 
 clean:
