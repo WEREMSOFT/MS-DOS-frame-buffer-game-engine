@@ -251,6 +251,7 @@ typedef struct
 
 typedef enum
 {
+    GAME_STATE_CLICK_TO_START,
     GAME_STATE_LEVEL1_INIT,
     GAME_STATE_LEVEL1_TUTORIAL,
     GAME_STATE_LEVEL1_PLAY,
@@ -1148,6 +1149,10 @@ Level2 level2GameLoop(Level2 _this)
         graphicsDrawSquareFill(_this.gameState->graphics.imageData, (PointI){1, 1}, (PointI){(int)_this.runningDistance, 10}, (Color){0xFF, 0, 0});
         graphicsDrawSquare(_this.gameState->graphics.imageData, (PointI){1, 1}, (PointI){317, 10}, (Color){0xCC, 0xCC, 0xCC});
         _this.runningDistance += (-backgroundSpeedFrame / 100.) * 6;
+
+        if (_this.runningDistance > 318)
+            _this.gameState->shouldStop = true;
+
         char stringToPrint[200] = {0};
         snprintf(stringToPrint, 200, "distance %.2f", _this.runningDistance);
         graphicsPrintString(_this.gameState->graphics.imageData, (PointI){120, 4}, stringToPrint, (Color){0, 0, 0});
@@ -1582,13 +1587,51 @@ Level3 level3GameLoop(Level3 _this)
     return _this;
 }
 
+GameState gameStateClickToStart(GameState _this)
+{
+    static int gameColor = 0;
+    graphicsClear(_this.graphics.imageData);
+    char *clickToStart = "click to start";
+
+    Color textColor = {255, 255, 255};
+
+    gameColor = (gameColor + 1) % 3;
+    switch (gameColor)
+    {
+    case 0:
+        textColor.r = 255;
+        textColor.g = 255;
+        textColor.b = 255;
+        break;
+    case 1:
+        textColor.r = 0;
+        textColor.g = 0;
+        textColor.b = 255;
+        break;
+    case 2:
+        textColor.r = 255;
+        textColor.g = 0;
+        textColor.b = 0;
+        break;
+    }
+
+    graphicsPrintString(_this.graphics.imageData, (PointI){120, 120}, clickToStart, textColor);
+    if (glfwGetMouseButton(_this.graphics.window, GLFW_MOUSE_BUTTON_1))
+        _this.shouldStop = true;
+    return _this;
+}
 GameState gameMainLoop(GameState gameState)
 {
     gameState.deltaTime = getDeltaTime();
     gameState = gameStateCheckExitConditions(gameState);
     switch (gameState.gameStateEnum)
     {
+    case GAME_STATE_CLICK_TO_START:
+        gameState = gameStateClickToStart(gameState);
+        break;
     case GAME_STATE_LEVEL1_INIT:
+        gameState.sound = soundCreate();
+        Soloud_setGlobalVolume(gameState.sound.soloud, 1.);
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
         gameState.level1 = level1Create();
         gameState.level1.gameState = &gameState;
@@ -1662,9 +1705,7 @@ int main(void)
 #endif
 
     gameState.graphics = graphicsCreate(320, 240, false);
-    gameState.sound = soundCreate();
     loadAssets(gameState.sprites);
-    Soloud_setGlobalVolume(gameState.sound.soloud, 1.);
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(emscriptenLoopHandler, 0, false);

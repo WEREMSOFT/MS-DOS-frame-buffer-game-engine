@@ -218,3 +218,30 @@ Average line score:        12
 50%-ile score:              7 (half in higher score procs)
 75%-ile score:             22 (25% in higher score procs)
 Highest score:             28 (level2GameLoop() in src/main.c)
+
+96627fe604c0306c890f98ad5c2ddf233792495c - added mapping
+Complexity Scores
+Score | ln-ct | nc-lns| file-name(line): proc-name
+    3      18      16   src/main.c(1379): level3ProcesStateEditDrawing
+    3      37      33   src/main.c(629): level1InitEnemies
+    4      34      33   src/main.c(1477): level3SerializeLevelDesign
+    4      65      49   src/main.c(924): level2TutorialLoop
+    5      57      56   src/main.c(1586): gameMainLoop
+    5     113      94   src/main.c(371): loadAssets
+    7      83      64   src/main.c(1292): level3ProcessStatePlaying
+   10      72      61   src/main.c(1401): level3ProcessStateEdit
+   11     137     109   src/main.c(702): level1GameLoop
+   15     163     128   src/main.c(993): level2GameLoop
+
+Complexity Histogram
+Score-Range  Lin-Ct
+    0-9         345 ************************************************************
+   10-19        298 ****************************************************
+
+Scored procedure ct:       10
+Non-comment line ct:      643
+Average line score:         8
+25%-ile score:              5 (75% in higher score procs)
+50%-ile score:              7 (half in higher score procs)
+75%-ile score:             11 (25% in higher score procs)
+Highest score:             15 (level2GameLoop() in src/main.c)
