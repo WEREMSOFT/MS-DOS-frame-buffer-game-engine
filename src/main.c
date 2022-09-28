@@ -1590,29 +1590,35 @@ Level3 level3GameLoop(Level3 _this)
 GameState gameStateClickToStart(GameState _this)
 {
     static int gameColor = 0;
+    static float elapsedTime = 0;
     graphicsClear(_this.graphics.imageData);
+    Color static textColor = {255, 255, 255};
     char *clickToStart = "click to start";
 
-    Color textColor = {255, 255, 255};
+    elapsedTime += getDeltaTime();
 
-    gameColor = (gameColor + 1) % 3;
-    switch (gameColor)
+    if (elapsedTime > 0.0001)
     {
-    case 0:
-        textColor.r = 255;
-        textColor.g = 255;
-        textColor.b = 255;
-        break;
-    case 1:
-        textColor.r = 0;
-        textColor.g = 0;
-        textColor.b = 255;
-        break;
-    case 2:
-        textColor.r = 255;
-        textColor.g = 0;
-        textColor.b = 0;
-        break;
+        elapsedTime = 0;
+        gameColor = (gameColor + 1) % 3;
+        switch (gameColor)
+        {
+        case 0:
+            textColor.r = 255;
+            textColor.g = 255;
+            textColor.b = 255;
+            break;
+        case 1:
+            textColor.r = 0;
+            textColor.g = 0;
+            textColor.b = 255;
+            break;
+        case 2:
+            textColor.r = 255;
+            textColor.g = 0;
+            textColor.b = 0;
+            break;
+        }
     }
 
     graphicsPrintString(_this.graphics.imageData, (PointI){120, 120}, clickToStart, textColor);
