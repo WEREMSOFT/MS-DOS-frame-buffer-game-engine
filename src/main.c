@@ -1688,10 +1688,8 @@ GameState gameStateClickToStart(GameState _this)
 
 Level4 level4Create(Level4 *_this)
 {
-#define U S3L_F
-    S3L_Unit cubeVertices[] = {S3L_CUBE_VERTICES(U)};
-    memcpy(_this->cubeVertices, cubeVertices, sizeof(cubeVertices) * sizeof(U));
-#undef U
+    S3L_Unit cubeVertices[] = {S3L_CUBE_VERTICES(S3L_F)};
+    memcpy(_this->cubeVertices, cubeVertices, sizeof(cubeVertices) * sizeof(S3L_F));
 
     S3L_Index cubeTriangles[] = {S3L_CUBE_TRIANGLES};
     memcpy(_this->cubeTriangles, cubeTriangles, sizeof(cubeTriangles) * sizeof(S3L_Index));
@@ -1705,21 +1703,21 @@ Level4 level4Create(Level4 *_this)
     return *_this;
 }
 
-Level4 level4GameLoop(Level4 *_this)
+Level4 level4GameLoop(Level4 _this)
 {
-    graphicsClear(_this->gameState->graphics.imageData);
+    graphicsClear(_this.gameState->graphics.imageData);
 
     static float rotation[2] = {0};
 
-    rotation[0] += 100. * _this->gameState->deltaTime;
-    rotation[1] += 100. * _this->gameState->deltaTime;
+    rotation[0] += 100. * _this.gameState->deltaTime;
+    rotation[1] += 100. * _this.gameState->deltaTime;
 
-    _this->scene.models[0].transform.rotation.y = rotation[0];
-    _this->scene.models[0].transform.rotation.x = rotation[1];
+    _this.scene.models[0].transform.rotation.y += 10; // rotation[0];
+    _this.scene.models[0].transform.rotation.x = rotation[1];
 
     S3L_newFrame();
-    S3L_drawScene(_this->scene);
-    return *_this;
+    S3L_drawScene(_this.scene);
+    return _this;
 }
 
 GameState gameMainLoop(GameState gameState)
@@ -1775,16 +1773,14 @@ GameState gameMainLoop(GameState gameState)
     case GAME_STATE_LEVEL3_PLAY:
         gameState.level3 = level3GameLoop(gameState.level3);
         break;
-
     case GAME_STATE_LEVEL4_INIT:
         globalGraphics = &gameState.graphics;
         gameState.level4 = level4Create(&gameState._self->level4);
-
         gameState.level4.gameState = &gameState;
         gameState.gameStateEnum++;
         break;
     case GAME_STATE_LEVEL4_PLAY:
-        gameState.level4 = level4GameLoop(&gameState._self->level4);
+        gameState.level4 = level4GameLoop(gameState.level4);
         break;
     default:
         gameState.shouldQuit = true;
@@ -1830,6 +1826,7 @@ int main(void)
     while (!gameState.shouldStop && !gameState.shouldQuit)
     {
         gameState = gameMainLoop(gameState);
+        printf("test\n");
     }
     // Cleanup
 Cleanup:
