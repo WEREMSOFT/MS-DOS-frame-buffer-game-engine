@@ -1725,32 +1725,41 @@ Level4 level4GameLoop(Level4 _this)
     {
         _this.cameraRotation[1] -= 100. * _this.gameState->deltaTime;
     }
+    S3L_Vec4 camF, camR;
+    S3L_rotationToDirections(_this.scene.camera.transform.rotation, 1000. * _this.gameState->deltaTime, &camF, &camR, 0);
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_A))
     {
-        _this.cameraPosition[0] -= 1000. * _this.gameState->deltaTime;
+        S3L_vec3Sub(&_this.scene.camera.transform.translation, camR);
+
+        // _this.cameraPosition[0] -= 1000. * _this.gameState->deltaTime;
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_D))
     {
-        _this.cameraPosition[0] += 1000. * _this.gameState->deltaTime;
+        S3L_vec3Add(&_this.scene.camera.transform.translation, camR);
+
+        // _this.cameraPosition[0] += 1000. * _this.gameState->deltaTime;
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_W))
     {
-        _this.cameraPosition[2] += 1000. * _this.gameState->deltaTime;
+        S3L_vec3Add(&_this.scene.camera.transform.translation, camF);
+
+        // _this.cameraPosition[2] += 1000. * _this.gameState->deltaTime;
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_S))
     {
-        _this.cameraPosition[2] -= 1000. * _this.gameState->deltaTime;
+        S3L_vec3Sub(&_this.scene.camera.transform.translation, camF);
+        // _this.cameraPosition[2] -= 1000. * _this.gameState->deltaTime;
     }
 
-    _this.scene.camera.transform.translation.x = _this.cameraPosition[0];
-    _this.scene.camera.transform.translation.z = _this.cameraPosition[2];
-    //_this.scene.camera.transform.rotation.y = _this.cameraRotation[1];
+    // _this.scene.camera.transform.translation.x = _this.cameraPosition[0];
+    // _this.scene.camera.transform.translation.z = _this.cameraPosition[2];
+    _this.scene.camera.transform.rotation.y = _this.cameraRotation[1];
 
-    S3L_lookAt((S3L_Vec4){0, 0, 0, 0}, &_this.scene.camera.transform);
+    // S3L_lookAt((S3L_Vec4){0, 0, 0, 0}, &_this.scene.camera.transform);
 
     // _this.cubeRotation[0] += 100. * _this.gameState->deltaTime;
     // _this.cubeRotation[1] += -50. * _this.gameState->deltaTime;
