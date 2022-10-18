@@ -292,7 +292,6 @@ typedef struct
     S3L_Scene scene;
     float cubeRotation[3];
     float cameraRotation[3];
-    float cameraPosition[3];
 } Level4;
 
 typedef enum
@@ -1706,8 +1705,8 @@ Level4 level4Create(Level4 *_this)
     S3L_model3DInit(_this->cubeVertices, S3L_CUBE_VERTEX_COUNT, _this->cubeTriangles, S3L_CUBE_TRIANGLE_COUNT, &_this->cubeModel);
     S3L_sceneInit(&_this->cubeModel, 1, &_this->scene);
 
-    _this->cameraPosition[1] = S3L_F / 2;
-    _this->cameraPosition[2] = -2 * S3L_F;
+    _this->scene.camera.transform.translation.y = S3L_F / 2;
+    _this->scene.camera.transform.translation.z = -2 * S3L_F;
 
     return *_this;
 }
@@ -1731,37 +1730,26 @@ Level4 level4GameLoop(Level4 _this)
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_A))
     {
         S3L_vec3Sub(&_this.scene.camera.transform.translation, camR);
-
-        // _this.cameraPosition[0] -= 1000. * _this.gameState->deltaTime;
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_D))
     {
         S3L_vec3Add(&_this.scene.camera.transform.translation, camR);
-
-        // _this.cameraPosition[0] += 1000. * _this.gameState->deltaTime;
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_W))
     {
         S3L_vec3Add(&_this.scene.camera.transform.translation, camF);
-
-        // _this.cameraPosition[2] += 1000. * _this.gameState->deltaTime;
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_S))
     {
         S3L_vec3Sub(&_this.scene.camera.transform.translation, camF);
-        // _this.cameraPosition[2] -= 1000. * _this.gameState->deltaTime;
     }
 
-    // _this.scene.camera.transform.translation.x = _this.cameraPosition[0];
-    // _this.scene.camera.transform.translation.z = _this.cameraPosition[2];
     _this.scene.camera.transform.rotation.y = _this.cameraRotation[1];
 
-    // S3L_lookAt((S3L_Vec4){0, 0, 0, 0}, &_this.scene.camera.transform);
-
-    // _this.cubeRotation[0] += 100. * _this.gameState->deltaTime;
+    _this.cubeRotation[0] += 100. * _this.gameState->deltaTime;
     // _this.cubeRotation[1] += -50. * _this.gameState->deltaTime;
     // _this.cubeRotation[2] += 10. * _this.gameState->deltaTime;
 
@@ -1871,7 +1859,7 @@ int main(void)
     gameState.graphics = graphicsCreate(320, 240, false);
     loadAssets(gameState.sprites);
 
-    // gameState.gameStateEnum = GAME_STATE_LEVEL4_INIT;
+    gameState.gameStateEnum = GAME_STATE_LEVEL4_INIT;
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(emscriptenLoopHandler, 0, false);

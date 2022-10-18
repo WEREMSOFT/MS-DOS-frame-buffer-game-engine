@@ -21,16 +21,22 @@ Graphics *globalGraphics;
 void drawPixel(S3L_PixelInfo *p)
 {
     Color color = {0};
-    switch (p->triangleID % 3)
+    switch (p->triangleID)
     {
+    case 1:
     case 0:
         color.r = 0xff;
         break;
-    case 1:
+    case 2:
+    case 3:
+        color.b = 0xff;
+        break;
+    case 6:
+    case 7:
         color.g = 0xff;
         break;
-    case 2:
-        color.b = 0xff;
+    default:
+        color.r = color.g = color.b = 0x66;
     }
 
     graphicsPutPixel(globalGraphics->imageData, (PointI){(int)p->x, p->y}, color);
@@ -284,6 +290,8 @@ typedef struct
     S3L_Index cubeTriangles[S3L_CUBE_TRIANGLE_COUNT * 3];
     S3L_Model3D cubeModel;
     S3L_Scene scene;
+    float cubeRotation[3];
+    float cameraRotation[3];
 } Level4;
 
 typedef enum
@@ -1688,10 +1696,8 @@ GameState gameStateClickToStart(GameState _this)
 
 Level4 level4Create(Level4 *_this)
 {
-#define U S3L_F
-    S3L_Unit cubeVertices[] = {S3L_CUBE_VERTICES(U)};
-    memcpy(_this->cubeVertices, cubeVertices, sizeof(cubeVertices) * sizeof(U));
-#undef U
+    S3L_Unit cubeVertices[] = {S3L_CUBE_VERTICES(S3L_F)};
+    memcpy(_this->cubeVertices, cubeVertices, sizeof(cubeVertices) * sizeof(S3L_F));
 
     S3L_Index cubeTriangles[] = {S3L_CUBE_TRIANGLES};
     memcpy(_this->cubeTriangles, cubeTriangles, sizeof(cubeTriangles) * sizeof(S3L_Index));
@@ -1699,27 +1705,61 @@ Level4 level4Create(Level4 *_this)
     S3L_model3DInit(_this->cubeVertices, S3L_CUBE_VERTEX_COUNT, _this->cubeTriangles, S3L_CUBE_TRIANGLE_COUNT, &_this->cubeModel);
     S3L_sceneInit(&_this->cubeModel, 1, &_this->scene);
 
-    _this->scene.camera.transform.translation.z = -2 * S3L_F;
     _this->scene.camera.transform.translation.y = S3L_F / 2;
+    _this->scene.camera.transform.translation.z = -2 * S3L_F;
 
     return *_this;
 }
 
-Level4 level4GameLoop(Level4 *_this)
+Level4 level4GameLoop(Level4 _this)
 {
-    graphicsClear(_this->gameState->graphics.imageData);
+    graphicsClear(_this.gameState->graphics.imageData);
 
-    static float rotation[2] = {0};
+    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT))
+    {
+        _this.cameraRotation[1] += 100. * _this.gameState->deltaTime;
+    }
 
-    rotation[0] += 100. * _this->gameState->deltaTime;
-    rotation[1] += 100. * _this->gameState->deltaTime;
+    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT))
+    {
+        _this.cameraRotation[1] -= 100. * _this.gameState->deltaTime;
+    }
+    S3L_Vec4 camF, camR;
+    S3L_rotationToDirections(_this.scene.camera.transform.rotation, 1000. * _this.gameState->deltaTime, &camF, &camR, 0);
 
-    _this->scene.models[0].transform.rotation.y = rotation[0];
-    _this->scene.models[0].transform.rotation.x = rotation[1];
+    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_A))
+    {
+        S3L_vec3Sub(&_this.scene.camera.transform.translation, camR);
+    }
+
+    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_D))
+    {
+        S3L_vec3Add(&_this.scene.camera.transform.translation, camR);
+    }
+
+    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_W))
+    {
+        S3L_vec3Add(&_this.scene.camera.transform.translation, camF);
+    }
+
+    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_S))
+    {
+        S3L_vec3Sub(&_this.scene.camera.transform.translation, camF);
+    }
+
+    _this.scene.camera.transform.rotation.y = _this.cameraRotation[1];
+
+    _this.cubeRotation[0] += 100. * _this.gameState->deltaTime;
+    // _this.cubeRotation[1] += -50. * _this.gameState->deltaTime;
+    // _this.cubeRotation[2] += 10. * _this.gameState->deltaTime;
+
+    _this.cubeModel.transform.rotation.x = _this.cubeRotation[0];
+    _this.cubeModel.transform.rotation.y = _this.cubeRotation[1];
+    _this.cubeModel.transform.rotation.z = _this.cubeRotation[2];
 
     S3L_newFrame();
-    S3L_drawScene(_this->scene);
-    return *_this;
+    S3L_drawScene(_this.scene);
+    return _this;
 }
 
 GameState gameMainLoop(GameState gameState)
@@ -1775,16 +1815,14 @@ GameState gameMainLoop(GameState gameState)
     case GAME_STATE_LEVEL3_PLAY:
         gameState.level3 = level3GameLoop(gameState.level3);
         break;
-
     case GAME_STATE_LEVEL4_INIT:
         globalGraphics = &gameState.graphics;
         gameState.level4 = level4Create(&gameState._self->level4);
-
         gameState.level4.gameState = &gameState;
         gameState.gameStateEnum++;
         break;
     case GAME_STATE_LEVEL4_PLAY:
-        gameState.level4 = level4GameLoop(&gameState._self->level4);
+        gameState.level4 = level4GameLoop(gameState.level4);
         break;
     default:
         gameState.shouldQuit = true;
@@ -1828,10 +1866,8 @@ int main(void)
 #else
 
     while (!gameState.shouldStop && !gameState.shouldQuit)
-    {
         gameState = gameMainLoop(gameState);
-    }
-    // Cleanup
+
 Cleanup:
     graphicsDestroy(gameState.graphics);
     staticAllocatorDestroy();
