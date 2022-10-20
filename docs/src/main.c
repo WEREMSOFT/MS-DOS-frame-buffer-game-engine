@@ -1725,7 +1725,7 @@ Level4 level4GameLoop(Level4 _this)
         _this.cameraRotation[1] -= 100. * _this.gameState->deltaTime;
     }
     S3L_Vec4 camF, camR;
-    S3L_rotationToDirections(_this.scene.camera.transform.rotation, 1000. * _this.gameState->deltaTime, &camF, &camR, 0);
+    S3L_rotationToDirections(_this.scene.camera.transform.rotation, 10000. * _this.gameState->deltaTime, &camF, &camR, 0);
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_A))
     {
