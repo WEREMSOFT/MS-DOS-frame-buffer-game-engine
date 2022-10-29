@@ -1750,8 +1750,6 @@ Level4 level4GameLoop(Level4 _this)
     _this.scene.camera.transform.rotation.y = _this.cameraRotation[1];
 
     _this.cubeRotation[0] += 100. * _this.gameState->deltaTime;
-    // _this.cubeRotation[1] += -50. * _this.gameState->deltaTime;
-    // _this.cubeRotation[2] += 10. * _this.gameState->deltaTime;
 
     _this.cubeModel.transform.rotation.x = _this.cubeRotation[0];
     _this.cubeModel.transform.rotation.y = _this.cubeRotation[1];
