@@ -29,6 +29,9 @@ run_main: all
 %.o: %.cpp
 	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
 
+main.bin: clean src/main.c
+	gcc -g -O0 src/main.c -lm -o main.bin
+
 web:
 	rm -rf docs
 	mkdir docs
@@ -40,6 +43,7 @@ clean:
 	rm -rf $(TARGET)
 	rm -rf bin/assets
 	rm -rf html/**/*.*
+	rm -rf ./main.bin
 
 deep_clean: clean
 	rm -rf $(SRC_CPP_O)
