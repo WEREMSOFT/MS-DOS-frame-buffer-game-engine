@@ -7,7 +7,6 @@
 #include <memory.h>
 #include "../shader/shader.h"
 #include "../stackAllocator/staticAlloc.h"
-#include <stb_image.h>
 
 extern char fonts[][5];
 static void textureCreate(Graphics *_this)
@@ -22,38 +21,31 @@ static void textureCreate(Graphics *_this)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _this->imageData.size.x, _this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, _this->imageData.data);
 }
 
-void textureCreateFromImage(Graphics *_this, char *fileName)
-{
-    int width, height, nrChannels;
-    glGenTextures(1, &_this->textureId);
-    glBindTexture(GL_TEXTURE_2D, _this->textureId);
-    // Set texture wrapping filtering options.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    stbi_set_flip_vertically_on_load(false);
-    _this->imageData.data = (Color *)stbi_load(fileName, &width, &height, &nrChannels, 0);
+// void textureCreateFromImage(Graphics *_this, char *fileName)
+// {
+//     int width, height, nrChannels;
+//     glGenTextures(1, &_this->textureId);
+//     glBindTexture(GL_TEXTURE_2D, _this->textureId);
+//     // Set texture wrapping filtering options.
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//     stbi_set_flip_vertically_on_load(false);
+//     _this->imageData.data = (Color *)stbi_load(fileName, &width, &height, &nrChannels, 0);
 
-    if (_this->imageData.data)
-    {
-        GLenum format = 0;
+//     if (_this->imageData.data)
+//     {
+//         GLenum format = 0;
 
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, _this->imageData.data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-
-    else
-    {
-        printf("%s::%s - Error loading texture \n", __FILE__, __FUNCTION__);
-        printf("Error: %s\n", stbi_failure_reason());
-        exit(1);
-    }
-}
+//         if (nrChannels == 1)
+//             format = GL_RED;
+//         else if (nrChannels == 3)
+//             format = GL_RGB;
+//         else if (nrChannels == 4)
+//             format = GL_RGBA;
+//         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, _this->imageData.data);
+//         glGenerateMipmap(GL_TEXTURE_2D);
+//     }
+// }
 
 static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
@@ -265,40 +257,40 @@ void graphicsPrintFontTest(ImageData _this)
     }
 }
 
-void graphicsPrintString(ImageData _this, PointI topLeftCorner, char *string, Color color)
-{
-    size_t stringLen = strlen(string);
+// void graphicsPrintString(ImageData _this, PointI topLeftCorner, char *string, Color color)
+// {
+//     size_t stringLen = strlen(string);
 
-    for (size_t i = 0; i < stringLen; i++)
-    {
-        if (string[i] == '.')
-        {
-            int charOffset = 'z' - 'a' + 12;
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-            continue;
-        }
+//     for (size_t i = 0; i < stringLen; i++)
+//     {
+//         if (string[i] == '.')
+//         {
+//             int charOffset = 'z' - 'a' + 12;
+//             graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+//             continue;
+//         }
 
-        if (string[i] == '%')
-        {
-            int charOffset = 'z' - 'a' + 11;
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-            continue;
-        }
+//         if (string[i] == '%')
+//         {
+//             int charOffset = 'z' - 'a' + 11;
+//             graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+//             continue;
+//         }
 
-        if (string[i] >= '0' && string[i] <= '9')
-        {
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
-            continue;
-        }
+//         if (string[i] >= '0' && string[i] <= '9')
+//         {
+//             graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
+//             continue;
+//         }
 
-        if (string[i] >= 'a' && string[i] <= 'z')
-        {
-            int charOffset = string[i] - 'a' + 10;
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-            continue;
-        }
-    }
-}
+//         if (string[i] >= 'a' && string[i] <= 'z')
+//         {
+//             int charOffset = string[i] - 'a' + 10;
+//             graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+//             continue;
+//         }
+//     }
+// }
 
 void graphicsUpdateMouseCoordinates(Graphics *_this)
 {

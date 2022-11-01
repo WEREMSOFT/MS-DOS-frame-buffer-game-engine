@@ -1,20 +1,6 @@
 #include "sprite.h"
 #include <math.h>
 #include "../stackAllocator/staticAlloc.h"
-#include <stb_image.h>
-
-Sprite spriteCreate(char *file)
-{
-    Sprite _this = {0};
-    int nrChannels;
-    _this.imageData = (Color *)stbi_load(file, &_this.size.x, &_this.size.y, &nrChannels, 0);
-    if (_this.imageData == NULL)
-    {
-        printf("Error loading image %s: %s\n", file, stbi_failure_reason());
-        exit(-1);
-    }
-    return _this;
-}
 
 void spriteDraw(Sprite _this, ImageData imageData)
 {

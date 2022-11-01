@@ -32,13 +32,13 @@ static inline void printFPS(Graphics _this, double deltaTime)
     {
         char text[1000] = {0};
         snprintf(text, 1000, "fps: %d", (int)floor(avg));
-        graphicsPrintString(_this.imageData, (PointI){230, 220}, text, (Color){0, 0xff, 0xff});
+        urPrintString((URPointI){230, 220}, text, (URColor){0, 0xff, 0xff});
     }
 
     {
         char text[1000] = {0};
         snprintf(text, 1000, "ftime:%.4f", deltaTime);
-        graphicsPrintString(_this.imageData, (PointI){230, 230}, text, (Color){0, 0xff, 0xff});
+        urPrintString((URPointI){230, 230}, text, (URColor){0, 0xff, 0xff});
     }
 }
 // The first time is called the deltatime value will be wrong.

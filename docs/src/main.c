@@ -433,7 +433,7 @@ void loadAssets(Sprite *_this)
     _this[ASSET_HOW_TO_PLAY].animation.frameRate = 5;
     _this[ASSET_HOW_TO_PLAY].animation.frameWidth = 82;
 
-    _this[ASSET_SIGHT] = spriteCreate("assets/aimcross.png");
+    _this[ASSET_SIGHT] = spriteCreate("assets/aimcross.bmp");
 
     _this[ASSET_SHOOT] = spriteCreate("assets/shoot.bmp");
     _this[ASSET_SHOOT].animated = true;

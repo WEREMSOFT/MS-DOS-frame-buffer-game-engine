@@ -39,24 +39,27 @@ typedef struct
 
 typedef struct
 {
-    char r, g, b;
-} Color;
+    unsigned char r, g, b;
+} URColor;
 
 typedef struct
 {
     int x, y;
 } URPointI;
 
-void urPutPixel(URPointI point, Color color);
+// forward declaration
+void UR_PUT_PIXEL(URPointI point, URColor color);
 
-void urClearScreen(URContext context, Color clearColor)
+void urPutPixel(URPointI point, URColor color);
+
+void urClearScreen(URContext context, URColor clearColor)
 {
     for (int x = 0; x < context.width; x++)
         for (int y = 0; y < context.height; y++)
             UR_PUT_PIXEL((URPointI){x, y}, clearColor);
 }
 
-void urDrawCircle(URPointI center, double radious, Color color)
+void urDrawCircle(URPointI center, double radious, URColor color)
 {
 
     for (int i = center.x - radious; i <= center.x + radious; i++)
@@ -71,7 +74,7 @@ void urDrawCircle(URPointI center, double radious, Color color)
     }
 }
 
-void urDrawCircleFill(URPointI center, double radious, Color color)
+void urDrawCircleFill(URPointI center, double radious, URColor color)
 {
 
     for (int i = center.x - radious; i <= center.x + radious; i++)
@@ -86,7 +89,7 @@ void urDrawCircleFill(URPointI center, double radious, Color color)
     }
 }
 
-void urDrawSquare(URPointI topLeftCorner, URPointI size, Color color)
+void urDrawSquare(URPointI topLeftCorner, URPointI size, URColor color)
 {
 
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
@@ -101,7 +104,7 @@ void urDrawSquare(URPointI topLeftCorner, URPointI size, Color color)
     }
 }
 
-void urDrawSquareFill(URPointI topLeftCorner, URPointI size, Color color)
+void urDrawSquareFill(URPointI topLeftCorner, URPointI size, URColor color)
 {
 
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
@@ -116,7 +119,7 @@ void urDrawSquareFill(URPointI topLeftCorner, URPointI size, Color color)
     }
 }
 
-void urDrawLine(URPointI pointA, URPointI pointB, Color color)
+void urDrawLine(URPointI pointA, URPointI pointB, URColor color)
 {
     int dx = abs(pointB.x - pointA.x), sx = pointA.x < pointB.x ? 1 : -1;
     int dy = abs(pointB.y - pointA.y), sy = pointA.y < pointB.y ? 1 : -1;
@@ -144,7 +147,7 @@ void urDrawLine(URPointI pointA, URPointI pointB, Color color)
     }
 }
 
-unsigned char fonts[][5] =
+unsigned char urFonts[][5] =
     {
         // 0
         {0b011100,
@@ -375,19 +378,19 @@ unsigned char fonts[][5] =
          0b001100,
          0b001100}};
 
-void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, Color color)
+void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, URColor color)
 {
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j <= 8; j++)
         {
-            if (fonts[letter][i] & (0b1000000 >> j))
+            if (urFonts[letter][i] & (0b1000000 >> j))
                 urPutPixel((URPointI){topLeftCorner.x + j, topLeftCorner.y + i}, color);
         }
     }
 }
 
-void urPrintString(URPointI topLeftCorner, char *string, Color color)
+void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 {
     size_t stringLen = strlen(string);
 
@@ -454,7 +457,7 @@ typedef struct tagBITMAPINFOHEADER
 
 #define BITMAPINFOHEADER_SIZE 40
 
-unsigned char *urBMPLoad(char *FileName, int *imageWidth, int *imageHeight)
+unsigned char *urBMPLoad(char *fileName, int *imageWidth, int *imageHeight)
 {
     BITMAPFILEHEADER fileHeader;
     BITMAPINFOHEADER infoHeader;
@@ -474,9 +477,9 @@ unsigned char *urBMPLoad(char *FileName, int *imageWidth, int *imageHeight)
         exit(-1);
     }
 
-    if ((fp = fopen(FileName, "rb")) == NULL)
+    if ((fp = fopen(fileName, "rb")) == NULL)
     {
-        printf("No such file. (%s)\n", FileName);
+        printf("No such file. (%s)\n", fileName);
         exit(-1);
     }
 
@@ -488,25 +491,25 @@ unsigned char *urBMPLoad(char *FileName, int *imageWidth, int *imageHeight)
 
     if (fileHeader.bfType != htons(0x424d))
     {
-        printf("Not BMP file type (magc number = '%04x')\n", fileHeader.bfType);
+        printf("%s: Not BMP file type (magc number = '%04x')\n", fileName, fileHeader.bfType);
         exit(-1);
     }
 
     if (fread(&infoHeader.biSize, sizeof(infoHeader.biSize), 1, fp) != 1)
     {
-        printf("No infoHeader field (too small filesize)\n");
+        printf("%s: No infoHeader field (too small filesize)\n", fileName);
         exit(-1);
     }
 
     if (infoHeader.biSize != 40)
     {
-        printf("Not Windows BMP file type (header size = %d)\n", infoHeader.biSize);
+        printf("%s: Not Windows BMP file type (header size = %d)\n", fileName, infoHeader.biSize);
         exit(-1);
     }
 
     if (fread(&infoHeader.biWidth, sizeof(infoHeader) - sizeof(infoHeader.biSize), 1, fp) != 1)
     {
-        printf("Not enough infoHeader field (too small filesize)\n");
+        printf("%s: Not enough infoHeader field (too small filesize)\n", fileName);
         exit(-1);
     }
 
@@ -529,7 +532,7 @@ unsigned char *urBMPLoad(char *FileName, int *imageWidth, int *imageHeight)
 
     if ((infoHeader.biBitCount != 24) && (infoHeader.biBitCount != 32))
     {
-        printf("only 24 or 32 bits per pixel format is acceptable (%d)\n", infoHeader.biBitCount);
+        printf("%s: only 24 or 32 bits per pixel format is acceptable (%d)\n", fileName, infoHeader.biBitCount);
         exit(-1);
     }
     printf("bits/pixel = %d\n", infoHeader.biBitCount);
@@ -617,7 +620,7 @@ typedef struct
     URPointI position;
     URPointI center;
     URPointI size;
-    Color *imageData;
+    URColor *imageData;
 } URSprite;
 
 URSprite urSpriteCreate(char *file)
@@ -625,7 +628,7 @@ URSprite urSpriteCreate(char *file)
     URSprite _this = {0};
     int nrChannels;
 
-    _this.imageData = (Color *)urBMPLoad(file, &_this.size.x, &_this.size.y);
+    _this.imageData = (URColor *)urBMPLoad(file, &_this.size.x, &_this.size.y);
     if (_this.imageData == NULL)
     {
         printf("Error loading image %s\n", file);
@@ -634,12 +637,12 @@ URSprite urSpriteCreate(char *file)
     return _this;
 }
 
-typedef struct
-{
-    URPointI size;
-    int bufferSize;
-    Color *data;
-} URImageData;
+// typedef struct
+// {
+//     URPointI size;
+//     int bufferSize;
+//     URColor *data;
+// } URImageData;
 
 void urSpriteDraw(URSprite _this)
 {
@@ -647,7 +650,7 @@ void urSpriteDraw(URSprite _this)
     {
         for (int j = 0; j < _this.size.y; j++)
         {
-            Color color = _this.imageData[j * _this.size.x + i];
+            URColor color = _this.imageData[j * _this.size.x + i];
             urPutPixel((URPointI){_this.position.x + i, _this.position.y + j}, color);
         }
     }
@@ -670,7 +673,7 @@ void urSpriteDrawClipped(URSprite _this)
         {
             for (int j = clippedY; j < clippedHeight; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
             }
         }
@@ -691,21 +694,21 @@ void urSpriteDrawClipped(URSprite _this)
         {
             for (int j = clippedY; j < clippedHeight; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
             }
         }
     }
 }
 
-void urSpriteDrawTransparent(URSprite _this, URImageData imageData)
+void urSpriteDrawTransparent(URSprite _this)
 {
     if (_this.isFlipped)
         for (int i = 0; i < _this.size.x; i++)
         {
             for (int j = 0; j < _this.size.y; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){_this.position.x + _this.size.x - i, _this.position.y + j}, color);
             }
@@ -715,14 +718,14 @@ void urSpriteDrawTransparent(URSprite _this, URImageData imageData)
         {
             for (int j = 0; j < _this.size.y; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){_this.position.x + i, _this.position.y + j}, color);
             }
         }
 }
 
-void urSpriteDrawTransparentClipped(URSprite _this, URImageData imageData)
+void urSpriteDrawTransparentClipped(URSprite _this)
 {
     if (_this.isFlipped)
     {
@@ -730,16 +733,16 @@ void urSpriteDrawTransparentClipped(URSprite _this, URImageData imageData)
 
         int clippedWidth = fmin(adjustedPosition.x, _this.size.x);
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
 
         int clippedX = 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
             }
@@ -750,18 +753,18 @@ void urSpriteDrawTransparentClipped(URSprite _this, URImageData imageData)
         URPointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
 
         int clippedWidth = fmin(_this.size.x,
-                                fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - imageData.size.x)));
+                                fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - UR_SCREEN_WIDTH)));
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
 
         int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
             }
@@ -769,10 +772,10 @@ void urSpriteDrawTransparentClipped(URSprite _this, URImageData imageData)
     }
 }
 
-void urSpriteDrawTransparentClippedLowerLine(URSprite _this, URImageData imageData, int lowerLineHeight)
+void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight)
 {
     int clippedWidth = fmin(_this.size.x,
-                            fmax(0, _this.size.x - (_this.size.x + _this.position.x - imageData.size.x)));
+                            fmax(0, _this.size.x - (_this.size.x + _this.position.x - UR_SCREEN_WIDTH)));
     int clippedHeight = fmin(_this.size.y,
                              fmax(0, _this.size.y - (_this.size.y + _this.position.y - lowerLineHeight)));
     int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
@@ -783,7 +786,7 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, URImageData imageDa
         {
             for (int j = clippedY; j < clippedHeight; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){_this.position.x + _this.size.x - i, _this.position.y + j}, color);
             }
@@ -793,7 +796,7 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, URImageData imageDa
         {
             for (int j = clippedY; j < clippedHeight; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i];
+                URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){_this.position.x + i, _this.position.y + j}, color);
             }
@@ -805,11 +808,11 @@ void urSpriteDestroy(URSprite _this)
     UR_FREE(_this.imageData);
 }
 
-URSprite urSpriteCreateCkeckerBoard(URPointI size, int checkerWidth, Color color1, Color color2)
+URSprite urSpriteCreateCkeckerBoard(URPointI size, int checkerWidth, URColor color1, URColor color2)
 {
     URSprite _this = {0};
-    Color currentColor = color1;
-    _this.imageData = UR_MALLOC(sizeof(Color) * size.x * size.y);
+    URColor currentColor = color1;
+    _this.imageData = UR_MALLOC(sizeof(URColor) * size.x * size.y);
     _this.size = size;
     for (int y = 0; y < _this.size.y; y++)
     {
@@ -829,7 +832,7 @@ URSprite urSpriteCreateCkeckerBoard(URPointI size, int checkerWidth, Color color
     return _this;
 }
 
-URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, URImageData imageData, double deltaTime)
+URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime)
 {
     if (!_this.animation.isPlaying)
     {
@@ -852,7 +855,7 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, URImageData imag
         int clippedWidth = fmin(_this.position.x + _this.size.y, _this.animation.frameWidth);
 
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y - imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
 
         int clippedX = 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -861,8 +864,8 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, URImageData imag
         {
             for (int j = clippedY; j < clippedHeight; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i +
-                                              _this.animation.currentFrame * _this.animation.frameWidth];
+                URColor color = _this.imageData[j * _this.size.x + i +
+                                                _this.animation.currentFrame * _this.animation.frameWidth];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
             }
@@ -875,10 +878,10 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, URImageData imag
 
         int clippedWidth = fmin(_this.animation.frameWidth,
                                 fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + adjustedPosition.x -
-                                                                      imageData.size.x)));
+                                                                      UR_SCREEN_WIDTH)));
 
         int clippedHeight = fmin(_this.size.y,
-                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - imageData.size.y)));
+                                 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
 
         int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -887,8 +890,8 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, URImageData imag
         {
             for (int j = clippedY; j < clippedHeight; j++)
             {
-                Color color = _this.imageData[j * _this.size.x + i +
-                                              _this.animation.currentFrame * _this.animation.frameWidth];
+                URColor color = _this.imageData[j * _this.size.x + i +
+                                                _this.animation.currentFrame * _this.animation.frameWidth];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
                     urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
             }
