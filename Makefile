@@ -29,8 +29,8 @@ run_main: all
 %.o: %.cpp
 	gcc -c $(FLAGS_RELEASE) $(FLAGS) -lstdc++ -ldl -lasound -DWITH_ALSA=1 $^ -o $@
 
-main.bin: clean src/main.c
-	gcc -g -O0 src/main.c -lm -o main.bin
+main.bin: clean src/mainNew.c
+	gcc -g -O0 src/mainNew.c -lm -o main.bin
 
 web:
 	rm -rf docs

@@ -33,12 +33,6 @@
 
 typedef struct
 {
-    int width;
-    int height;
-} URContext;
-
-typedef struct
-{
     unsigned char r, g, b;
 } URColor;
 
@@ -52,10 +46,10 @@ void UR_PUT_PIXEL(URPointI point, URColor color);
 
 void urPutPixel(URPointI point, URColor color);
 
-void urClearScreen(URContext context, URColor clearColor)
+void urClearScreen(URColor clearColor)
 {
-    for (int x = 0; x < context.width; x++)
-        for (int y = 0; y < context.height; y++)
+    for (int x = 0; x < UR_SCREEN_WIDTH; x++)
+        for (int y = 0; y < UR_SCREEN_HEIGHT; y++)
             UR_PUT_PIXEL((URPointI){x, y}, clearColor);
 }
 
