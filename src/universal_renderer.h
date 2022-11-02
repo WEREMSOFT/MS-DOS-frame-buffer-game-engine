@@ -88,10 +88,8 @@ void urDrawSquare(URPointI topLeftCorner, URPointI size, URColor color)
 
     for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
     {
-
         for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
         {
-
             if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
                 UR_PUT_PIXEL((URPointI){i, j}, color);
         }

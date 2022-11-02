@@ -39,9 +39,9 @@ typedef struct
 } Graphics;
 
 Graphics graphicsCreate(int width, int height, bool fullScreen);
-void graphicsSwapBuffers(Graphics this);
-void graphicsDestroy(Graphics this);
-void graphicsUpdateMouseCoordinates(Graphics *this);
-void graphicsClear(ImageData this);
-Color graphicsGetPixel(ImageData this, PointI point);
+void graphicsSwapBuffers(Graphics _this);
+void graphicsDestroy(Graphics _this);
+void graphicsUpdateMouseCoordinates(Graphics *_this);
+void graphicsClear(ImageData _this);
+Color graphicsGetPixel(ImageData _this, PointI point);
 #endif
