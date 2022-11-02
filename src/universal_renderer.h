@@ -631,13 +631,6 @@ URSprite urSpriteCreate(char *file)
     return _this;
 }
 
-// typedef struct
-// {
-//     URPointI size;
-//     int bufferSize;
-//     URColor *data;
-// } URImageData;
-
 void urSpriteDraw(URSprite _this)
 {
     for (int i = 0; i < _this.size.x; i++)
@@ -663,9 +656,9 @@ void urSpriteDrawClipped(URSprite _this)
         int clippedX = 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i];
                 urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
@@ -684,9 +677,9 @@ void urSpriteDrawClipped(URSprite _this)
         int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i];
                 urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
@@ -698,9 +691,9 @@ void urSpriteDrawClipped(URSprite _this)
 void urSpriteDrawTransparent(URSprite _this)
 {
     if (_this.isFlipped)
-        for (int i = 0; i < _this.size.x; i++)
+        for (int j = 0; j < _this.size.y; j++)
         {
-            for (int j = 0; j < _this.size.y; j++)
+            for (int i = 0; i < _this.size.x; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -708,9 +701,9 @@ void urSpriteDrawTransparent(URSprite _this)
             }
         }
     else
-        for (int i = 0; i < _this.size.x; i++)
+        for (int j = 0; j < _this.size.y; j++)
         {
-            for (int j = 0; j < _this.size.y; j++)
+            for (int i = 0; i < _this.size.x; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -776,9 +769,9 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight
     int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
 
     if (_this.isFlipped)
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -786,9 +779,9 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight
             }
         }
     else
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i];
                 if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -854,9 +847,9 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
         int clippedX = 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i +
                                                 _this.animation.currentFrame * _this.animation.frameWidth];
@@ -880,9 +873,9 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
         int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
         int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-        for (int i = clippedX; i < clippedWidth; i++)
+        for (int j = clippedY; j < clippedHeight; j++)
         {
-            for (int j = clippedY; j < clippedHeight; j++)
+            for (int i = clippedX; i < clippedWidth; i++)
             {
                 URColor color = _this.imageData[j * _this.size.x + i +
                                                 _this.animation.currentFrame * _this.animation.frameWidth];
