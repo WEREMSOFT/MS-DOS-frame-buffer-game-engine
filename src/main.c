@@ -32,15 +32,12 @@ Graphics *globalGraphics;
 void urPutPixel(URPointI point, URColor color)
 {
     int position = (point.x + point.y * UR_SCREEN_WIDTH) % globalGraphics->imageData.bufferSize;
-    // int component = (color.r + color.g + color.b) / 3;
-    // color.r = color.g = color.b = component;
-    // // color.r = color.b = 0;
     globalGraphics->imageData.data[position] = (Color){color.r, color.g, color.b};
 }
 
 void drawPixel(S3L_PixelInfo *p)
 {
-    Color color = {0};
+    URColor color = {0};
     switch (p->triangleID)
     {
     case 1:
@@ -59,7 +56,7 @@ void drawPixel(S3L_PixelInfo *p)
         color.r = color.g = color.b = 0x66;
     }
 
-    graphicsPutPixel(globalGraphics->imageData, (PointI){(int)p->x, p->y}, color);
+    urPutPixel((URPointI){(int)p->x, p->y}, color);
 }
 
 #define TILES_CAPACITY 100
@@ -261,7 +258,7 @@ typedef enum
 
 typedef struct
 {
-    PointI position, size;
+    URPointI position, size;
     char sides;
 } Tile;
 
@@ -278,7 +275,7 @@ typedef struct
     } tiles;
     struct
     {
-        PointI origin, size;
+        URPointI origin, size;
     } newSquare;
     struct
     {
@@ -1227,8 +1224,8 @@ Level2 level2GameLoop(Level2 _this)
 
     // Draw UI
     {
-        graphicsDrawSquareFill(_this.gameState->graphics.imageData, (PointI){1, 1}, (PointI){(int)_this.runningDistance, 10}, (Color){0xFF, 0, 0});
-        graphicsDrawSquare(_this.gameState->graphics.imageData, (PointI){1, 1}, (PointI){317, 10}, (Color){0xCC, 0xCC, 0xCC});
+        urDrawSquareFill((URPointI){1, 1}, (URPointI){(int)_this.runningDistance, 10}, (URColor){0xFF, 0, 0});
+        urDrawSquare((URPointI){1, 1}, (URPointI){317, 10}, (URColor){0xCC, 0xCC, 0xCC});
         _this.runningDistance += (-_this.backgroundSpeedFrame / 100.) * 6;
 
         if (_this.runningDistance > 318)
@@ -1280,8 +1277,8 @@ Level2 level2GameCompleteLoop(Level2 _this)
         if (_this.UIPositionY > 120)
             _this.gameState->shouldStop = true;
 
-        graphicsDrawSquareFill(_this.gameState->graphics.imageData, (PointI){1, 1 + _this.UIPositionY}, (PointI){(int)_this.runningDistance, 10}, (Color){0xFF, 0, 0});
-        graphicsDrawSquare(_this.gameState->graphics.imageData, (PointI){1, 1 + _this.UIPositionY}, (PointI){317, 10}, (Color){0xCC, 0xCC, 0xCC});
+        urDrawSquareFill((URPointI){1, 1 + _this.UIPositionY}, (URPointI){(int)_this.runningDistance, 10}, (URColor){0xFF, 0, 0});
+        urDrawSquare((URPointI){1, 1 + _this.UIPositionY}, (URPointI){317, 10}, (URColor){0xCC, 0xCC, 0xCC});
         char stringToPrint[200] = {0};
         snprintf(stringToPrint, 200, "distance %.2f", _this.runningDistance);
         urPrintString((URPointI){120, 4 + _this.UIPositionY}, stringToPrint, (URColor){0, 0, 0});
@@ -1313,25 +1310,25 @@ void level3DrawTile(Level3 _this, int tileId, char flags)
         return;
     Tile tile = _this.tiles.data[tileId];
     ImageData imageData = _this.gameState->graphics.imageData;
-    PointI position = tile.position;
-    PointI size = tile.size;
+    URPointI position = tile.position;
+    URPointI size = tile.size;
 
     if ((flags & TILE_SELECTED) == TILE_SELECTED)
-        graphicsDrawSquareFill(imageData, position, size, (Color){0xFF, 0xFF, 0});
+        urDrawSquareFill(position, size, (URColor){0xFF, 0xFF, 0});
     else
-        graphicsDrawSquare(imageData, position, size, (Color){0xFF, 0xFF, 0xFF});
+        urDrawSquare(position, size, (URColor){0xFF, 0xFF, 0xFF});
 
     if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-        graphicsDrawLine(imageData, position, (PointI){position.x + size.x, position.y}, (Color){0xFF, 0, 0xFF});
+        urDrawLine(position, (URPointI){position.x + size.x, position.y}, (URColor){0xFF, 0, 0xFF});
 
     if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-        graphicsDrawLine(imageData, (PointI){position.x, position.y + size.y}, (PointI){position.x + size.x, position.y + size.y}, (Color){0xFF, 0, 0xFF});
+        urDrawLine((URPointI){position.x, position.y + size.y}, (URPointI){position.x + size.x, position.y + size.y}, (URColor){0xFF, 0, 0xFF});
 
     if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-        graphicsDrawLine(imageData, (PointI){position.x, position.y}, (PointI){position.x, position.y + size.y}, (Color){0xFF, 0, 0xFF});
+        urDrawLine((URPointI){position.x, position.y}, (URPointI){position.x, position.y + size.y}, (URColor){0xFF, 0, 0xFF});
 
     if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-        graphicsDrawLine(imageData, (PointI){position.x + size.x, position.y}, (PointI){position.x + size.x, position.y + size.y}, (Color){0xFF, 0, 0xFF});
+        urDrawLine((URPointI){position.x + size.x, position.y}, (URPointI){position.x + size.x, position.y + size.y}, (URColor){0xFF, 0, 0xFF});
 }
 
 Level3 level3Create()
@@ -1468,15 +1465,15 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
         _this.state = LEVEL3_STATE_EDIT;
         double x, y;
         glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
-        PointI size = (PointI){(int)x - _this.newSquare.origin.x, (int)y - _this.newSquare.origin.y};
+        URPointI size = (URPointI){(int)x - _this.newSquare.origin.x, (int)y - _this.newSquare.origin.y};
         _this.tiles.data[_this.tiles.size++] = (Tile){.position = _this.newSquare.origin, .size = size, .sides = 0xff};
         _this.activeTile = _this.tiles.size - 1;
     }
 
-    graphicsDrawSquare(_this.gameState->graphics.imageData, _this.newSquare.origin, (PointI){_this.mousePos.x - _this.newSquare.origin.x, _this.mousePos.y - _this.newSquare.origin.y}, (Color){0xff, 0, 0});
-    graphicsDrawLine(_this.gameState->graphics.imageData, (PointI){0, _this.mousePos.y}, (PointI){319, _this.mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
-    graphicsDrawLine(_this.gameState->graphics.imageData, (PointI){_this.mousePos.x, 0}, (PointI){_this.mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
-    graphicsPutPixel(_this.gameState->graphics.imageData, _this.mousePos, (Color){0xFF, 0, 0});
+    urDrawSquare((URPointI){_this.newSquare.origin.x, _this.newSquare.origin.y}, (URPointI){_this.mousePos.x - _this.newSquare.origin.x, _this.mousePos.y - _this.newSquare.origin.y}, (URColor){0xff, 0, 0});
+    urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, (URColor){0xFF, 0xFF, 0xFF});
+    urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, (URColor){0xFF, 0xFF, 0xFF});
+    urPutPixel((URPointI){_this.mousePos.x, _this.mousePos.y}, (URColor){0xFF, 0, 0});
 
     for (int i = 0; i < _this.tiles.size; i++)
         level3DrawTile(_this, i, 0);
@@ -1490,7 +1487,7 @@ Level3 level3ProcessStateEdit(Level3 _this)
         _this.state = LEVEL3_STATE_EDIT_DRAWING;
         double x, y;
         glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
-        _this.newSquare.origin = (PointI){(int)x, (int)y};
+        _this.newSquare.origin = (URPointI){(int)x, (int)y};
     }
 
     if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -1554,8 +1551,8 @@ Level3 level3ProcessStateEdit(Level3 _this)
         else
             level3DrawTile(_this, i, 0);
     }
-    graphicsDrawLine(_this.gameState->graphics.imageData, (PointI){0, _this.mousePos.y}, (PointI){319, _this.mousePos.y}, (Color){0xFF, 0xFF, 0xFF});
-    graphicsDrawLine(_this.gameState->graphics.imageData, (PointI){_this.mousePos.x, 0}, (PointI){_this.mousePos.x, 239}, (Color){0xFF, 0xFF, 0xFF});
+    urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, (URColor){0xFF, 0xFF, 0xFF});
+    urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, (URColor){0xFF, 0xFF, 0xFF});
     return _this;
 }
 
@@ -1568,8 +1565,8 @@ void level3SerializeLevelDesign(Level3 _this)
     {
         Tile tile = _this.tiles.data[i];
         fprintf(fp, "_this.tiles.data[_this.tiles.size++] = (Tile){\n");
-        fprintf(fp, ".position = (PointI){%d, %d},\n", tile.position.x, tile.position.y);
-        fprintf(fp, ".size = (PointI){%d, %d},\n", tile.size.x, tile.size.y);
+        fprintf(fp, ".position = (URPointI){%d, %d},\n", tile.position.x, tile.position.y);
+        fprintf(fp, ".size = (URPointI){%d, %d},\n", tile.size.x, tile.size.y);
         fprintf(fp, ".sides = 0 ");
         if ((tile.sides & SIDE_LEFT) != 0)
         {
