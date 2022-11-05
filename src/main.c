@@ -258,7 +258,13 @@ typedef enum
 
 typedef struct
 {
-    URPointI position, size;
+    URPointI position;
+    URPointI size;
+} RectI;
+
+typedef struct
+{
+    RectI rectangle;
     char sides;
 } Tile;
 
@@ -1310,8 +1316,8 @@ void level3DrawTile(Level3 _this, int tileId, char flags)
         return;
     Tile tile = _this.tiles.data[tileId];
     ImageData imageData = _this.gameState->graphics.imageData;
-    URPointI position = tile.position;
-    URPointI size = tile.size;
+    URPointI position = tile.rectangle.position;
+    URPointI size = tile.rectangle.size;
 
     if ((flags & TILE_SELECTED) == TILE_SELECTED)
         urDrawSquareFill(position, size, (URColor){0xFF, 0xFF, 0});
@@ -1424,25 +1430,25 @@ Level3 level3ProcessStatePlaying(Level3 _this)
             Tile tile = _this.tiles.data[_this.activeTile];
             // restrict position
             if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-                _this.hero.positionF.x = fmax(tile.position.x, _this.hero.positionF.x);
+                _this.hero.positionF.x = fmax(tile.rectangle.position.x, _this.hero.positionF.x);
 
             if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-                _this.hero.positionF.x = fmin(tile.position.x + tile.size.x, _this.hero.positionF.x);
+                _this.hero.positionF.x = fmin(tile.rectangle.position.x + tile.rectangle.size.x, _this.hero.positionF.x);
 
             if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-                _this.hero.positionF.y = fmax(tile.position.y, _this.hero.positionF.y);
+                _this.hero.positionF.y = fmax(tile.rectangle.position.y, _this.hero.positionF.y);
 
             if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-                _this.hero.positionF.y = fmin(tile.position.y + tile.size.y, _this.hero.positionF.y);
+                _this.hero.positionF.y = fmin(tile.rectangle.position.y + tile.rectangle.size.y, _this.hero.positionF.y);
         }
 
         _this.activeTile = -1;
         for (int i = 0; i < _this.tiles.size; i++)
         {
-            if (_this.hero.positionF.x >= _this.tiles.data[i].position.x &&
-                _this.hero.positionF.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
-                _this.hero.positionF.y >= _this.tiles.data[i].position.y &&
-                _this.hero.positionF.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+            if (_this.hero.positionF.x >= _this.tiles.data[i].rectangle.position.x &&
+                _this.hero.positionF.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
+                _this.hero.positionF.y >= _this.tiles.data[i].rectangle.position.y &&
+                _this.hero.positionF.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
             {
                 _this.activeTile = i;
                 break;
@@ -1466,7 +1472,7 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
         double x, y;
         glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
         URPointI size = (URPointI){(int)x - _this.newSquare.origin.x, (int)y - _this.newSquare.origin.y};
-        _this.tiles.data[_this.tiles.size++] = (Tile){.position = _this.newSquare.origin, .size = size, .sides = 0xff};
+        _this.tiles.data[_this.tiles.size++] = (Tile){.rectangle.position = _this.newSquare.origin, .rectangle.size = size, .sides = 0xff};
         _this.activeTile = _this.tiles.size - 1;
     }
 
@@ -1506,10 +1512,10 @@ Level3 level3ProcessStateEdit(Level3 _this)
         bool activeTileAssigned = false;
         for (int i = 0; i < _this.tiles.size; i++)
         {
-            if (_this.mousePos.x >= _this.tiles.data[i].position.x &&
-                _this.mousePos.x <= _this.tiles.data[i].position.x + _this.tiles.data[i].size.x &&
-                _this.mousePos.y >= _this.tiles.data[i].position.y &&
-                _this.mousePos.y <= _this.tiles.data[i].position.y + _this.tiles.data[i].size.y)
+            if (_this.mousePos.x >= _this.tiles.data[i].rectangle.position.x &&
+                _this.mousePos.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
+                _this.mousePos.y >= _this.tiles.data[i].rectangle.position.y &&
+                _this.mousePos.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
             {
                 _this.activeTile = i;
                 activeTileAssigned = true;
@@ -1565,8 +1571,8 @@ void level3SerializeLevelDesign(Level3 _this)
     {
         Tile tile = _this.tiles.data[i];
         fprintf(fp, "_this.tiles.data[_this.tiles.size++] = (Tile){\n");
-        fprintf(fp, ".position = (URPointI){%d, %d},\n", tile.position.x, tile.position.y);
-        fprintf(fp, ".size = (URPointI){%d, %d},\n", tile.size.x, tile.size.y);
+        fprintf(fp, "rectangle.position = (URPointI){%d, %d},\n", tile.rectangle.position.x, tile.rectangle.position.y);
+        fprintf(fp, "rectangle.size = (URPointI){%d, %d},\n", tile.rectangle.size.x, tile.rectangle.size.y);
         fprintf(fp, ".sides = 0 ");
         if ((tile.sides & SIDE_LEFT) != 0)
         {
@@ -1625,6 +1631,33 @@ Level3 level3HeroDraw(Level3 _this)
     else
         urSpriteDrawTransparentClipped(_this.gameState->sprites[_this.hero.spriteId]);
     return _this;
+}
+
+bool hitTestRR(RectI rectangleA, RectI rectangleB)
+{
+    int a[4], b[4];
+
+    a[0] = rectangleA.position.x;
+    a[1] = rectangleA.position.y;
+
+    a[2] = a[0] + rectangleA.size.x;
+    a[3] = a[1] + rectangleA.size.y;
+
+    b[0] = rectangleB.position.x;
+    b[1] = rectangleB.position.y;
+
+    b[2] = b[0] + rectangleB.size.x;
+    b[3] = b[1] + rectangleB.size.y;
+
+    return  a[0] > b[2] || 
+            a[1] > b[3] ||
+            b[2] < a[0] ||
+            b[2] < a[1];
+}
+
+bool hitTestPR(URPointI point, RectI rectangle)
+{
+    return false;
 }
 
 Level3 level3GameLoop(Level3 _this)

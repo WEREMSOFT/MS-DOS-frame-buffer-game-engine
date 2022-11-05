@@ -60,7 +60,7 @@ extern GLint (*glGetUniformLocation)(GLuint program, const GLchar *uniformName);
 extern void (*glUniform1f)(GLuint id, GLfloat x);
 extern void (*glUniform2f)(GLuint id, GLfloat x, GLfloat y);
 extern void (*glUniform3f)(GLuint id, GLfloat x, GLfloat y, GLfloat z);
-// extern void (*glUniform4f)(GLuint id, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+
 extern void (*glUniform2i)(GLuint id, GLuint x, GLuint y);
 extern void (*glUniform1i)(GLuint id, GLint x);
 #define bindFunctionRef(a, b)                 \
@@ -70,7 +70,7 @@ extern void (*glUniform1i)(GLuint id, GLint x);
         p = fp;                               \
     }
 #define bindFunction(a, b) a = (b)glfwGetProcAddress(#a);
-/* ############################################## */
+
 void loadOpenGLFunctions(void);
 #ifdef GL_FUNCTION_LOADER__IMPLEMENTATION
 void (*glDeleteProgram)(GLuint program);
