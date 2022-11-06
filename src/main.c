@@ -1569,8 +1569,8 @@ void level3SerializeLevelDesign(Level3 _this)
     {
         Tile tile = _this.tiles.data[i];
         fprintf(fp, "_this.tiles.data[_this.tiles.size++] = (Tile){\n");
-        fprintf(fp, "rectangle.position = (URPointI){%d, %d},\n", tile.rectangle.position.x, tile.rectangle.position.y);
-        fprintf(fp, "rectangle.size = (URPointI){%d, %d},\n", tile.rectangle.size.x, tile.rectangle.size.y);
+        fprintf(fp, ".rectangle.position = (URPointI){%d, %d},\n", tile.rectangle.position.x, tile.rectangle.position.y);
+        fprintf(fp, ".rectangle.size = (URPointI){%d, %d},\n", tile.rectangle.size.x, tile.rectangle.size.y);
         fprintf(fp, ".sides = 0 ");
         if ((tile.sides & SIDE_LEFT) != 0)
         {
