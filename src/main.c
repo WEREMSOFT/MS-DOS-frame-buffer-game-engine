@@ -268,6 +268,40 @@ typedef struct
     char sides;
 } Tile;
 
+
+bool hitTestRR(RectI rectangleA, RectI rectangleB)
+{
+    int a[4], b[4];
+
+    a[0] = rectangleA.position.x;
+    a[1] = rectangleA.position.y;
+
+    a[2] = a[0] + rectangleA.size.x;
+    a[3] = a[1] + rectangleA.size.y;
+
+    b[0] = rectangleB.position.x;
+    b[1] = rectangleB.position.y;
+
+    b[2] = b[0] + rectangleB.size.x;
+    b[3] = b[1] + rectangleB.size.y;
+
+    return a[0] > b[2] ||
+           a[1] > b[3] ||
+           b[2] < a[0] ||
+           b[2] < a[1];
+}
+
+bool hitTestPR(URPointI point, RectI rectangle)
+{
+    if (point.x >= rectangle.position.x &&
+        point.x <= rectangle.position.x + rectangle.size.x &&
+        point.y >= rectangle.position.y &&
+        point.y <= rectangle.position.y + rectangle.size.y)
+            return true;
+
+    return false;
+}
+
 typedef struct
 {
     struct GameState *gameState;
@@ -285,7 +319,7 @@ typedef struct
     } newSquare;
     struct
     {
-        PointI position;
+        URPointI position;
         PointF positionF;
         PointF speed;
         Level3HeroState state;
@@ -1405,10 +1439,12 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
     _this.activeTile = -1;
     for (int i = 0; i < _this.tiles.size; i++)
     {
-        if (_this.hero.positionF.x >= _this.tiles.data[i].rectangle.position.x &&
-            _this.hero.positionF.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
-            _this.hero.positionF.y >= _this.tiles.data[i].rectangle.position.y &&
-            _this.hero.positionF.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
+        // if (_this.hero.positionF.x >= _this.tiles.data[i].rectangle.position.x &&
+        //     _this.hero.positionF.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
+        //     _this.hero.positionF.y >= _this.tiles.data[i].rectangle.position.y &&
+        //     _this.hero.positionF.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
+        // {
+        if(hitTestPR((URPointI){_this.hero.positionF.x, _this.hero.positionF.y}, _this.tiles.data[i].rectangle))
         {
             _this.activeTile = i;
             break;
@@ -1639,33 +1675,6 @@ Level3 level3HeroDraw(Level3 _this)
     else
         urSpriteDrawTransparentClipped(_this.gameState->sprites[_this.hero.spriteId]);
     return _this;
-}
-
-bool hitTestRR(RectI rectangleA, RectI rectangleB)
-{
-    int a[4], b[4];
-
-    a[0] = rectangleA.position.x;
-    a[1] = rectangleA.position.y;
-
-    a[2] = a[0] + rectangleA.size.x;
-    a[3] = a[1] + rectangleA.size.y;
-
-    b[0] = rectangleB.position.x;
-    b[1] = rectangleB.position.y;
-
-    b[2] = b[0] + rectangleB.size.x;
-    b[3] = b[1] + rectangleB.size.y;
-
-    return a[0] > b[2] ||
-           a[1] > b[3] ||
-           b[2] < a[0] ||
-           b[2] < a[1];
-}
-
-bool hitTestPR(URPointI point, RectI rectangle)
-{
-    return false;
 }
 
 Level3 level3GameLoop(Level3 _this)
