@@ -1794,7 +1794,6 @@ GameState gameMainLoop(GameState gameState)
         gameState = gameStateClickToStart(gameState);
         break;
     case GAME_STATE_LEVEL1_INIT:
-        gameState.sound = soundCreate();
         Soloud_setGlobalVolume(gameState.sound.soloud, 1.);
         soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
         gameState.level1 = level1Create();
@@ -1881,7 +1880,8 @@ int main(void)
     gameState.graphics = graphicsCreate(320, 240, false);
     loadAssets(gameState.sprites);
 
-    // gameState.gameStateEnum = GAME_STATE_LEVEL4_INIT;
+    gameState.sound = soundCreate();
+    gameState.gameStateEnum = GAME_STATE_LEVEL3_INIT;
 
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(emscriptenLoopHandler, 0, false);
