@@ -1377,6 +1377,53 @@ Level3 level3MoveBackground(Level3 _this)
 
     return _this;
 }
+
+Level3 level3HandleCollisionsReactions(Level3 _this)
+{
+
+    PointF lastPosition = _this.hero.positionF;
+
+    _this.hero.isInFloor = false;
+
+    if (_this.activeTile != -1)
+    {
+        Tile tile = _this.tiles.data[_this.activeTile];
+        // restrict position
+        if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
+            _this.hero.positionF.x = fmax(tile.rectangle.position.x, _this.hero.positionF.x);
+
+        if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
+            _this.hero.positionF.x = fmin(tile.rectangle.position.x + tile.rectangle.size.x, _this.hero.positionF.x);
+
+        if ((tile.sides & SIDE_TOP) == SIDE_TOP)
+            _this.hero.positionF.y = fmax(tile.rectangle.position.y, _this.hero.positionF.y);
+
+        if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
+            _this.hero.positionF.y = fmin(tile.rectangle.position.y + tile.rectangle.size.y, _this.hero.positionF.y);
+    }
+
+    _this.activeTile = -1;
+    for (int i = 0; i < _this.tiles.size; i++)
+    {
+        if (_this.hero.positionF.x >= _this.tiles.data[i].rectangle.position.x &&
+            _this.hero.positionF.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
+            _this.hero.positionF.y >= _this.tiles.data[i].rectangle.position.y &&
+            _this.hero.positionF.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
+        {
+            _this.activeTile = i;
+            break;
+        }
+    }
+
+    if (lastPosition.y != _this.hero.positionF.y)
+    {
+        _this.hero.isInFloor = true;
+        _this.hero.speed.y = 0.;
+    }
+
+    return _this;
+}
+
 Level3 level3ProcessStatePlaying(Level3 _this)
 {
     _this.hero.isWalking = false;
@@ -1420,47 +1467,8 @@ Level3 level3ProcessStatePlaying(Level3 _this)
     _this.hero.speed.y += _this.hero.gravity * _this.gameState->deltaTime;
     _this.hero.positionF.y += _this.hero.speed.y * _this.gameState->deltaTime;
     // Handle collisions
-    {
-        PointF lastPosition = _this.hero.positionF;
+    _this = level3HandleCollisionsReactions(_this);
 
-        _this.hero.isInFloor = false;
-
-        if (_this.activeTile != -1)
-        {
-            Tile tile = _this.tiles.data[_this.activeTile];
-            // restrict position
-            if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-                _this.hero.positionF.x = fmax(tile.rectangle.position.x, _this.hero.positionF.x);
-
-            if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-                _this.hero.positionF.x = fmin(tile.rectangle.position.x + tile.rectangle.size.x, _this.hero.positionF.x);
-
-            if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-                _this.hero.positionF.y = fmax(tile.rectangle.position.y, _this.hero.positionF.y);
-
-            if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-                _this.hero.positionF.y = fmin(tile.rectangle.position.y + tile.rectangle.size.y, _this.hero.positionF.y);
-        }
-
-        _this.activeTile = -1;
-        for (int i = 0; i < _this.tiles.size; i++)
-        {
-            if (_this.hero.positionF.x >= _this.tiles.data[i].rectangle.position.x &&
-                _this.hero.positionF.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
-                _this.hero.positionF.y >= _this.tiles.data[i].rectangle.position.y &&
-                _this.hero.positionF.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
-            {
-                _this.activeTile = i;
-                break;
-            }
-        }
-
-        if (lastPosition.y != _this.hero.positionF.y)
-        {
-            _this.hero.isInFloor = true;
-            _this.hero.speed.y = 0.;
-        }
-    }
     return _this;
 }
 
@@ -1649,10 +1657,10 @@ bool hitTestRR(RectI rectangleA, RectI rectangleB)
     b[2] = b[0] + rectangleB.size.x;
     b[3] = b[1] + rectangleB.size.y;
 
-    return  a[0] > b[2] || 
-            a[1] > b[3] ||
-            b[2] < a[0] ||
-            b[2] < a[1];
+    return a[0] > b[2] ||
+           a[1] > b[3] ||
+           b[2] < a[0] ||
+           b[2] < a[1];
 }
 
 bool hitTestPR(URPointI point, RectI rectangle)
