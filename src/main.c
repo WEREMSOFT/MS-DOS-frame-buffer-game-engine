@@ -319,6 +319,7 @@ typedef struct
     } newSquare;
     struct
     {
+        RectI collisionBox;
         URPointI position;
         PointF positionF;
         PointF speed;
@@ -866,7 +867,7 @@ Level1 level1HandleControls(Level1 _this)
     return _this;
 }
 
-Level1 level1GameLoop(Level1 _this)
+Level1 level1Update(Level1 _this)
 {
     // Enemy selection and trigger to attack
     if (glfwGetTime() - _this.elapsedTime > .5)
@@ -1164,7 +1165,7 @@ Level2 level2DelayedJumpForDinosHandler(Level2 _this)
     return _this;
 }
 
-Level2 level2GameLoop(Level2 _this)
+Level2 level2Update(Level2 _this)
 {
     _this.backgroundSpeed += _this.backgroundAcceleration * _this.gameState->deltaTime;
     _this.backgroundSpeedFrame = _this.gameState->deltaTime * _this.backgroundSpeed;
@@ -1375,6 +1376,7 @@ Level3 level3Create()
 {
     Level3 _this = {0};
     _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
+    _this.hero.collisionBox = (RectI){{-10, -10}, {20, 2}};
     _this.hero.gravity = 1000.;
     _this.hero.positionF.x = 100.;
     _this.hero.positionF.y = 100.;
@@ -1439,11 +1441,6 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
     _this.activeTile = -1;
     for (int i = 0; i < _this.tiles.size; i++)
     {
-        // if (_this.hero.positionF.x >= _this.tiles.data[i].rectangle.position.x &&
-        //     _this.hero.positionF.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
-        //     _this.hero.positionF.y >= _this.tiles.data[i].rectangle.position.y &&
-        //     _this.hero.positionF.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
-        // {
         if(hitTestPR((URPointI){_this.hero.positionF.x, _this.hero.positionF.y}, _this.tiles.data[i].rectangle))
         {
             _this.activeTile = i;
@@ -1677,7 +1674,7 @@ Level3 level3HeroDraw(Level3 _this)
     return _this;
 }
 
-Level3 level3GameLoop(Level3 _this)
+Level3 level3Update(Level3 _this)
 {
     _this = level3MoveBackground(_this);
 
@@ -1772,7 +1769,7 @@ Level4 level4Create(Level4 *_this)
     return *_this;
 }
 
-Level4 level4GameLoop(Level4 _this)
+Level4 level4Update(Level4 _this)
 {
     graphicsClear(_this.gameState->graphics.imageData);
 
@@ -1846,7 +1843,7 @@ GameState gameMainLoop(GameState gameState)
         gameState.level1 = level1Tutorial(gameState.level1);
         break;
     case GAME_STATE_LEVEL1_PLAY:
-        gameState.level1 = level1GameLoop(gameState.level1);
+        gameState.level1 = level1Update(gameState.level1);
         break;
     case GAME_STATE_LEVEL1_EXIT:
         gameState.level1 = level1GameCompleteLoop(gameState.level1);
@@ -1861,7 +1858,7 @@ GameState gameMainLoop(GameState gameState)
         gameState.level2 = level2TutorialLoop(gameState.level2);
         break;
     case GAME_STATE_LEVEL2_PLAY:
-        gameState.level2 = level2GameLoop(gameState.level2);
+        gameState.level2 = level2Update(gameState.level2);
         break;
     case GAME_STATE_LEVEL2_EXIT:
         gameState.level2 = level2GameCompleteLoop(gameState.level2);
@@ -1873,7 +1870,7 @@ GameState gameMainLoop(GameState gameState)
         gameState.gameStateEnum++;
         break;
     case GAME_STATE_LEVEL3_PLAY:
-        gameState.level3 = level3GameLoop(gameState.level3);
+        gameState.level3 = level3Update(gameState.level3);
         break;
     case GAME_STATE_LEVEL4_INIT:
         gameState.level4 = level4Create(&gameState._self->level4);
@@ -1881,7 +1878,7 @@ GameState gameMainLoop(GameState gameState)
         gameState.gameStateEnum++;
         break;
     case GAME_STATE_LEVEL4_PLAY:
-        gameState.level4 = level4GameLoop(gameState.level4);
+        gameState.level4 = level4Update(gameState.level4);
         break;
     default:
         gameState.shouldQuit = true;
