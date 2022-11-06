@@ -1376,7 +1376,7 @@ Level3 level3Create()
 {
     Level3 _this = {0};
     _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
-    _this.hero.collisionBox = (RectI){{-10, -10}, {20, 2}};
+    _this.hero.collisionBox = (RectI){{-8, -20}, {16, 20}};
     _this.hero.gravity = 1000.;
     _this.hero.positionF.x = 100.;
     _this.hero.positionF.y = 100.;
@@ -1671,6 +1671,14 @@ Level3 level3HeroDraw(Level3 _this)
         _this.gameState->sprites[_this.hero.spriteId] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[_this.hero.spriteId], _this.gameState->deltaTime);
     else
         urSpriteDrawTransparentClipped(_this.gameState->sprites[_this.hero.spriteId]);
+
+    urDrawSquare(
+        (URPointI){
+            _this.hero.collisionBox.position.x + _this.hero.positionF.x,
+            _this.hero.collisionBox.position.y + _this.hero.positionF.y,
+        },
+        _this.hero.collisionBox.size, 
+    (URColor){0xFF, 0, 0});
     return _this;
 }
 
