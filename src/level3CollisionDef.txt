@@ -139,9 +139,4 @@ _this.tiles.data[_this.tiles.size++] = (Tile){
 .rectangle.size = (URPointI){11, 30},
 .sides = 0 | SIDE_RIGHT }; 
 
- _this.tiles.data[_this.tiles.size++] = (Tile){
-.rectangle.position = (URPointI){78, 58},
-.rectangle.size = (URPointI){51, 32},
-.sides = 0 | SIDE_LEFT | SIDE_RIGHT | SIDE_TOP | SIDE_BOTTOM}; 
-
  

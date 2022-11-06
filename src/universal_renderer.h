@@ -908,10 +908,7 @@ bool urHitTestRectRect(URRectI rectangleA, URRectI rectangleB)
     b[2] = b[0] + rectangleB.size.x;
     b[3] = b[1] + rectangleB.size.y;
 
-    return a[0] > b[2] ||
-           a[1] > b[3] ||
-           b[2] < a[0] ||
-           b[2] < a[1];
+    return !(a[1] > b[3] || b[1] > a[3]) && !(a[0] > b[2] || b[0] > a[2]);
 }
 
 bool urHitTestPointRect(URPointI point, URRectI rectangle)
