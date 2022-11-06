@@ -41,6 +41,12 @@ typedef struct
     int x, y;
 } URPointI;
 
+typedef struct
+{
+    URPointI position;
+    URPointI size;
+} URRectI;
+
 // forward declaration
 void UR_PUT_PIXEL(URPointI point, URColor color);
 
@@ -884,5 +890,40 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
         return _this;
     }
 }
+
+
+bool urHitTestRectRect(URRectI rectangleA, URRectI rectangleB)
+{
+    int a[4], b[4];
+
+    a[0] = rectangleA.position.x;
+    a[1] = rectangleA.position.y;
+
+    a[2] = a[0] + rectangleA.size.x;
+    a[3] = a[1] + rectangleA.size.y;
+
+    b[0] = rectangleB.position.x;
+    b[1] = rectangleB.position.y;
+
+    b[2] = b[0] + rectangleB.size.x;
+    b[3] = b[1] + rectangleB.size.y;
+
+    return a[0] > b[2] ||
+           a[1] > b[3] ||
+           b[2] < a[0] ||
+           b[2] < a[1];
+}
+
+bool urHitTestPointRect(URPointI point, URRectI rectangle)
+{
+    if (point.x >= rectangle.position.x &&
+        point.x <= rectangle.position.x + rectangle.size.x &&
+        point.y >= rectangle.position.y &&
+        point.y <= rectangle.position.y + rectangle.size.y)
+            return true;
+
+    return false;
+}
+
 
 #endif

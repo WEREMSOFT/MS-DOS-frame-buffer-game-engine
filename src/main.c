@@ -258,49 +258,9 @@ typedef enum
 
 typedef struct
 {
-    URPointI position;
-    URPointI size;
-} RectI;
-
-typedef struct
-{
-    RectI rectangle;
+    URRectI rectangle;
     char sides;
 } Tile;
-
-
-bool hitTestRR(RectI rectangleA, RectI rectangleB)
-{
-    int a[4], b[4];
-
-    a[0] = rectangleA.position.x;
-    a[1] = rectangleA.position.y;
-
-    a[2] = a[0] + rectangleA.size.x;
-    a[3] = a[1] + rectangleA.size.y;
-
-    b[0] = rectangleB.position.x;
-    b[1] = rectangleB.position.y;
-
-    b[2] = b[0] + rectangleB.size.x;
-    b[3] = b[1] + rectangleB.size.y;
-
-    return a[0] > b[2] ||
-           a[1] > b[3] ||
-           b[2] < a[0] ||
-           b[2] < a[1];
-}
-
-bool hitTestPR(URPointI point, RectI rectangle)
-{
-    if (point.x >= rectangle.position.x &&
-        point.x <= rectangle.position.x + rectangle.size.x &&
-        point.y >= rectangle.position.y &&
-        point.y <= rectangle.position.y + rectangle.size.y)
-            return true;
-
-    return false;
-}
 
 typedef struct
 {
@@ -319,7 +279,7 @@ typedef struct
     } newSquare;
     struct
     {
-        RectI collisionBox;
+        URRectI collisionBox;
         URPointI position;
         PointF positionF;
         PointF speed;
@@ -332,7 +292,7 @@ typedef struct
         bool isFlipped;
     } hero;
     bool showCollisions;
-    PointI mousePos;
+    URPointI mousePos;
 } Level3;
 
 typedef struct
@@ -1376,7 +1336,7 @@ Level3 level3Create()
 {
     Level3 _this = {0};
     _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
-    _this.hero.collisionBox = (RectI){{-8, -20}, {16, 20}};
+    _this.hero.collisionBox = (URRectI){{-8, -20}, {16, 20}};
     _this.hero.gravity = 1000.;
     _this.hero.positionF.x = 100.;
     _this.hero.positionF.y = 100.;
@@ -1441,7 +1401,7 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
     _this.activeTile = -1;
     for (int i = 0; i < _this.tiles.size; i++)
     {
-        if(hitTestPR((URPointI){_this.hero.positionF.x, _this.hero.positionF.y}, _this.tiles.data[i].rectangle))
+        if(urHitTestPointRect((URPointI){_this.hero.positionF.x, _this.hero.positionF.y}, _this.tiles.data[i].rectangle))
         {
             _this.activeTile = i;
             break;
@@ -1553,10 +1513,7 @@ Level3 level3ProcessStateEdit(Level3 _this)
         bool activeTileAssigned = false;
         for (int i = 0; i < _this.tiles.size; i++)
         {
-            if (_this.mousePos.x >= _this.tiles.data[i].rectangle.position.x &&
-                _this.mousePos.x <= _this.tiles.data[i].rectangle.position.x + _this.tiles.data[i].rectangle.size.x &&
-                _this.mousePos.y >= _this.tiles.data[i].rectangle.position.y &&
-                _this.mousePos.y <= _this.tiles.data[i].rectangle.position.y + _this.tiles.data[i].rectangle.size.y)
+            if(urHitTestPointRect(_this.mousePos, _this.tiles.data[i].rectangle))
             {
                 _this.activeTile = i;
                 activeTileAssigned = true;
@@ -1693,7 +1650,7 @@ Level3 level3Update(Level3 _this)
     {
         double x, y;
         glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
-        _this.mousePos = (PointI){fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
+        _this.mousePos = (URPointI){fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
     }
 
     // Level state handling
