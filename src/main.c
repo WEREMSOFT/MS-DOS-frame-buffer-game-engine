@@ -279,7 +279,6 @@ typedef struct
     } newSquare;
     struct
     {
-        URRectI collisionBox;
         URPointI position;
         PointF positionF;
         PointF speed;
@@ -1336,7 +1335,6 @@ Level3 level3Create()
 {
     Level3 _this = {0};
     _this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
-    _this.hero.collisionBox = (URRectI){{-8, -20}, {16, 20}};
     _this.hero.gravity = 1000.;
     _this.hero.positionF.x = 100.;
     _this.hero.positionF.y = 100.;
@@ -1438,10 +1436,10 @@ Level3 level3ProcessStatePlaying(Level3 _this)
         _this.hero.isWalking = true;
 
     if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_E))
+    {
+        _this.showCollisions = true;
         _this.state = LEVEL3_STATE_EDIT;
-
-    if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_H))
-        _this.showCollisions = !_this.showCollisions;
+    }
 
     for (int i = 0; i < _this.tiles.size; i++)
     {
@@ -1504,16 +1502,16 @@ Level3 level3ProcessStateEdit(Level3 _this)
         _this.hero.positionF.x -= _this.hero.speed.x * _this.gameState->deltaTime;
 
     if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_E))
+    {
+        _this.showCollisions = false;
         _this.state = LEVEL3_STATE_PLAYING;
-
-    if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_H))
-        _this.showCollisions = !_this.showCollisions;
+    }
 
     {
         bool activeTileAssigned = false;
         for (int i = 0; i < _this.tiles.size; i++)
         {
-            if(urHitTestPointRect(_this.mousePos, _this.tiles.data[i].rectangle))
+            if(urHitTestRectRect((URRectI){.position = _this.mousePos, .size = (URPointI){10, 10}}, _this.tiles.data[i].rectangle))
             {
                 _this.activeTile = i;
                 activeTileAssigned = true;
@@ -1557,6 +1555,21 @@ Level3 level3ProcessStateEdit(Level3 _this)
     }
     urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, (URColor){0xFF, 0xFF, 0xFF});
     urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, (URColor){0xFF, 0xFF, 0xFF});
+
+    char *editHelp[] = {
+        "e edit",
+        "q save level",
+        "tab start end draw",
+        "wasd tell wich side is the constrain",
+        "r remove"};
+
+    urPrintString((URPointI){1, 1}, editHelp[0], (URColor){0xFF, 0xFF, 0xFF});
+    urPrintString((URPointI){1, 10}, editHelp[1], (URColor){0xFF, 0xFF, 0xFF});
+    urPrintString((URPointI){1, 20}, editHelp[2], (URColor){0xFF, 0xFF, 0xFF});
+    urPrintString((URPointI){1, 30}, editHelp[3], (URColor){0xFF, 0xFF, 0xFF});
+    urPrintString((URPointI){1, 40}, editHelp[4], (URColor){0xFF, 0xFF, 0xFF});
+
+
     return _this;
 }
 
@@ -1629,13 +1642,6 @@ Level3 level3HeroDraw(Level3 _this)
     else
         urSpriteDrawTransparentClipped(_this.gameState->sprites[_this.hero.spriteId]);
 
-    urDrawSquare(
-        (URPointI){
-            _this.hero.collisionBox.position.x + _this.hero.positionF.x,
-            _this.hero.collisionBox.position.y + _this.hero.positionF.y,
-        },
-        _this.hero.collisionBox.size, 
-    (URColor){0xFF, 0, 0});
     return _this;
 }
 
@@ -1674,6 +1680,16 @@ Level3 level3Update(Level3 _this)
 
     // setup hero and draw it
     _this = level3HeroDraw(_this);
+
+    // Draw square on the mouse position
+    urDrawSquare(
+    (URPointI){
+        _this.mousePos.x,
+        _this.mousePos.y
+    },
+    (URPointI){10, 10}, 
+    (URColor){0xFF, 0, 0});
+
     return _this;
 }
 
