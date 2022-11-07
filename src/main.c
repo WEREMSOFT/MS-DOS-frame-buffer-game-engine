@@ -1485,6 +1485,60 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
     return _this;
 }
 
+Level3 level3SelectActiveTileWithMouse(Level3 _this)
+{
+    bool activeTileAssigned = false;
+    for (int i = 0; i < _this.tiles.size; i++)
+    {
+        if (urHitTestRectRect((URRectI){.position = _this.mousePos, .size = (URPointI){10, 10}}, _this.tiles.data[i].rectangle))
+        {
+            _this.activeTile = i;
+            activeTileAssigned = true;
+            break;
+        }
+    }
+    if (!activeTileAssigned)
+        _this.activeTile = -1;
+    return _this;
+}
+
+void level3DrawEditorInstructions()
+{
+    static int gameColor = 0;
+    static float elapsedTime = 0;
+    URColor static textColor = {255, 255, 255};
+    
+    elapsedTime += getDeltaTime();
+
+    if (elapsedTime > 0.25)
+    {
+        elapsedTime = 0;
+        gameColor = (gameColor + 1) % 2;
+        switch (gameColor)
+        {
+        case 0:
+            textColor = UR_WHITE;
+            break;
+        case 1:
+            textColor = UR_BLACK;
+            break;
+        }
+    }
+
+    char *editHelp[] = {
+    "e edit",
+    "q save level",
+    "tab start end draw",
+    "wasd tell wich side is the constrain",
+    "r remove"};
+
+    urPrintString((URPointI){1, 1}, editHelp[0], textColor);
+    urPrintString((URPointI){1, 10}, editHelp[1], textColor);
+    urPrintString((URPointI){1, 20}, editHelp[2], textColor);
+    urPrintString((URPointI){1, 30}, editHelp[3], textColor);
+    urPrintString((URPointI){1, 40}, editHelp[4], textColor);
+}
+
 Level3 level3ProcessStateEdit(Level3 _this)
 {
     if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_TAB))
@@ -1495,32 +1549,12 @@ Level3 level3ProcessStateEdit(Level3 _this)
         _this.newSquare.origin = (URPointI){(int)x, (int)y};
     }
 
-    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        _this.hero.positionF.x += _this.hero.speed.x * _this.gameState->deltaTime;
-
-    if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        _this.hero.positionF.x -= _this.hero.speed.x * _this.gameState->deltaTime;
-
     if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_E))
     {
         _this.showCollisions = false;
         _this.state = LEVEL3_STATE_PLAYING;
     }
-
-    {
-        bool activeTileAssigned = false;
-        for (int i = 0; i < _this.tiles.size; i++)
-        {
-            if(urHitTestRectRect((URRectI){.position = _this.mousePos, .size = (URPointI){10, 10}}, _this.tiles.data[i].rectangle))
-            {
-                _this.activeTile = i;
-                activeTileAssigned = true;
-                break;
-            }
-        }
-        if (!activeTileAssigned)
-            _this.activeTile = -1;
-    }
+    _this = level3SelectActiveTileWithMouse(_this);
 
     for (int i = 0; i < _this.tiles.size; i++)
     {
@@ -1556,19 +1590,7 @@ Level3 level3ProcessStateEdit(Level3 _this)
     urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, (URColor){0xFF, 0xFF, 0xFF});
     urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, (URColor){0xFF, 0xFF, 0xFF});
 
-    char *editHelp[] = {
-        "e edit",
-        "q save level",
-        "tab start end draw",
-        "wasd tell wich side is the constrain",
-        "r remove"};
-
-    urPrintString((URPointI){1, 1}, editHelp[0], (URColor){0xFF, 0xFF, 0xFF});
-    urPrintString((URPointI){1, 10}, editHelp[1], (URColor){0xFF, 0xFF, 0xFF});
-    urPrintString((URPointI){1, 20}, editHelp[2], (URColor){0xFF, 0xFF, 0xFF});
-    urPrintString((URPointI){1, 30}, editHelp[3], (URColor){0xFF, 0xFF, 0xFF});
-    urPrintString((URPointI){1, 40}, editHelp[4], (URColor){0xFF, 0xFF, 0xFF});
-
+    level3DrawEditorInstructions();
 
     return _this;
 }
@@ -1695,12 +1717,13 @@ Level3 level3Update(Level3 _this)
 
 GameState gameStateClickToStart(GameState _this)
 {
-    static int gameColor = 0;
-    static float elapsedTime = 0;
     graphicsClear(_this.graphics.imageData);
     URColor static textColor = {255, 255, 255};
     char *clickToStart = "click to start";
 
+    static int gameColor = 0;
+    static float elapsedTime = 0;
+    
     elapsedTime += getDeltaTime();
 
     if (elapsedTime > 0.0001)

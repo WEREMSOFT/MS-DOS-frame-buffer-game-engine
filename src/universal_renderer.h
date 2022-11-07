@@ -36,6 +36,13 @@ typedef struct
     unsigned char r, g, b;
 } URColor;
 
+#define UR_RED (URColor){0xFF, 0, 0}
+#define UR_WHITE (URColor){0xFF, 0xFF, 0xFF}
+#define UR_BLUE (URColor){0, 0, 0xFF}
+#define UR_GREEN (URColor){0, 0xFF, 0}
+#define UR_PURPLE (URColor){0xFF, 0, 0xFF}
+#define UR_BLACK (URColor){0, 0, 0}
+
 typedef struct
 {
     int x, y;

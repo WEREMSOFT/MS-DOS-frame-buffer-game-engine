@@ -304,3 +304,104 @@ Average line score:         6
 50%-ile score:              5 (half in higher score procs)
 75%-ile score:              7 (25% in higher score procs)
 Highest score:             10 (level3ProcessStateEdit() in src/main.c)
+
+7a51263527c9c02d7a0ad6c7239926b53489acfa - added editor instructions, collisions only display in edit mode
+Complexity Scores
+Score | ln-ct | nc-lns| file-name(line): proc-name
+    3      44      32   src/main.c(1649): level3Update
+    3      55      32   src/main.c(1243): level2GameCompleteLoop
+    3      37      33   src/main.c(691): level1InitEnemies
+    3      44      33   src/main.c(1419): level3ProcessStatePlaying
+    4      18      16   src/main.c(1467): level3ProcesStateEditDrawing
+    4      39      29   src/main.c(1376): level3HandleCollisionsReactions
+    4      34      33   src/main.c(1577): level3SerializeLevelDesign
+    4      65      49   src/main.c(1001): level2TutorialLoop
+    5      36      32   src/main.c(1070): level2HandleObstaclesAndCollisions
+    5      36      33   src/main.c(1697): gameStateClickToStart
+    5      62      54   src/main.c(764): level1HandleControls
+    5     113      94   src/main.c(433): loadAssets
+    6     111      82   src/main.c(1128): level2Update
+    7      70      69   src/main.c(1803): gameMainLoop
+    8      77      56   src/main.c(830): level1Update
+   12      84      70   src/main.c(1489): level3ProcessStateEdit
+
+Complexity Histogram
+Score-Range  Lin-Ct
+    0-9         677 ************************************************************
+   10-19         70 ******
+
+Scored procedure ct:       16
+Non-comment line ct:      747
+Average line score:         6
+25%-ile score:              4 (75% in higher score procs)
+50%-ile score:              5 (half in higher score procs)
+75%-ile score:              7 (25% in higher score procs)
+Highest score:             12 (level3ProcessStateEdit() in src/main.c)
+
+7a51263527c9c02d7a0ad6c7239926b53489acfa - added editor instructions, collisions only display in edit mode
+Complexity Scores
+Score | ln-ct | nc-lns| file-name(line): proc-name
+    3      13      13   src/main.c(1489): level3SelectActiveTileWithMouse
+    3      44      32   src/main.c(1671): level3Update
+    3      55      32   src/main.c(1243): level2GameCompleteLoop
+    3      37      33   src/main.c(691): level1InitEnemies
+    3      44      33   src/main.c(1419): level3ProcessStatePlaying
+    4      18      16   src/main.c(1467): level3ProcesStateEditDrawing
+    4      33      29   src/main.c(1506): level3DrawEditorInstructions
+    4      39      29   src/main.c(1376): level3HandleCollisionsReactions
+    4      34      33   src/main.c(1599): level3SerializeLevelDesign
+    4      65      49   src/main.c(1001): level2TutorialLoop
+    5      36      32   src/main.c(1070): level2HandleObstaclesAndCollisions
+    5      37      33   src/main.c(1719): gameStateClickToStart
+    5      62      54   src/main.c(764): level1HandleControls
+    5     113      94   src/main.c(433): loadAssets
+    6     111      82   src/main.c(1128): level2Update
+    7      70      69   src/main.c(1826): gameMainLoop
+    8      52      43   src/main.c(1543): level3ProcessStateEdit
+    8      77      56   src/main.c(830): level1Update
+
+Complexity Histogram
+Score-Range  Lin-Ct
+    0-9         762 ************************************************************
+
+Scored procedure ct:       18
+Non-comment line ct:      762
+Average line score:         5
+25%-ile score:              4 (75% in higher score procs)
+50%-ile score:              5 (half in higher score procs)
+75%-ile score:              6 (25% in higher score procs)
+Highest score:              8 (level1Update() in src/main.c)
+
+c1fba0360285043921bd777804001238e9c21107 - added color constants
+Complexity Scores
+Score | ln-ct | nc-lns| file-name(line): proc-name
+    3      13      13   src/main.c(1489): level3SelectActiveTileWithMouse
+    3      44      32   src/main.c(1671): level3Update
+    3      55      32   src/main.c(1243): level2GameCompleteLoop
+    3      37      33   src/main.c(691): level1InitEnemies
+    3      44      33   src/main.c(1419): level3ProcessStatePlaying
+    4      18      16   src/main.c(1467): level3ProcesStateEditDrawing
+    4      33      29   src/main.c(1506): level3DrawEditorInstructions
+    4      39      29   src/main.c(1376): level3HandleCollisionsReactions
+    4      34      33   src/main.c(1599): level3SerializeLevelDesign
+    4      65      49   src/main.c(1001): level2TutorialLoop
+    5      36      32   src/main.c(1070): level2HandleObstaclesAndCollisions
+    5      37      33   src/main.c(1719): gameStateClickToStart
+    5      62      54   src/main.c(764): level1HandleControls
+    5     113      94   src/main.c(433): loadAssets
+    6     111      82   src/main.c(1128): level2Update
+    7      70      69   src/main.c(1826): gameMainLoop
+    8      52      43   src/main.c(1543): level3ProcessStateEdit
+    8      77      56   src/main.c(830): level1Update
+
+Complexity Histogram
+Score-Range  Lin-Ct
+    0-9         762 ************************************************************
+
+Scored procedure ct:       18
+Non-comment line ct:      762
+Average line score:         5
+25%-ile score:              4 (75% in higher score procs)
+50%-ile score:              5 (half in higher score procs)
+75%-ile score:              6 (25% in higher score procs)
+Highest score:              8 (level1Update() in src/main.c)
