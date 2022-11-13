@@ -3,16 +3,20 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
+#ifndef Color
 typedef struct
 {
     unsigned char r, g, b;
 } Color;
+#endif
 
+#ifndef PointI
 typedef struct
 {
     int x;
     int y;
 } PointI;
+#endif
 
 typedef struct
 {
