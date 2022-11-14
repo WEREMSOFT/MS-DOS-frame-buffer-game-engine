@@ -1440,12 +1440,21 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
 	}
 
 	_this.activeTile = -1;
+	URRectI heroCollisionRect = 
+	{
+		(URPointI){
+			_this.hero.collisionRect.position.x + _this.hero.positionF.x,
+			_this.hero.collisionRect.position.y + _this.hero.positionF.y,
+		},
+		_this.hero.collisionRect.size
+	};
+	
 	for (int i = 0; i < _this.tiles.size; i++)
 	{
-		if (urHitTestPointRect((URPointI){
-			_this.hero.positionF.x, 
-			_this.hero.positionF.y}, 
-			_this.tiles.data[i].rectangle))
+		if (urHitTestRectRect(
+			heroCollisionRect,
+			_this.tiles.data[i].rectangle
+		))
 		{
 			_this.activeTile = i;
 			break;
@@ -1539,7 +1548,7 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 			_this.mousePos.x - _this.newSquare.origin.x, 
 			_this.mousePos.y - _this.newSquare.origin.y
 			}, UR_RED);
-			
+
 	urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, UR_WHITE);
 	urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, UR_WHITE);
 	urPutPixel(_this.mousePos, UR_RED);
