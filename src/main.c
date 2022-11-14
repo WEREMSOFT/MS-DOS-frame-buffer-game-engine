@@ -1363,6 +1363,7 @@ void level3DrawTile(Level3 _this, int tileId, char flags)
 Level3 level3Create()
 {
 	Level3 _this = {0};
+	_this.hero.collisionRect = (URRectI){-10, -10, 20, 10};
 	_this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
 	_this.hero.gravity = 1000.;
 	_this.hero.positionF.x = 100.;
@@ -1403,32 +1404,48 @@ Level3 level3MoveBackground(Level3 _this)
 
 Level3 level3HandleCollisionsReactions(Level3 _this)
 {
-
 	PointF lastPosition = _this.hero.positionF;
-
 	_this.hero.isInFloor = false;
-
 	if (_this.activeTile != -1)
 	{
 		Tile tile = _this.tiles.data[_this.activeTile];
 		// restrict position
 		if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-			_this.hero.positionF.x = fmax(tile.rectangle.position.x, _this.hero.positionF.x);
+			_this.hero.positionF.x = 
+			fmax(
+				tile.rectangle.position.x, 
+				_this.hero.positionF.x
+				);
 
 		if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-			_this.hero.positionF.x = fmin(tile.rectangle.position.x + tile.rectangle.size.x, _this.hero.positionF.x);
+			_this.hero.positionF.x = 
+			fmin(
+				tile.rectangle.position.x + tile.rectangle.size.x, 
+				_this.hero.positionF.x
+				);
 
 		if ((tile.sides & SIDE_TOP) == SIDE_TOP)
-			_this.hero.positionF.y = fmax(tile.rectangle.position.y, _this.hero.positionF.y);
+			_this.hero.positionF.y = 
+			fmax(
+				tile.rectangle.position.y, 
+				_this.hero.positionF.y
+				);
 
 		if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
-			_this.hero.positionF.y = fmin(tile.rectangle.position.y + tile.rectangle.size.y, _this.hero.positionF.y);
+			_this.hero.positionF.y = 
+			fmin(
+				tile.rectangle.position.y + tile.rectangle.size.y, 
+				_this.hero.positionF.y
+				);
 	}
 
 	_this.activeTile = -1;
 	for (int i = 0; i < _this.tiles.size; i++)
 	{
-		if (urHitTestPointRect((URPointI){_this.hero.positionF.x, _this.hero.positionF.y}, _this.tiles.data[i].rectangle))
+		if (urHitTestPointRect((URPointI){
+			_this.hero.positionF.x, 
+			_this.hero.positionF.y}, 
+			_this.tiles.data[i].rectangle))
 		{
 			_this.activeTile = i;
 			break;
@@ -1500,15 +1517,32 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 		_this.state = LEVEL3_STATE_EDIT;
 		double x, y;
 		glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
-		URPointI size = (URPointI){(int)x - _this.newSquare.origin.x, (int)y - _this.newSquare.origin.y};
-		_this.tiles.data[_this.tiles.size++] = (Tile){.rectangle.position = _this.newSquare.origin, .rectangle.size = size, .sides = 0xff};
+		
+		URPointI size = 
+		{
+			x - _this.newSquare.origin.x, 
+			y - _this.newSquare.origin.y
+		};
+
+		_this.tiles.data[_this.tiles.size++] = 
+			(Tile)
+			{
+				.rectangle.position = _this.newSquare.origin, 
+				.rectangle.size = size, .sides = 0xff
+			};
+
 		_this.activeTile = _this.tiles.size - 1;
 	}
 
-	urDrawSquare((URPointI){_this.newSquare.origin.x, _this.newSquare.origin.y}, (URPointI){_this.mousePos.x - _this.newSquare.origin.x, _this.mousePos.y - _this.newSquare.origin.y}, UR_RED);
+	urDrawSquare(_this.newSquare.origin, 
+		(URPointI){
+			_this.mousePos.x - _this.newSquare.origin.x, 
+			_this.mousePos.y - _this.newSquare.origin.y
+			}, UR_RED);
+			
 	urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, UR_WHITE);
 	urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, UR_WHITE);
-	urPutPixel((URPointI){_this.mousePos.x, _this.mousePos.y}, UR_RED);
+	urPutPixel(_this.mousePos, UR_RED);
 
 	for (int i = 0; i < _this.tiles.size; i++)
 		level3DrawTile(_this, i, 0);
@@ -1741,12 +1775,22 @@ Level3 level3Update(Level3 _this)
 
 	// Draw square on the mouse position
 	urDrawSquare(
-			(URPointI){
-					_this.mousePos.x,
-					_this.mousePos.y
-					},
-			(URPointI){10, 10},
-			UR_RED);
+		_this.mousePos,
+		(URPointI){10, 10},
+		UR_RED);
+
+	URRectI heroCollisionRect =
+	{
+		.position = {
+				_this.hero.collisionRect.position.x + _this.hero.positionF.x,
+				_this.hero.collisionRect.position.y + _this.hero.positionF.y},
+		.size = _this.hero.collisionRect.size
+	};
+
+	urDrawSquare(
+			heroCollisionRect.position,
+			heroCollisionRect.size,
+			UR_WHITE);
 
 	return _this;
 }

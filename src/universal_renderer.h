@@ -99,10 +99,9 @@ void urDrawCircleFill(URPointI center, double radious, URColor color)
 
 void urDrawSquare(URPointI topLeftCorner, URPointI size, URColor color)
 {
-
-    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
+    for (int i = fmax(topLeftCorner.x, 0); i <= topLeftCorner.x + size.x; i++)
     {
-        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
+        for (int j = fmax(topLeftCorner.y, 0); j <= topLeftCorner.y + size.y; j++)
         {
             if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
                 UR_PUT_PIXEL((URPointI){i, j}, color);
