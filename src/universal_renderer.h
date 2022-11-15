@@ -930,4 +930,35 @@ bool urHitTestPointRect(URPointI point, URRectI rectangle)
 }
 
 
+void urPrintFPS(double deltaTime)
+{
+
+#define FPS_HISTORY 10
+    static double fpsHistory[FPS_HISTORY] = {0};
+    static int counter = 1;
+    counter++;
+    counter %= FPS_HISTORY;
+    fpsHistory[counter] = (1 / deltaTime);
+
+    int sum = 0;
+    for (int i = 0; i < FPS_HISTORY; i++)
+    {
+        sum += fpsHistory[i];
+    }
+
+    float avg = sum / FPS_HISTORY;
+
+    {
+        char text[1000] = {0};
+        snprintf(text, 1000, "fps: %d", (int)floor(avg));
+        urPrintString((URPointI){230, 220}, text, (URColor){0, 0xff, 0xff});
+    }
+
+    {
+        char text[1000] = {0};
+        snprintf(text, 1000, "ftime:%.4f", deltaTime);
+        urPrintString((URPointI){230, 230}, text, (URColor){0, 0xff, 0xff});
+    }
+}
+
 #endif

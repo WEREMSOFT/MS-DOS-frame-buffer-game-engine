@@ -368,15 +368,10 @@ GameState gameStateCheckExitConditions(GameState _this)
 
 void swapBuffersPrintFPSPollEvents(Graphics graphics, float deltaTime)
 {
-	printFPS(graphics, deltaTime);
+	urPrintFPS(deltaTime);
 	graphicsSwapBuffers(graphics);
 	glfwPollEvents();
 }
-
-typedef struct
-{
-	GameState gameState;
-} Program;
 
 Sound soundCreate()
 {
@@ -1431,7 +1426,7 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
 				_this.hero.positionF.y
 				);
 
-		if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM)
+		if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM && _this.hero.speed.y >= 0)
 			_this.hero.positionF.y = 
 			fmin(
 				tile.rectangle.position.y + tile.rectangle.size.y, 
