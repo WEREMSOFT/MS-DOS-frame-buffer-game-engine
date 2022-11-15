@@ -17,12 +17,16 @@
 #define UR_REALLOC reallocStatic
 #define UR_FREE freeStatic
 
+// #define PUT_PIXEL(p, color) ({globalImgData[(p.x + p.y * UR_SCREEN_WIDTH) % globalImgData.bufferSize] = color;})
+
 #define UR_PUT_PIXEL urPutPixel
+// #define UR_PUT_PIXEL PUT_PIXEL
 #include "universal_renderer.h"
 #define Color URColor
 #define PointI URPointI
 
 #include "program/core/utils/utils.h"
+ImageData globalImgData;
 
 #include "program/core/input/keyboard.h"
 
@@ -31,13 +35,12 @@
 #define S3L_PIXEL_FUNCTION drawPixel
 #include <small3Dlib/small3dlib.h>
 
-Graphics *globalGraphics;
 
 void urPutPixel(URPointI point, URColor color)
 {
 	int position = (point.x + point.y * UR_SCREEN_WIDTH) 
-								% globalGraphics->imageData.bufferSize;
-	globalGraphics->imageData.data[position] = color;
+								% globalImgData.bufferSize;
+	globalImgData.data[position] = color;
 }
 
 void drawPixel(S3L_PixelInfo *p)
@@ -1908,7 +1911,7 @@ Level4 level4Update(Level4 _this)
 
 GameState gameMainLoop(GameState gameState)
 {
-	globalGraphics = &gameState.graphics;
+	globalImgData = gameState.graphics.imageData;
 	gameState.deltaTime = getDeltaTime();
 	gameState = gameStateCheckExitConditions(gameState);
 	switch (gameState.gameStateEnum)
