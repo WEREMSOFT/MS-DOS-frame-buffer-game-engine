@@ -269,6 +269,16 @@ typedef struct
 	char sides;
 } Tile;
 
+typedef struct {
+	URRectI collisionRect;
+		URPointI position;
+		PointF positionF;
+		PointF speed;
+		int spriteId;
+} Level3Enemy;
+
+#define ENEMIES_CAPACITY 1
+
 typedef struct
 {
 	struct GameState *gameState;
@@ -284,7 +294,9 @@ typedef struct
 	{
 		URPointI origin, size;
 	} newSquare;
-	
+
+	Level3Enemy enemies[ENEMIES_CAPACITY];
+
 	struct
 	{
 		URRectI collisionRect;
@@ -555,12 +567,12 @@ void loadAssets(URSprite *_this)
 	_this[ASSET_LEVEL3_HERO_IDLE].center.y = -32;
 
 	_this[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteCreate(ASSET_PATH "enemyWalking.bmp");
-	_this[ASSET_LEVEL3_ENEMY_WALKING].position.x = 100;
-	_this[ASSET_LEVEL3_ENEMY_WALKING].position.y = 100;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].position.x = 0;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].position.y = 0;
 	_this[ASSET_LEVEL3_ENEMY_WALKING].animated = true;
 	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameCount = 10;
 	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameWidth = 44;
-	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameRate = 15;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameRate = 6;
 	_this[ASSET_LEVEL3_ENEMY_WALKING].center.x = -21;
 	_this[ASSET_LEVEL3_ENEMY_WALKING].center.y = -30;
 
@@ -1381,6 +1393,13 @@ Level3 level3Create()
 	_this.activeTile = 0;
 	_this.tiles.capacity = TILES_CAPACITY;
 	_this.state = LEVEL3_STATE_PLAYING;
+
+	_this.enemies[0] = (Level3Enemy){
+		.speed.x = 50,
+		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
+		.position = (URPointI){ 100, 126}
+	};
+
 	return _this;
 }
 
@@ -1433,11 +1452,11 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
 				_this.hero.positionF.x
 				);
 
-		if ((tile.sides & SIDE_TOP) == SIDE_TOP)
+		if ((tile.sides & SIDE_TOP) == SIDE_TOP && _this.hero.speed.y < 0)
 			_this.hero.positionF.y = 
 			fmax(
 				tile.rectangle.position.y, 
-				_this.hero.positionF.y
+				_this.hero.positionF.y + 1
 				);
 
 		if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM && _this.hero.speed.y >= 0)
@@ -1791,7 +1810,16 @@ Level3 level3Update(Level3 _this)
 	// setup hero and draw it
 	_this = level3HeroDraw(_this);
 
-	_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING], _this.gameState->deltaTime);
+	for (int i = 0; i < ENEMIES_CAPACITY; i++)
+	{
+		_this.gameState->sprites[_this.enemies[i].spriteId].position = 
+		_this.enemies[i].position;
+		
+		_this.gameState->sprites[_this.enemies[i].spriteId] =
+			 urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[_this.enemies[i].spriteId], _this.gameState->deltaTime);
+	}
+
+		_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING], _this.gameState->deltaTime);
 
 	// Draw square on the mouse position
 	urDrawSquare(
