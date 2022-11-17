@@ -5,34 +5,14 @@ _this.tiles.data[_this.tiles.size++] = (Tile){
 .sides = 0 | SIDE_LEFT | SIDE_BOTTOM}; 
 
  _this.tiles.data[_this.tiles.size++] = (Tile){
-.rectangle.position = (URPointI){39, 207},
-.rectangle.size = (URPointI){57, 16},
-.sides = 0 | SIDE_RIGHT | SIDE_BOTTOM}; 
-
- _this.tiles.data[_this.tiles.size++] = (Tile){
-.rectangle.position = (URPointI){96, 171},
-.rectangle.size = (URPointI){29, 36},
-.sides = 0 | SIDE_RIGHT | SIDE_BOTTOM}; 
-
- _this.tiles.data[_this.tiles.size++] = (Tile){
 .rectangle.position = (URPointI){40, 140},
 .rectangle.size = (URPointI){85, 11},
 .sides = 0 | SIDE_TOP }; 
 
  _this.tiles.data[_this.tiles.size++] = (Tile){
-.rectangle.position = (URPointI){125, 125},
-.rectangle.size = (URPointI){9, 15},
-.sides = 0 | SIDE_LEFT }; 
-
- _this.tiles.data[_this.tiles.size++] = (Tile){
 .rectangle.position = (URPointI){40, 116},
 .rectangle.size = (URPointI){85, 9},
 .sides = 0 | SIDE_BOTTOM}; 
-
- _this.tiles.data[_this.tiles.size++] = (Tile){
-.rectangle.position = (URPointI){30, 125},
-.rectangle.size = (URPointI){10, 15},
-.sides = 0 | SIDE_RIGHT }; 
 
  _this.tiles.data[_this.tiles.size++] = (Tile){
 .rectangle.position = (URPointI){8, 151},
@@ -138,5 +118,25 @@ _this.tiles.data[_this.tiles.size++] = (Tile){
 .rectangle.position = (URPointI){300, 146},
 .rectangle.size = (URPointI){11, 30},
 .sides = 0 | SIDE_RIGHT }; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.rectangle.position = (URPointI){33, 126},
+.rectangle.size = (URPointI){7, 13},
+.sides = 0 | SIDE_RIGHT }; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.rectangle.position = (URPointI){125, 126},
+.rectangle.size = (URPointI){9, 13},
+.sides = 0 | SIDE_LEFT }; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.rectangle.position = (URPointI){97, 172},
+.rectangle.size = (URPointI){28, 35},
+.sides = 0 | SIDE_RIGHT | SIDE_BOTTOM}; 
+
+ _this.tiles.data[_this.tiles.size++] = (Tile){
+.rectangle.position = (URPointI){39, 208},
+.rectangle.size = (URPointI){57, 15},
+.sides = 0 | SIDE_RIGHT | SIDE_BOTTOM}; 
 
  

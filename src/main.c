@@ -17,10 +17,8 @@
 #define UR_REALLOC reallocStatic
 #define UR_FREE freeStatic
 
-// #define PUT_PIXEL(p, color) ({globalImgData[(p.x + p.y * UR_SCREEN_WIDTH) % globalImgData.bufferSize] = color;})
 
 #define UR_PUT_PIXEL urPutPixel
-// #define UR_PUT_PIXEL PUT_PIXEL
 #include "universal_renderer.h"
 #define Color URColor
 #define PointI URPointI
@@ -34,7 +32,6 @@ ImageData globalImgData;
 #define S3L_RESOLUTION_Y 240
 #define S3L_PIXEL_FUNCTION drawPixel
 #include <small3Dlib/small3dlib.h>
-
 
 void urPutPixel(URPointI point, URColor color)
 {
@@ -157,6 +154,8 @@ typedef enum
 	ASSET_LEVEL3_HERO_JUMP,
 	ASSET_LEVEL3_HERO_FALL,
 	ASSET_LEVEL3_HERO_IDLE,
+	ASSET_LEVEL3_ENEMY_WALKING,
+	ASSET_LEVEL3_ENEMY_HIT,
 
 	ASSET_COUNT
 } Assets;
@@ -554,6 +553,17 @@ void loadAssets(URSprite *_this)
 	_this[ASSET_LEVEL3_HERO_IDLE].animation.frameRate = 15;
 	_this[ASSET_LEVEL3_HERO_IDLE].center.x = -16;
 	_this[ASSET_LEVEL3_HERO_IDLE].center.y = -32;
+
+	_this[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteCreate(ASSET_PATH "enemyWalking.bmp");
+	_this[ASSET_LEVEL3_ENEMY_WALKING].position.x = 100;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].position.y = 100;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].animated = true;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameCount = 10;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameWidth = 44;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].animation.frameRate = 15;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].center.x = -21;
+	_this[ASSET_LEVEL3_ENEMY_WALKING].center.y = -30;
+
 #undef ASSET_PATH
 }
 
@@ -1407,18 +1417,19 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
 	if (_this.activeTile != -1)
 	{
 		Tile tile = _this.tiles.data[_this.activeTile];
+		int collisionRectHalfSize = _this.hero.collisionRect.size.x / 2;
 		// restrict position
 		if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
 			_this.hero.positionF.x = 
 			fmax(
-				tile.rectangle.position.x, 
+				tile.rectangle.position.x + collisionRectHalfSize, 
 				_this.hero.positionF.x
 				);
 
 		if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
 			_this.hero.positionF.x = 
 			fmin(
-				tile.rectangle.position.x + tile.rectangle.size.x, 
+				tile.rectangle.position.x + tile.rectangle.size.x - collisionRectHalfSize, 
 				_this.hero.positionF.x
 				);
 
@@ -1779,6 +1790,8 @@ Level3 level3Update(Level3 _this)
 
 	// setup hero and draw it
 	_this = level3HeroDraw(_this);
+
+	_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING], _this.gameState->deltaTime);
 
 	// Draw square on the mouse position
 	urDrawSquare(
