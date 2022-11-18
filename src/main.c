@@ -269,15 +269,24 @@ typedef struct
 	char sides;
 } Tile;
 
+typedef enum
+{
+	LEVEL3_ENEMY_STATE_INIT,
+	LEVEL3_ENEMY_STATE_WALKING,
+	LEVEL3_ENEMY_STATE_COUNT
+} Level3EnemiesStateEnum;
+
 typedef struct {
 	URRectI collisionRect;
-		URPointI position;
 		PointF positionF;
-		PointF speed;
+		float speed;
+		int radious;
+		Level3EnemiesStateEnum state;
+		PointF initialPosition;
 		int spriteId;
 } Level3Enemy;
 
-#define ENEMIES_CAPACITY 1
+#define ENEMIES_CAPACITY 2
 
 typedef struct
 {
@@ -1395,9 +1404,17 @@ Level3 level3Create()
 	_this.state = LEVEL3_STATE_PLAYING;
 
 	_this.enemies[0] = (Level3Enemy){
-		.speed.x = 50,
+		.radious = 22,
+		.speed = 20.,
 		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
-		.position = (URPointI){ 100, 126}
+		.positionF = (PointF) { 83, 126 }
+	};
+
+	_this.enemies[1] = (Level3Enemy){
+		.radious = 10,
+		.speed = -20.,
+		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
+		.positionF = (PointF) { 202, 95 }
 	};
 
 	return _this;
@@ -1774,6 +1791,48 @@ Level3 level3HeroDraw(Level3 _this)
 	return _this;
 }
 
+Level3 level3EnemiesDraw(Level3 _this)
+{
+	for (int i = 0; i < ENEMIES_CAPACITY; i++)
+	{
+		_this.gameState->sprites[_this.enemies[i].spriteId].position = 
+		(URPointI){_this.enemies[i].positionF.x, _this.enemies[i].positionF.y};
+
+		_this.gameState->sprites[_this.enemies[i].spriteId].isFlipped = _this.enemies[i].speed > 0;
+		_this.gameState->sprites[_this.enemies[i].spriteId] =
+				urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[_this.enemies[i].spriteId], _this.gameState->deltaTime);
+	}
+	return _this;
+}
+
+Level3 level3EnemiesUpdate(Level3 _this)
+{
+	for (int i = 0; i < ENEMIES_CAPACITY; i++)
+	{
+		switch(_this.enemies[i].state)
+		{
+		case LEVEL3_ENEMY_STATE_INIT:
+			_this.enemies[i].initialPosition = _this.enemies[i].positionF;
+			_this.enemies[i].state++;
+			break;
+		case LEVEL3_ENEMY_STATE_WALKING:
+		{
+			Level3Enemy enemy = _this.enemies[i];
+			enemy.positionF.x += enemy.speed * _this.gameState->deltaTime;
+			
+			if(abs(enemy.positionF.x - enemy.initialPosition.x) > enemy.radious)
+			{
+				enemy.speed *= -1;
+			}
+
+			_this.enemies[i] = enemy;
+		}
+			break;
+				}
+	}
+	return _this;
+}
+
 Level3 level3Update(Level3 _this)
 {
 	_this = level3MoveBackground(_this);
@@ -1806,20 +1865,13 @@ Level3 level3Update(Level3 _this)
 		level3SerializeLevelDesign(_this);
 
 	_this = level3SetHeroAnimation(_this);
+	_this = level3EnemiesUpdate(_this);
 
 	// setup hero and draw it
 	_this = level3HeroDraw(_this);
+	_this = level3EnemiesDraw(_this);
 
-	for (int i = 0; i < ENEMIES_CAPACITY; i++)
-	{
-		_this.gameState->sprites[_this.enemies[i].spriteId].position = 
-		_this.enemies[i].position;
-		
-		_this.gameState->sprites[_this.enemies[i].spriteId] =
-			 urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[_this.enemies[i].spriteId], _this.gameState->deltaTime);
-	}
-
-		_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING], _this.gameState->deltaTime);
+	_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING], _this.gameState->deltaTime);
 
 	// Draw square on the mouse position
 	urDrawSquare(
@@ -1827,6 +1879,7 @@ Level3 level3Update(Level3 _this)
 		(URPointI){10, 10},
 		UR_RED);
 
+#ifdef DRAW_COLLISION_BOXES
 	URRectI heroCollisionRect =
 	{
 		.position = {
@@ -1839,6 +1892,7 @@ Level3 level3Update(Level3 _this)
 			heroCollisionRect.position,
 			heroCollisionRect.size,
 			UR_WHITE);
+#endif
 
 	return _this;
 }
