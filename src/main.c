@@ -1547,14 +1547,16 @@ Level3 level3HandleCombatCollisions(Level3 _this)
 
 		for (int i = 0; i < ENEMIES_CAPACITY; i++)
 		{
-		URRectI enemyColRect = level3GetTranslatedCollisionRect(
-			_this.enemies[i].positionF,
-			_this.enemies[i].collisionRect
-		);
-		if(urHitTestRectRect(enemyColRect, heroColRect) && _this.hero.speed.y > 0)
-		{
-			_this.enemies[i].isDead = true;
-		}
+			if(_this.enemies[i].isDead)
+			continue;
+
+			URRectI enemyColRect = level3GetTranslatedCollisionRect(
+					_this.enemies[i].positionF,
+					_this.enemies[i].collisionRect);
+			if (urHitTestRectRect(enemyColRect, heroColRect) && _this.hero.speed.y > 0)
+			{
+				_this.enemies[i].isDead = true;
+			}
 	}
 
 		return _this;
@@ -1919,8 +1921,6 @@ Level3 level3Update(Level3 _this)
 	// setup hero and draw it
 	_this = level3HeroDraw(_this);
 	_this = level3EnemiesDraw(_this);
-
-	_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING], _this.gameState->deltaTime);
 
 	// Draw square on the mouse position
 	urDrawSquare(
