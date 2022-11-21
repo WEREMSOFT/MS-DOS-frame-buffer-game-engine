@@ -17,7 +17,6 @@
 #define UR_REALLOC reallocStatic
 #define UR_FREE freeStatic
 
-
 #define UR_PUT_PIXEL urPutPixel
 #include "universal_renderer.h"
 #define Color URColor
@@ -35,8 +34,7 @@ ImageData globalImgData;
 
 void urPutPixel(URPointI point, URColor color)
 {
-	int position = (point.x + point.y * UR_SCREEN_WIDTH) 
-								% globalImgData.bufferSize;
+	int position = (point.x + point.y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
 	globalImgData.data[position] = color;
 }
 
@@ -273,18 +271,20 @@ typedef enum
 {
 	LEVEL3_ENEMY_STATE_INIT,
 	LEVEL3_ENEMY_STATE_WALKING,
-	LEVEL3_ENEMY_STATE_COUNT
+	LEVEL3_ENEMY_STATE_DYING,
+	LEVEL3_ENEMY_STATE_DEAD,
+	LEVEL3_ENEMY_STATE_COUNT,
 } Level3EnemiesStateEnum;
 
-typedef struct {
+typedef struct
+{
 	URRectI collisionRect;
 	PointF positionF;
-	float speed;
+	PointF speed;
 	int radious;
 	Level3EnemiesStateEnum state;
 	PointF initialPosition;
 	int spriteId;
-	bool isDead;
 } Level3Enemy;
 
 #define ENEMIES_CAPACITY 2
@@ -321,7 +321,7 @@ typedef struct
 		bool isInFloor;
 		bool isFlipped;
 	} hero;
-	
+
 	bool showCollisions;
 	URPointI mousePos;
 } Level3;
@@ -423,9 +423,9 @@ Sound soundCreate()
 	Sfxr_loadPreset(this.sfx[SFX_HERO_HURT], SFXR_HURT, 3247);
 
 	Soloud_initEx(
-			this.soloud,
-			SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
-			SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
+		this.soloud,
+		SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
+		SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
 
 	Soloud_setGlobalVolume(this.soloud, 4);
 
@@ -460,7 +460,7 @@ void soundDestroy(Sound this)
 
 void loadAssets(URSprite *_this)
 {
-	
+
 	_this[ASSET_BACKGROUND] = urSpriteCreate("assets/background.bmp");
 	_this[ASSET_FOREGROUND] = urSpriteCreate("assets/foreground.bmp");
 	_this[ASSET_TOP_SCORE_SQUARE] = urSpriteCreate("assets/topScoreSquare.bmp");
@@ -745,13 +745,13 @@ static Level1 level1InitEnemies(Level1 _this)
 	{
 		_this.enemies[i].visible = true;
 
-		_this.enemies[i].position.x = 
-			_this.enemies[i].basePosition.x = 
-			(int)_this.positions[i].x + _this.enemyOffset.x;
+		_this.enemies[i].position.x =
+			_this.enemies[i].basePosition.x =
+				(int)_this.positions[i].x + _this.enemyOffset.x;
 
-		_this.enemies[i].position.y = 
-			_this.enemies[i].basePosition.y = 
-			(int)_this.positions[i].y + _this.enemyOffset.y;
+		_this.enemies[i].position.y =
+			_this.enemies[i].basePosition.y =
+				(int)_this.positions[i].y + _this.enemyOffset.y;
 
 		_this.enemies[i] = enemyPassToStateHidden(_this.enemies[i]);
 
@@ -764,13 +764,11 @@ static Level1 level1InitEnemies(Level1 _this)
 
 		_this.enemies[i].bottomOffset = _this.enemies[i].lowerClippingPosition;
 
-		_this.enemies[i].topLimit = 
-			_this.enemies[i].lowerClippingPosition 
-			- _this.gameState->sprites[_this.enemies[i].spriteId].size.y;
+		_this.enemies[i].topLimit =
+			_this.enemies[i].lowerClippingPosition - _this.gameState->sprites[_this.enemies[i].spriteId].size.y;
 
-		_this.enemies[i].speedMultiplicator = 
-			(float)_this.gameState->sprites[_this.enemies[i].spriteId].size.y 
-			/ (float)_this.gameState->sprites[ASSET_ENEMY_GREEN_BIG].size.y;
+		_this.enemies[i].speedMultiplicator =
+			(float)_this.gameState->sprites[_this.enemies[i].spriteId].size.y / (float)_this.gameState->sprites[ASSET_ENEMY_GREEN_BIG].size.y;
 	}
 
 	for (int i = 0; i < 8; i++)
@@ -820,32 +818,28 @@ Level1 level1Tutorial(Level1 _this)
 
 Level1 level1HandleControls(Level1 _this)
 {
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT)
-		&& glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_UP))
+	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT) && glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_UP))
 	{
 		_this.gameState->sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_LEFT];
 		_this.quadPosition = QPOS_TOP_LEFT;
 		return _this;
 	}
 
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT)
-	 		&& glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_UP))
+	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT) && glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_UP))
 	{
 		_this.gameState->sprites[ASSET_SIGHT].position = _this.positions[QPOS_TOP_RIGHT];
 		_this.quadPosition = QPOS_TOP_RIGHT;
 		return _this;
 	}
 
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT) 
-			&& glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_DOWN))
+	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT) && glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_DOWN))
 	{
 		_this.gameState->sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_LEFT];
 		_this.quadPosition = QPOS_BOTTOM_LEFT;
 		return _this;
 	}
 
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT) 
-		&& glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_DOWN))
+	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT) && glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_DOWN))
 	{
 		_this.gameState->sprites[ASSET_SIGHT].position = _this.positions[QPOS_BOTTOM_RIGHT];
 		_this.quadPosition = QPOS_BOTTOM_RIGHT;
@@ -938,8 +932,7 @@ Level1 level1Update(Level1 _this)
 
 			_this.gameState->sprites[ASSET_SHOOT] = urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[ASSET_SHOOT], _this.gameState->deltaTime);
 
-			if (_this.enemies[_this.quadPosition].state != ENEMY_STATE_HIDDEN 
-					&& _this.enemies[_this.quadPosition].state != ENEMY_STATE_DEAD)
+			if (_this.enemies[_this.quadPosition].state != ENEMY_STATE_HIDDEN && _this.enemies[_this.quadPosition].state != ENEMY_STATE_DEAD)
 			{
 				soundPlaySpeech(_this.gameState->sound, SPEECH_NOOO);
 				_this.enemiesRemaining--;
@@ -1141,9 +1134,9 @@ Level2 level2HandleObstaclesAndCollisions(Level2 _this)
 			static URPointI obstaclePosV = {0, 174.};
 			obstaclePosV.x = _this.obstaclePosition + _this.gameState->sprites[ASSET_LEVEL2_OBSTACLE_1].size.x * i;
 			distance.x = obstaclePosV.x +
-									 _this.gameState->sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 -
-									 _this.gameState->sprites[ASSET_LEVEL2_HERO_GREEN + _this.livesLost].position.x -
-									 _this.gameState->sprites[ASSET_LEVEL2_HERO_GREEN + _this.livesLost].animation.frameWidth;
+						 _this.gameState->sprites[ASSET_LEVEL2_OBSTACLE_1].size.x / 2 -
+						 _this.gameState->sprites[ASSET_LEVEL2_HERO_GREEN + _this.livesLost].position.x -
+						 _this.gameState->sprites[ASSET_LEVEL2_HERO_GREEN + _this.livesLost].animation.frameWidth;
 			distance.y = obstaclePosV.y - _this.gameState->sprites[ASSET_LEVEL2_HERO_GREEN + _this.livesLost].position.y;
 			float distanceScalar = distance.x * distance.x + distance.y * distance.y;
 			if (50 > distanceScalar)
@@ -1397,16 +1390,14 @@ Level3 level3CreateEnemies(Level3 _this)
 		.radious = 22,
 		.speed = 20.,
 		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
-		.positionF = (PointF) { 83, 126 }
-	};
+		.positionF = (PointF){83, 126}};
 
 	_this.enemies[1] = (Level3Enemy){
 		.collisionRect = (URRectI){-10, -10, 20, 10},
 		.radious = 10,
 		.speed = -20.,
 		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
-		.positionF = (PointF) { 202, 95 }
-	};
+		.positionF = (PointF){202, 95}};
 
 	return _this;
 }
@@ -1426,7 +1417,7 @@ Level3 level3Create()
 	_this.state = LEVEL3_STATE_PLAYING;
 
 	_this = level3CreateEnemies(_this);
-	
+
 	return _this;
 }
 
@@ -1441,8 +1432,8 @@ Level3 level3MoveBackground(Level3 _this)
 {
 	float backgroundSpeed = 10.;
 	static PointF positionF = {
-			0.,
-			-64.,
+		0.,
+		-64.,
 	};
 
 	positionF.y += backgroundSpeed * _this.gameState->deltaTime;
@@ -1466,50 +1457,44 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
 		int collisionRectHalfSize = _this.hero.collisionRect.size.x / 2;
 		// restrict position
 		if ((tile.sides & SIDE_LEFT) == SIDE_LEFT)
-			_this.hero.positionF.x = 
-			fmax(
-				tile.rectangle.position.x + collisionRectHalfSize, 
-				_this.hero.positionF.x
-				);
+			_this.hero.positionF.x =
+				fmax(
+					tile.rectangle.position.x + collisionRectHalfSize,
+					_this.hero.positionF.x);
 
 		if ((tile.sides & SIDE_RIGHT) == SIDE_RIGHT)
-			_this.hero.positionF.x = 
-			fmin(
-				tile.rectangle.position.x + tile.rectangle.size.x - collisionRectHalfSize, 
-				_this.hero.positionF.x
-				);
+			_this.hero.positionF.x =
+				fmin(
+					tile.rectangle.position.x + tile.rectangle.size.x - collisionRectHalfSize,
+					_this.hero.positionF.x);
 
 		if ((tile.sides & SIDE_TOP) == SIDE_TOP && _this.hero.speed.y < 0)
-			_this.hero.positionF.y = 
-			fmax(
-				tile.rectangle.position.y, 
-				_this.hero.positionF.y + 1
-				);
+			_this.hero.positionF.y =
+				fmax(
+					tile.rectangle.position.y,
+					_this.hero.positionF.y + 1);
 
 		if ((tile.sides & SIDE_BOTTOM) == SIDE_BOTTOM && _this.hero.speed.y >= 0)
-			_this.hero.positionF.y = 
-			fmin(
-				tile.rectangle.position.y + tile.rectangle.size.y, 
-				_this.hero.positionF.y
-				);
+			_this.hero.positionF.y =
+				fmin(
+					tile.rectangle.position.y + tile.rectangle.size.y,
+					_this.hero.positionF.y);
 	}
 
 	_this.activeTile = -1;
-	URRectI heroCollisionRect = 
-	{
-		(URPointI){
-			_this.hero.collisionRect.position.x + _this.hero.positionF.x,
-			_this.hero.collisionRect.position.y + _this.hero.positionF.y,
-		},
-		_this.hero.collisionRect.size
-	};
-	
+	URRectI heroCollisionRect =
+		{
+			(URPointI){
+				_this.hero.collisionRect.position.x + _this.hero.positionF.x,
+				_this.hero.collisionRect.position.y + _this.hero.positionF.y,
+			},
+			_this.hero.collisionRect.size};
+
 	for (int i = 0; i < _this.tiles.size; i++)
 	{
 		if (urHitTestRectRect(
-			heroCollisionRect,
-			_this.tiles.data[i].rectangle
-		))
+				heroCollisionRect,
+				_this.tiles.data[i].rectangle))
 		{
 			_this.activeTile = i;
 			break;
@@ -1527,39 +1512,38 @@ Level3 level3HandleCollisionsReactions(Level3 _this)
 
 URRectI level3GetTranslatedCollisionRect(PointF position, URRectI collisionRect)
 {
-		URRectI collRect =
+	URRectI collRect =
 		{
 			.position = {
-					collisionRect.position.x + position.x,
-					collisionRect.position.y + position.y},
-			.size = collisionRect.size
-		};
+				collisionRect.position.x + position.x,
+				collisionRect.position.y + position.y},
+			.size = collisionRect.size};
 
-		return collRect;
+	return collRect;
 }
 
 Level3 level3HandleCombatCollisions(Level3 _this)
 {
-		URRectI heroColRect = level3GetTranslatedCollisionRect(
-			_this.hero.positionF,
-			_this.hero.collisionRect
-		);
+	URRectI heroColRect = level3GetTranslatedCollisionRect(
+		_this.hero.positionF,
+		_this.hero.collisionRect);
 
-		for (int i = 0; i < ENEMIES_CAPACITY; i++)
-		{
-			if(_this.enemies[i].isDead)
+	for (int i = 0; i < ENEMIES_CAPACITY; i++)
+	{
+		if (_this.enemies[i].state >= LEVEL3_ENEMY_STATE_DYING)
 			continue;
 
-			URRectI enemyColRect = level3GetTranslatedCollisionRect(
-					_this.enemies[i].positionF,
-					_this.enemies[i].collisionRect);
-			if (urHitTestRectRect(enemyColRect, heroColRect) && _this.hero.speed.y > 0)
-			{
-				_this.enemies[i].isDead = true;
-			}
+		URRectI enemyColRect = level3GetTranslatedCollisionRect(
+			_this.enemies[i].positionF,
+			_this.enemies[i].collisionRect);
+		if (urHitTestRectRect(enemyColRect, heroColRect) && _this.hero.speed.y > 0)
+		{
+			_this.enemies[i].state = LEVEL3_ENEMY_STATE_DYING;
+			_this.enemies[i].speed.y = _this.hero.jumpSpeed;
+		}
 	}
 
-		return _this;
+	return _this;
 }
 
 Level3 level3ProcessStatePlaying(Level3 _this)
@@ -1596,8 +1580,7 @@ Level3 level3ProcessStatePlaying(Level3 _this)
 			level3DrawTile(_this, i, 0);
 	}
 
-	if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_SPACE) 
-	&& _this.hero.isInFloor)
+	if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_SPACE) && _this.hero.isInFloor)
 	{
 		_this.hero.speed.y = _this.hero.jumpSpeed;
 		soundPlaySfx(_this.gameState->sound, SFX_HERO_JUMP);
@@ -1619,28 +1602,26 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 		_this.state = LEVEL3_STATE_EDIT;
 		double x, y;
 		glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
-		
-		URPointI size = 
-		{
-			x - _this.newSquare.origin.x, 
-			y - _this.newSquare.origin.y
-		};
 
-		_this.tiles.data[_this.tiles.size++] = 
-			(Tile)
+		URPointI size =
 			{
-				.rectangle.position = _this.newSquare.origin, 
-				.rectangle.size = size, .sides = 0xff
-			};
+				x - _this.newSquare.origin.x,
+				y - _this.newSquare.origin.y};
+
+		_this.tiles.data[_this.tiles.size++] =
+			(Tile){
+				.rectangle.position = _this.newSquare.origin,
+				.rectangle.size = size,
+				.sides = 0xff};
 
 		_this.activeTile = _this.tiles.size - 1;
 	}
 
-	urDrawSquare(_this.newSquare.origin, 
-		(URPointI){
-			_this.mousePos.x - _this.newSquare.origin.x, 
-			_this.mousePos.y - _this.newSquare.origin.y
-			}, UR_RED);
+	urDrawSquare(_this.newSquare.origin,
+				 (URPointI){
+					 _this.mousePos.x - _this.newSquare.origin.x,
+					 _this.mousePos.y - _this.newSquare.origin.y},
+				 UR_RED);
 
 	urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, UR_WHITE);
 	urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, UR_WHITE);
@@ -1648,7 +1629,7 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 
 	for (int i = 0; i < _this.tiles.size; i++)
 		level3DrawTile(_this, i, 0);
-	
+
 	return _this;
 }
 
@@ -1658,9 +1639,9 @@ Level3 level3SelectActiveTileWithMouse(Level3 _this)
 	for (int i = 0; i < _this.tiles.size; i++)
 	{
 		if (urHitTestRectRect((URRectI){
-															.position = _this.mousePos,
-															.size = (URPointI){10, 10}},
-													_this.tiles.data[i].rectangle))
+								  .position = _this.mousePos,
+								  .size = (URPointI){10, 10}},
+							  _this.tiles.data[i].rectangle))
 		{
 			_this.activeTile = i;
 			activeTileAssigned = true;
@@ -1698,11 +1679,11 @@ void level3DrawEditorInstructions()
 	}
 
 	char *editHelp[] = {
-			"e edit",
-			"q save level",
-			"tab start end draw",
-			"wasd tell wich side is the constrain",
-			"r remove"};
+		"e edit",
+		"q save level",
+		"tab start end draw",
+		"wasd tell wich side is the constrain",
+		"r remove"};
 
 	urPrintString((URPointI){1, 1}, editHelp[0], textColor);
 	urPrintString((URPointI){1, 10}, editHelp[1], textColor);
@@ -1843,15 +1824,12 @@ Level3 level3EnemiesDraw(Level3 _this)
 {
 	for (int i = 0; i < ENEMIES_CAPACITY; i++)
 	{
-		if(_this.enemies[i].isDead)
-			continue;
-
 		_this.gameState->sprites[_this.enemies[i].spriteId].position =
-				(URPointI){_this.enemies[i].positionF.x, _this.enemies[i].positionF.y};
+			(URPointI){_this.enemies[i].positionF.x, _this.enemies[i].positionF.y};
 
-		_this.gameState->sprites[_this.enemies[i].spriteId].isFlipped = _this.enemies[i].speed > 0;
+		_this.gameState->sprites[_this.enemies[i].spriteId].isFlipped = _this.enemies[i].speed.x > 0;
 		_this.gameState->sprites[_this.enemies[i].spriteId] =
-				urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[_this.enemies[i].spriteId], _this.gameState->deltaTime);
+			urSpriteDrawTransparentAnimatedClipped(_this.gameState->sprites[_this.enemies[i].spriteId], _this.gameState->deltaTime);
 	}
 	return _this;
 }
@@ -1860,7 +1838,7 @@ Level3 level3EnemiesUpdate(Level3 _this)
 {
 	for (int i = 0; i < ENEMIES_CAPACITY; i++)
 	{
-		switch(_this.enemies[i].state)
+		switch (_this.enemies[i].state)
 		{
 		case LEVEL3_ENEMY_STATE_INIT:
 			_this.enemies[i].initialPosition = _this.enemies[i].positionF;
@@ -1869,17 +1847,28 @@ Level3 level3EnemiesUpdate(Level3 _this)
 		case LEVEL3_ENEMY_STATE_WALKING:
 		{
 			Level3Enemy enemy = _this.enemies[i];
-			enemy.positionF.x += enemy.speed * _this.gameState->deltaTime;
-			
-			if(abs(enemy.positionF.x - enemy.initialPosition.x) > enemy.radious)
+			enemy.positionF.x += enemy.speed.x * _this.gameState->deltaTime;
+
+			if (abs(enemy.positionF.x - enemy.initialPosition.x) > enemy.radious)
 			{
-				enemy.speed *= -1;
+				enemy.speed.x *= -1;
 			}
 
 			_this.enemies[i] = enemy;
 		}
-			break;
-				}
+		break;
+		case LEVEL3_ENEMY_STATE_DYING:
+		{
+			if (_this.enemies[i].positionF.y - _this.gameState->sprites[ASSET_LEVEL3_ENEMY_WALKING].size.y >= UR_SCREEN_HEIGHT)
+			{
+				_this.enemies[i].state = LEVEL3_ENEMY_STATE_DEAD;
+				break;
+			}
+			_this.enemies[i].speed.y += _this.hero.gravity * _this.gameState->deltaTime;
+			_this.enemies[i].positionF.y += _this.enemies[i].speed.y * _this.gameState->deltaTime;
+		}
+		break;
+		}
 	}
 	return _this;
 }
@@ -1928,30 +1917,26 @@ Level3 level3Update(Level3 _this)
 		(URPointI){10, 10},
 		UR_RED);
 
-// #define DRAW_COLLISION_BOXES
+	// #define DRAW_COLLISION_BOXES
 
 #ifdef DRAW_COLLISION_BOXES
 	{
-		URRectI collRect = level3GetTranslatedCollisionRect
-		(
+		URRectI collRect = level3GetTranslatedCollisionRect(
 			_this.hero.positionF,
-			_this.hero.collisionRect
-		);
-		
+			_this.hero.collisionRect);
+
 		urDrawSquare(
-				collRect.position,
-				collRect.size,
-				UR_WHITE);
+			collRect.position,
+			collRect.size,
+			UR_WHITE);
 	}
 
 	for (int i = 0; i < ENEMIES_CAPACITY; i++)
 	{
 		Level3Enemy enemy = _this.enemies[i];
-		URRectI collisionRect = level3GetTranslatedCollisionRect
-		(
+		URRectI collisionRect = level3GetTranslatedCollisionRect(
 			enemy.positionF,
-			enemy.collisionRect
-		);
+			enemy.collisionRect);
 		urDrawSquare(collisionRect.position, collisionRect.size, UR_RED);
 	}
 #endif
