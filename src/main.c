@@ -32,10 +32,10 @@ ImageData globalImgData;
 #define S3L_PIXEL_FUNCTION drawPixel
 #include <small3Dlib/small3dlib.h>
 
-void urPutPixel(URPointI point, URColor color)
+void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 {
-	int position = (point.x + point.y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
-	globalImgData.data[position] = color;
+	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
+	globalImgData.data[position] = (URColor){r, g, b};
 }
 
 void drawPixel(S3L_PixelInfo *p)
@@ -59,7 +59,7 @@ void drawPixel(S3L_PixelInfo *p)
 		color.r = color.g = color.b = 0x66;
 	}
 
-	urPutPixel((URPointI){(int)p->x, p->y}, color);
+	urPutPixel(p->x, p->y, color.r, color.g, color.b);
 }
 
 #define TILES_CAPACITY 100
@@ -1646,7 +1646,7 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 
 	urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, UR_WHITE);
 	urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, UR_WHITE);
-	urPutPixel(_this.mousePos, UR_RED);
+	urPutPixel(_this.mousePos.x, _this.mousePos.y, UR_RED.r, UR_RED.g, UR_RED.b);
 
 	for (int i = 0; i < _this.tiles.size; i++)
 		level3DrawTile(_this, i, 0);

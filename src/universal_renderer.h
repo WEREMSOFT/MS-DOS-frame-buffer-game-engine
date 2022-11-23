@@ -18,6 +18,8 @@
 #ifndef UR_PUT_PIXEL
 #error UR_PUT_PIXEL not defined
 #endif
+// forward declaration
+void UR_PUT_PIXEL(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 
 #ifndef UR_MALLOC
 #define UR_MALLOC malloc
@@ -36,40 +38,40 @@ typedef struct
 	unsigned char r, g, b;
 } URColor;
 
-#define UR_RED \
-	(URColor)    \
-	{            \
-		0xFF, 0, 0 \
-	}
-#define UR_WHITE     \
-	(URColor)          \
-	{                  \
-		0xFF, 0xFF, 0xFF \
-	}
-#define UR_BLUE \
-	(URColor)     \
-	{             \
-		0, 0, 0xFF  \
-	}
-#define UR_GREEN \
+#define UR_RED     \
 	(URColor)      \
 	{              \
-		0, 0xFF, 0   \
+		0xFF, 0, 0 \
 	}
-#define UR_PURPLE \
-	(URColor)       \
-	{               \
+#define UR_WHITE         \
+	(URColor)            \
+	{                    \
+		0xFF, 0xFF, 0xFF \
+	}
+#define UR_BLUE    \
+	(URColor)      \
+	{              \
+		0, 0, 0xFF \
+	}
+#define UR_GREEN   \
+	(URColor)      \
+	{              \
+		0, 0xFF, 0 \
+	}
+#define UR_PURPLE     \
+	(URColor)         \
+	{                 \
 		0xFF, 0, 0xFF \
 	}
-#define UR_YELLOW \
-	(URColor)       \
-	{               \
+#define UR_YELLOW     \
+	(URColor)         \
+	{                 \
 		0xFF, 0xFF, 0 \
 	}
 #define UR_BLACK \
-	(URColor)      \
-	{              \
-		0, 0, 0      \
+	(URColor)    \
+	{            \
+		0, 0, 0  \
 	}
 
 typedef struct
@@ -89,7 +91,7 @@ void urClearScreen(URColor clearColor)
 		for (int y = 0; y < UR_SCREEN_HEIGHT; y++)
 		{
 			URPointI p = (URPointI){x, y};
-			UR_PUT_PIXEL(p, clearColor);
+			UR_PUT_PIXEL(p.x, p.y, clearColor.r, clearColor.g, clearColor.b);
 		}
 }
 
@@ -101,7 +103,7 @@ void urDrawCircle(URPointI center, double radious, URColor color)
 		{
 			URPointI p = (URPointI){i, j};
 			if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-				UR_PUT_PIXEL(p, color);
+				UR_PUT_PIXEL(p.x, p.y, color.r, color.g, color.b);
 		}
 	}
 }
@@ -115,7 +117,7 @@ void urDrawCircleFill(URPointI center, double radious, URColor color)
 		{
 			URPointI p = (URPointI){i, j};
 			if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) <= radious)
-				UR_PUT_PIXEL(p, color);
+				UR_PUT_PIXEL(p.x, p.y, color.r, color.g, color.b);
 		}
 	}
 }
@@ -128,7 +130,7 @@ void urDrawSquare(URPointI topLeftCorner, URPointI size, URColor color)
 		{
 			URPointI p = (URPointI){i, j};
 			if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
-				UR_PUT_PIXEL(p, color);
+				UR_PUT_PIXEL(p.x, p.y, color.r, color.g, color.b);
 		}
 	}
 }
@@ -141,7 +143,7 @@ void urDrawSquareFill(URPointI topLeftCorner, URPointI size, URColor color)
 		{
 			URPointI p = (URPointI){i, j};
 			if (j >= topLeftCorner.y || j <= topLeftCorner.y + size.y || i >= topLeftCorner.x || i <= topLeftCorner.x + size.x)
-				UR_PUT_PIXEL(p, color);
+				UR_PUT_PIXEL(p.x, p.y, color.r, color.g, color.b);
 		}
 	}
 }
@@ -154,7 +156,7 @@ void urDrawLine(URPointI pointA, URPointI pointB, URColor color)
 
 	for (;;)
 	{
-		urPutPixel(pointA, color);
+		UR_PUT_PIXEL(pointA.x, pointA.y, color.r, color.g, color.b);
 
 		if (pointA.x == pointB.x && pointA.y == pointB.y)
 			break;
@@ -175,235 +177,235 @@ void urDrawLine(URPointI pointA, URPointI pointB, URColor color)
 }
 
 unsigned char urFonts[][5] =
-		{
-				// 0
-				{0b011100,
-				 0b110010,
-				 0b101010,
-				 0b100110,
-				 0b011100},
-				// 1
-				{0b001000,
-				 0b011000,
-				 0b001000,
-				 0b001000,
-				 0b011100},
-				// 2
-				{0b011100,
-				 0b100010,
-				 0b001100,
-				 0b010000,
-				 0b111110},
-				// 3
-				{0b011100,
-				 0b100010,
-				 0b001100,
-				 0b100010,
-				 0b011100},
-				// 4
-				{0b001010,
-				 0b010010,
-				 0b100010,
-				 0b111110,
-				 0b000010},
-				// 5
-				{0b111110,
-				 0b100000,
-				 0b111100,
-				 0b000010,
-				 0b111100},
-				// 6
-				{0b011110,
-				 0b100000,
-				 0b111100,
-				 0b100010,
-				 0b011100},
-				// 7
-				{0b111110,
-				 0b000010,
-				 0b000100,
-				 0b001000,
-				 0b010000},
-				// 8
-				{0b011100,
-				 0b100010,
-				 0b011100,
-				 0b100010,
-				 0b011100},
-				// 9
-				{0b011100,
-				 0b100010,
-				 0b011110,
-				 0b000010,
-				 0b011100},
-				// A
-				{0b111100,
-				 0b100100,
-				 0b100100,
-				 0b111100,
-				 0b100100},
-				// B
-				{0b111000,
-				 0b100100,
-				 0b111000,
-				 0b100100,
-				 0b111000},
-				// C
-				{0b111100,
-				 0b100100,
-				 0b100000,
-				 0b100100,
-				 0b111100},
-				// D
-				{0b111000,
-				 0b100100,
-				 0b100100,
-				 0b100100,
-				 0b111000},
-				// E
-				{0b111100,
-				 0b100000,
-				 0b111100,
-				 0b100000,
-				 0b111100},
-				// F
-				{0b111100,
-				 0b100000,
-				 0b111000,
-				 0b100000,
-				 0b100000},
-				// G
-				{0b011000,
-				 0b100000,
-				 0b101100,
-				 0b100100,
-				 0b011000},
-				// H
-				{0b100100,
-				 0b100100,
-				 0b111100,
-				 0b100100,
-				 0b100100},
-				// I
-				{0b011100,
-				 0b001000,
-				 0b001000,
-				 0b001000,
-				 0b011100},
-				// J
-				{0b111100,
-				 0b000100,
-				 0b000100,
-				 0b100100,
-				 0b011000},
-				// K
-				{0b100100,
-				 0b101000,
-				 0b110000,
-				 0b101000,
-				 0b100100},
-				// L
-				{0b100000,
-				 0b100000,
-				 0b100000,
-				 0b100000,
-				 0b111000},
-				// M
-				{0b100010,
-				 0b110110,
-				 0b101010,
-				 0b100010,
-				 0b100010},
-				// N
-				{0b010010,
-				 0b011010,
-				 0b010110,
-				 0b010010,
-				 0b010010},
-				// O
-				{0b111100,
-				 0b100100,
-				 0b100100,
-				 0b100100,
-				 0b111100},
-				// P
-				{0b111000,
-				 0b100100,
-				 0b111000,
-				 0b100000,
-				 0b100000},
-				// Q
-				{0b111100,
-				 0b100100,
-				 0b100100,
-				 0b101100,
-				 0b111100},
-				// R
-				{0b111000,
-				 0b100100,
-				 0b111000,
-				 0b100100,
-				 0b100100},
-				// S
-				{0b011100,
-				 0b100000,
-				 0b011000,
-				 0b000100,
-				 0b111000},
-				// T
-				{0b111000,
-				 0b010000,
-				 0b010000,
-				 0b010000,
-				 0b010000},
-				// U
-				{0b100100,
-				 0b100100,
-				 0b100100,
-				 0b100100,
-				 0b011000},
-				// V
-				{0b100100,
-				 0b100100,
-				 0b100100,
-				 0b011000,
-				 0b010000},
-				// W
-				{0b100010,
-				 0b100010,
-				 0b101010,
-				 0b110110,
-				 0b100010},
-				// X
-				{0b100100,
-				 0b100100,
-				 0b011000,
-				 0b100100,
-				 0b100100},
-				// Y
-				{0b100010,
-				 0b100010,
-				 0b010100,
-				 0b001000,
-				 0b001000},
-				// Z
-				{0b111110,
-				 0b000100,
-				 0b001000,
-				 0b010000,
-				 0b111110},
-				// %
-				{0b110001,
-				 0b110010,
-				 0b001100,
-				 0b010011,
-				 0b100011},
-				// .
-				{0b000000,
-				 0b000000,
-				 0b000000,
-				 0b001100,
-				 0b001100}};
+	{
+		// 0
+		{0b011100,
+		 0b110010,
+		 0b101010,
+		 0b100110,
+		 0b011100},
+		// 1
+		{0b001000,
+		 0b011000,
+		 0b001000,
+		 0b001000,
+		 0b011100},
+		// 2
+		{0b011100,
+		 0b100010,
+		 0b001100,
+		 0b010000,
+		 0b111110},
+		// 3
+		{0b011100,
+		 0b100010,
+		 0b001100,
+		 0b100010,
+		 0b011100},
+		// 4
+		{0b001010,
+		 0b010010,
+		 0b100010,
+		 0b111110,
+		 0b000010},
+		// 5
+		{0b111110,
+		 0b100000,
+		 0b111100,
+		 0b000010,
+		 0b111100},
+		// 6
+		{0b011110,
+		 0b100000,
+		 0b111100,
+		 0b100010,
+		 0b011100},
+		// 7
+		{0b111110,
+		 0b000010,
+		 0b000100,
+		 0b001000,
+		 0b010000},
+		// 8
+		{0b011100,
+		 0b100010,
+		 0b011100,
+		 0b100010,
+		 0b011100},
+		// 9
+		{0b011100,
+		 0b100010,
+		 0b011110,
+		 0b000010,
+		 0b011100},
+		// A
+		{0b111100,
+		 0b100100,
+		 0b100100,
+		 0b111100,
+		 0b100100},
+		// B
+		{0b111000,
+		 0b100100,
+		 0b111000,
+		 0b100100,
+		 0b111000},
+		// C
+		{0b111100,
+		 0b100100,
+		 0b100000,
+		 0b100100,
+		 0b111100},
+		// D
+		{0b111000,
+		 0b100100,
+		 0b100100,
+		 0b100100,
+		 0b111000},
+		// E
+		{0b111100,
+		 0b100000,
+		 0b111100,
+		 0b100000,
+		 0b111100},
+		// F
+		{0b111100,
+		 0b100000,
+		 0b111000,
+		 0b100000,
+		 0b100000},
+		// G
+		{0b011000,
+		 0b100000,
+		 0b101100,
+		 0b100100,
+		 0b011000},
+		// H
+		{0b100100,
+		 0b100100,
+		 0b111100,
+		 0b100100,
+		 0b100100},
+		// I
+		{0b011100,
+		 0b001000,
+		 0b001000,
+		 0b001000,
+		 0b011100},
+		// J
+		{0b111100,
+		 0b000100,
+		 0b000100,
+		 0b100100,
+		 0b011000},
+		// K
+		{0b100100,
+		 0b101000,
+		 0b110000,
+		 0b101000,
+		 0b100100},
+		// L
+		{0b100000,
+		 0b100000,
+		 0b100000,
+		 0b100000,
+		 0b111000},
+		// M
+		{0b100010,
+		 0b110110,
+		 0b101010,
+		 0b100010,
+		 0b100010},
+		// N
+		{0b010010,
+		 0b011010,
+		 0b010110,
+		 0b010010,
+		 0b010010},
+		// O
+		{0b111100,
+		 0b100100,
+		 0b100100,
+		 0b100100,
+		 0b111100},
+		// P
+		{0b111000,
+		 0b100100,
+		 0b111000,
+		 0b100000,
+		 0b100000},
+		// Q
+		{0b111100,
+		 0b100100,
+		 0b100100,
+		 0b101100,
+		 0b111100},
+		// R
+		{0b111000,
+		 0b100100,
+		 0b111000,
+		 0b100100,
+		 0b100100},
+		// S
+		{0b011100,
+		 0b100000,
+		 0b011000,
+		 0b000100,
+		 0b111000},
+		// T
+		{0b111000,
+		 0b010000,
+		 0b010000,
+		 0b010000,
+		 0b010000},
+		// U
+		{0b100100,
+		 0b100100,
+		 0b100100,
+		 0b100100,
+		 0b011000},
+		// V
+		{0b100100,
+		 0b100100,
+		 0b100100,
+		 0b011000,
+		 0b010000},
+		// W
+		{0b100010,
+		 0b100010,
+		 0b101010,
+		 0b110110,
+		 0b100010},
+		// X
+		{0b100100,
+		 0b100100,
+		 0b011000,
+		 0b100100,
+		 0b100100},
+		// Y
+		{0b100010,
+		 0b100010,
+		 0b010100,
+		 0b001000,
+		 0b001000},
+		// Z
+		{0b111110,
+		 0b000100,
+		 0b001000,
+		 0b010000,
+		 0b111110},
+		// %
+		{0b110001,
+		 0b110010,
+		 0b001100,
+		 0b010011,
+		 0b100011},
+		// .
+		{0b000000,
+		 0b000000,
+		 0b000000,
+		 0b001100,
+		 0b001100}};
 
 void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, URColor color)
 {
@@ -412,7 +414,7 @@ void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, URColor color)
 		for (int j = 0; j <= 8; j++)
 		{
 			if (urFonts[letter][i] & (0b1000000 >> j))
-				urPutPixel((URPointI){topLeftCorner.x + j, topLeftCorner.y + i}, color);
+				UR_PUT_PIXEL(topLeftCorner.x + j, topLeftCorner.y + i, color.r, color.g, color.b);
 		}
 	}
 }
@@ -612,9 +614,9 @@ unsigned char *urBMPLoad(char *fileName, int *imageWidth, int *imageHeight)
 
 		for (w = 0; w < width; w++)
 		{
-			target[w * pixSize] = lineData[w * pixSize + 2];		 // Red
+			target[w * pixSize] = lineData[w * pixSize + 2];	 // Red
 			target[w * pixSize + 1] = lineData[w * pixSize + 1]; // Green
-			target[w * pixSize + 2] = lineData[w * pixSize];		 // Blue
+			target[w * pixSize + 2] = lineData[w * pixSize];	 // Blue
 			if (pixSize == 4)
 				target[w * pixSize + 3] = lineData[w * pixSize + 3]; // Alpha
 		}
@@ -671,7 +673,7 @@ void urSpriteDraw(URSprite _this)
 		for (int j = 0; j < _this.size.y; j++)
 		{
 			URColor color = _this.imageData[j * _this.size.x + i];
-			urPutPixel((URPointI){_this.position.x + i, _this.position.y + j}, color);
+			UR_PUT_PIXEL(_this.position.x + i, _this.position.y + j, color.r, color.g, color.b);
 		}
 	}
 }
@@ -684,7 +686,7 @@ void urSpriteDrawClipped(URSprite _this)
 
 		int clippedWidth = fmin(adjustedPosition.x, _this.size.x);
 		int clippedHeight = fmin(_this.size.y,
-														 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
+								 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
 
 		int clippedX = 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -694,7 +696,7 @@ void urSpriteDrawClipped(URSprite _this)
 			for (int i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
-				urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
+				UR_PUT_PIXEL(adjustedPosition.x - i, adjustedPosition.y + j, color.r, color.g, color.b);
 			}
 		}
 	}
@@ -703,9 +705,9 @@ void urSpriteDrawClipped(URSprite _this)
 		URPointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
 
 		int clippedWidth = fmin(_this.size.x,
-														fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - UR_SCREEN_WIDTH)));
+								fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - UR_SCREEN_WIDTH)));
 		int clippedHeight = fmin(_this.size.y,
-														 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
+								 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
 
 		int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -715,7 +717,7 @@ void urSpriteDrawClipped(URSprite _this)
 			for (int i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
-				urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
+				UR_PUT_PIXEL(adjustedPosition.x + i, adjustedPosition.y + j, color.r, color.g, color.b);
 			}
 		}
 	}
@@ -730,7 +732,7 @@ void urSpriteDrawTransparent(URSprite _this)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){_this.position.x + _this.size.x - i, _this.position.y + j}, color);
+					UR_PUT_PIXEL(_this.position.x + _this.size.x - i, _this.position.y + j, color.r, color.g, color.b);
 			}
 		}
 	else
@@ -740,7 +742,7 @@ void urSpriteDrawTransparent(URSprite _this)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){_this.position.x + i, _this.position.y + j}, color);
+					UR_PUT_PIXEL(_this.position.x + i, _this.position.y + j, color.r, color.g, color.b);
 			}
 		}
 }
@@ -753,7 +755,7 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 
 		int clippedWidth = fmin(adjustedPosition.x, _this.size.x);
 		int clippedHeight = fmin(_this.size.y,
-														 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
+								 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
 
 		int clippedX = 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -764,7 +766,7 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
+					UR_PUT_PIXEL(adjustedPosition.x - i, adjustedPosition.y + j, color.r, color.g, color.b);
 			}
 		}
 	}
@@ -773,9 +775,9 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 		URPointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
 
 		int clippedWidth = fmin(_this.size.x,
-														fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - UR_SCREEN_WIDTH)));
+								fmax(0, _this.size.x - (_this.size.x + adjustedPosition.x - UR_SCREEN_WIDTH)));
 		int clippedHeight = fmin(_this.size.y,
-														 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
+								 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
 
 		int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -786,7 +788,7 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
+					UR_PUT_PIXEL(adjustedPosition.x + i, adjustedPosition.y + j, color.r, color.g, color.b);
 			}
 		}
 	}
@@ -795,9 +797,9 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight)
 {
 	int clippedWidth = fmin(_this.size.x,
-													fmax(0, _this.size.x - (_this.size.x + _this.position.x - UR_SCREEN_WIDTH)));
+							fmax(0, _this.size.x - (_this.size.x + _this.position.x - UR_SCREEN_WIDTH)));
 	int clippedHeight = fmin(_this.size.y,
-													 fmax(0, _this.size.y - (_this.size.y + _this.position.y - lowerLineHeight)));
+							 fmax(0, _this.size.y - (_this.size.y + _this.position.y - lowerLineHeight)));
 	int clippedX = _this.position.x < 0 ? -_this.position.x : 0;
 	int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
 
@@ -808,7 +810,7 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){_this.position.x + _this.size.x - i, _this.position.y + j}, color);
+					UR_PUT_PIXEL(_this.position.x + _this.size.x - i, _this.position.y + j, color.r, color.g, color.b);
 			}
 		}
 	else
@@ -818,7 +820,7 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){_this.position.x + i, _this.position.y + j}, color);
+					UR_PUT_PIXEL(_this.position.x + i, _this.position.y + j, color.r, color.g, color.b);
 			}
 		}
 }
@@ -875,7 +877,7 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 		int clippedWidth = fmin(_this.position.x + _this.size.y, _this.animation.frameWidth);
 
 		int clippedHeight = fmin(_this.size.y,
-														 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
+								 fmax(0, _this.size.y - (_this.size.y - UR_SCREEN_HEIGHT)));
 
 		int clippedX = 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -885,9 +887,9 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 			for (int i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i +
-																				_this.animation.currentFrame * _this.animation.frameWidth];
+												_this.animation.currentFrame * _this.animation.frameWidth];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){adjustedPosition.x - i, adjustedPosition.y + j}, color);
+					UR_PUT_PIXEL(adjustedPosition.x - i, adjustedPosition.y + j, color.r, color.g, color.b);
 			}
 		}
 		return _this;
@@ -897,11 +899,11 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 		URPointI adjustedPosition = {_this.position.x + _this.center.x, _this.position.y + _this.center.y};
 
 		int clippedWidth = fmin(_this.animation.frameWidth,
-														fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + adjustedPosition.x -
-																																	UR_SCREEN_WIDTH)));
+								fmax(0, _this.animation.frameWidth - (_this.animation.frameWidth + adjustedPosition.x -
+																	  UR_SCREEN_WIDTH)));
 
 		int clippedHeight = fmin(_this.size.y,
-														 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
+								 fmax(0, _this.size.y - (_this.size.y + adjustedPosition.y - UR_SCREEN_HEIGHT)));
 
 		int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
@@ -911,9 +913,9 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 			for (int i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i +
-																				_this.animation.currentFrame * _this.animation.frameWidth];
+												_this.animation.currentFrame * _this.animation.frameWidth];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
-					urPutPixel((URPointI){adjustedPosition.x + i, adjustedPosition.y + j}, color);
+					UR_PUT_PIXEL(adjustedPosition.x + i, adjustedPosition.y + j, color.r, color.g, color.b);
 			}
 		}
 		return _this;
@@ -942,9 +944,9 @@ bool urHitTestRectRect(URRectI rectangleA, URRectI rectangleB)
 bool urHitTestPointRect(URPointI point, URRectI rectangle)
 {
 	if (point.x >= rectangle.position.x &&
-			point.x <= rectangle.position.x + rectangle.size.x &&
-			point.y >= rectangle.position.y &&
-			point.y <= rectangle.position.y + rectangle.size.y)
+		point.x <= rectangle.position.x + rectangle.size.x &&
+		point.y >= rectangle.position.y &&
+		point.y <= rectangle.position.y + rectangle.size.y)
 		return true;
 
 	return false;
