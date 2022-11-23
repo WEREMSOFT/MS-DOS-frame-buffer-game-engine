@@ -255,10 +255,12 @@ typedef enum
 
 typedef enum
 {
-	LEVEL3_HERO_STATE_IDLE,
 	LEVEL3_HERO_STATE_WALING,
+	LEVEL3_HERO_STATE_IDLE,
 	LEVEL3_HERO_STATE_JUMPING,
-	LEVEL3_HERO_STATE_COUNT
+	LEVEL3_HERO_STATE_DYING,
+	LEVEL3_HERO_STATE_DEAD,
+	LEVEL3_HERO_STATE_COUNT,
 } Level3HeroState;
 
 typedef struct
@@ -1386,14 +1388,14 @@ void level3DrawTile(Level3 _this, int tileId, char flags)
 Level3 level3CreateEnemies(Level3 _this)
 {
 	_this.enemies[0] = (Level3Enemy){
-		.collisionRect = (URRectI){-10, -10, 20, 10},
+		.collisionRect = (URRectI){-10, -25, 20, 25},
 		.radious = 22,
 		.speed = 20.,
 		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
 		.positionF = (PointF){83, 126}};
 
 	_this.enemies[1] = (Level3Enemy){
-		.collisionRect = (URRectI){-10, -10, 20, 10},
+		.collisionRect = (URRectI){-10, -25, 20, 25},
 		.radious = 10,
 		.speed = -20.,
 		.spriteId = ASSET_LEVEL3_ENEMY_WALKING,
@@ -1536,10 +1538,20 @@ Level3 level3HandleCombatCollisions(Level3 _this)
 		URRectI enemyColRect = level3GetTranslatedCollisionRect(
 			_this.enemies[i].positionF,
 			_this.enemies[i].collisionRect);
-		if (urHitTestRectRect(enemyColRect, heroColRect) && _this.hero.speed.y > 0)
+		if (urHitTestRectRect(enemyColRect, heroColRect))
 		{
-			_this.enemies[i].state = LEVEL3_ENEMY_STATE_DYING;
-			_this.enemies[i].speed.y = _this.hero.jumpSpeed;
+			// Who wins?
+			if (_this.hero.speed.y > 0)
+			{
+				_this.hero.speed.y = _this.hero.jumpSpeed * .5;
+				_this.enemies[i].state = LEVEL3_ENEMY_STATE_DYING;
+				_this.enemies[i].speed.y = _this.hero.jumpSpeed * .25;
+			}
+			else
+			{
+				_this.hero.speed.y = _this.hero.jumpSpeed;
+				_this.hero.state = LEVEL3_HERO_STATE_DYING;
+			}
 		}
 	}
 
@@ -1550,44 +1562,53 @@ Level3 level3ProcessStatePlaying(Level3 _this)
 {
 	_this.hero.isWalking = false;
 	double lastPositionX = _this.hero.positionF.x;
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT))
-		_this.hero.positionF.x += _this.hero.speed.x * _this.gameState->deltaTime;
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT))
-		_this.hero.positionF.x -= _this.hero.speed.x * _this.gameState->deltaTime;
-
-	if (lastPositionX - _this.hero.positionF.x > 0)
-		_this.hero.isFlipped = true;
-
-	if (lastPositionX - _this.hero.positionF.x < 0)
-		_this.hero.isFlipped = false;
-
-	if (lastPositionX != _this.hero.positionF.x)
-		_this.hero.isWalking = true;
-
-	if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_E))
+	switch (_this.hero.state)
 	{
-		_this.showCollisions = true;
-		_this.state = LEVEL3_STATE_EDIT;
-	}
+	case LEVEL3_HERO_STATE_WALING:
+		if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT))
+			_this.hero.positionF.x += _this.hero.speed.x * _this.gameState->deltaTime;
 
-	for (int i = 0; i < _this.tiles.size; i++)
-	{
-		if (_this.activeTile == i)
-			level3DrawTile(_this, i, TILE_SELECTED);
-		else
-			level3DrawTile(_this, i, 0);
-	}
+		if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT))
+			_this.hero.positionF.x -= _this.hero.speed.x * _this.gameState->deltaTime;
 
-	if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_SPACE) && _this.hero.isInFloor)
-	{
-		_this.hero.speed.y = _this.hero.jumpSpeed;
-		soundPlaySfx(_this.gameState->sound, SFX_HERO_JUMP);
+		if (lastPositionX - _this.hero.positionF.x > 0)
+			_this.hero.isFlipped = true;
+
+		if (lastPositionX - _this.hero.positionF.x < 0)
+			_this.hero.isFlipped = false;
+
+		if (lastPositionX != _this.hero.positionF.x)
+			_this.hero.isWalking = true;
+
+		if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_E))
+		{
+			_this.showCollisions = true;
+			_this.state = LEVEL3_STATE_EDIT;
+		}
+
+		for (int i = 0; i < _this.tiles.size; i++)
+		{
+			if (_this.activeTile == i)
+				level3DrawTile(_this, i, TILE_SELECTED);
+			else
+				level3DrawTile(_this, i, 0);
+		}
+
+		if (isKeyJustPressed(_this.gameState->graphics.window, GLFW_KEY_SPACE) && _this.hero.isInFloor)
+		{
+			_this.hero.speed.y = _this.hero.jumpSpeed;
+			soundPlaySfx(_this.gameState->sound, SFX_HERO_JUMP);
+		}
+
+		break;
+	case LEVEL3_HERO_STATE_DYING:
+		// DO SOMETHING
+		break;
 	}
 
 	_this.hero.speed.y += _this.hero.gravity * _this.gameState->deltaTime;
 	_this.hero.positionF.y += _this.hero.speed.y * _this.gameState->deltaTime;
+
 	// Handle collisions
 	_this = level3HandleCollisionsReactions(_this);
 	_this = level3HandleCombatCollisions(_this);
