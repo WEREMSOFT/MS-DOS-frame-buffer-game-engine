@@ -16,27 +16,27 @@
 #define UR_MALLOC allocStatic
 #define UR_REALLOC reallocStatic
 #define UR_FREE freeStatic
+unsigned char *imageData;
+#define urPutPixelM(x, y, r, g, b)                   \
+	{                                                \
+		int index = ((x) + (y)*UR_SCREEN_WIDTH) * 3; \
+		imageData[index] = (r);                      \
+		imageData[index + 1] = (g);                  \
+		imageData[index + 2] = (b);                  \
+	}
 
-#define UR_PUT_PIXEL urPutPixel
+#define UR_PUT_PIXEL urPutPixelM
 #include "universal_renderer.h"
 #define Color URColor
 #define PointI URPointI
 
 #include "program/core/utils/utils.h"
-ImageData globalImgData;
-
 #include "program/core/input/keyboard.h"
 
 #define S3L_RESOLUTION_X 320
 #define S3L_RESOLUTION_Y 240
 #define S3L_PIXEL_FUNCTION drawPixel
 #include <small3Dlib/small3dlib.h>
-
-void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
-{
-	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
-	globalImgData.data[position] = (URColor){r, g, b};
-}
 
 void drawPixel(S3L_PixelInfo *p)
 {
@@ -59,7 +59,7 @@ void drawPixel(S3L_PixelInfo *p)
 		color.r = color.g = color.b = 0x66;
 	}
 
-	urPutPixel(p->x, p->y, color.r, color.g, color.b);
+	UR_PUT_PIXEL(p->x, p->y, color.r, color.g, color.b);
 }
 
 #define TILES_CAPACITY 100
@@ -1646,7 +1646,7 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 
 	urDrawLine((URPointI){0, _this.mousePos.y}, (URPointI){319, _this.mousePos.y}, UR_WHITE);
 	urDrawLine((URPointI){_this.mousePos.x, 0}, (URPointI){_this.mousePos.x, 239}, UR_WHITE);
-	urPutPixel(_this.mousePos.x, _this.mousePos.y, UR_RED.r, UR_RED.g, UR_RED.b);
+	UR_PUT_PIXEL(_this.mousePos.x, _this.mousePos.y, UR_RED.r, UR_RED.g, UR_RED.b);
 
 	for (int i = 0; i < _this.tiles.size; i++)
 		level3DrawTile(_this, i, 0);
@@ -2074,7 +2074,7 @@ Level4 level4Update(Level4 _this)
 
 GameState gameMainLoop(GameState gameState)
 {
-	globalImgData = gameState.graphics.imageData;
+	imageData = (char *)gameState.graphics.imageData.data;
 	gameState.deltaTime = getDeltaTime();
 	gameState = gameStateCheckExitConditions(gameState);
 	switch (gameState.gameStateEnum)

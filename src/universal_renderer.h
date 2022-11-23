@@ -18,8 +18,6 @@
 #ifndef UR_PUT_PIXEL
 #error UR_PUT_PIXEL not defined
 #endif
-// forward declaration
-void UR_PUT_PIXEL(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 
 #ifndef UR_MALLOC
 #define UR_MALLOC malloc
