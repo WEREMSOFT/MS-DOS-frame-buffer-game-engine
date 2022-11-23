@@ -1868,13 +1868,14 @@ Level3 level3EnemiesUpdate(Level3 _this)
 		case LEVEL3_ENEMY_STATE_WALKING:
 		{
 			Level3Enemy enemy = _this.enemies[i];
-			enemy.positionF.x += enemy.speed.x * _this.gameState->deltaTime;
 
 			if (abs(enemy.positionF.x - enemy.initialPosition.x) > enemy.radious)
 			{
 				enemy.speed.x *= -1;
+				enemy.positionF.x = enemy.initialPosition.x - enemy.radious * (enemy.speed.x / abs(enemy.speed.x));
 			}
 
+			enemy.positionF.x += enemy.speed.x * _this.gameState->deltaTime;
 			_this.enemies[i] = enemy;
 		}
 		break;
