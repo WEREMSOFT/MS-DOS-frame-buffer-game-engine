@@ -255,7 +255,7 @@ typedef enum
 
 typedef enum
 {
-	LEVEL3_HERO_STATE_WALING,
+	LEVEL3_HERO_STATE_WALKING,
 	LEVEL3_HERO_STATE_IDLE,
 	LEVEL3_HERO_STATE_JUMPING,
 	LEVEL3_HERO_STATE_DYING,
@@ -1564,7 +1564,7 @@ Level3 level3ProcessStatePlaying(Level3 _this)
 	double lastPositionX = _this.hero.positionF.x;
 	switch (_this.hero.state)
 	{
-	case LEVEL3_HERO_STATE_WALING:
+	case LEVEL3_HERO_STATE_WALKING:
 		if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT))
 			_this.hero.positionF.x += _this.hero.speed.x * _this.gameState->deltaTime;
 
@@ -1600,18 +1600,24 @@ Level3 level3ProcessStatePlaying(Level3 _this)
 			soundPlaySfx(_this.gameState->sound, SFX_HERO_JUMP);
 		}
 
+		// Handle collisions
+		_this = level3HandleCollisionsReactions(_this);
+		_this = level3HandleCombatCollisions(_this);
+
 		break;
 	case LEVEL3_HERO_STATE_DYING:
-		// DO SOMETHING
+		if (_this.hero.positionF.y > UR_SCREEN_HEIGHT)
+		{
+			_this.hero.state = LEVEL3_HERO_STATE_DEAD;
+		}
+		break;
+	case LEVEL3_HERO_STATE_DEAD:
+		// do domething
 		break;
 	}
 
 	_this.hero.speed.y += _this.hero.gravity * _this.gameState->deltaTime;
 	_this.hero.positionF.y += _this.hero.speed.y * _this.gameState->deltaTime;
-
-	// Handle collisions
-	_this = level3HandleCollisionsReactions(_this);
-	_this = level3HandleCombatCollisions(_this);
 
 	return _this;
 }
@@ -1656,6 +1662,7 @@ Level3 level3ProcesStateEditDrawing(Level3 _this)
 
 Level3 level3SelectActiveTileWithMouse(Level3 _this)
 {
+
 	bool activeTileAssigned = false;
 	for (int i = 0; i < _this.tiles.size; i++)
 	{
@@ -1930,8 +1937,8 @@ Level3 level3Update(Level3 _this)
 	_this = level3EnemiesUpdate(_this);
 
 	// setup hero and draw it
-	_this = level3HeroDraw(_this);
 	_this = level3EnemiesDraw(_this);
+	_this = level3HeroDraw(_this);
 
 	// Draw square on the mouse position
 	urDrawSquare(
