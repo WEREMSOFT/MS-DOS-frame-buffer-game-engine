@@ -294,7 +294,7 @@ typedef struct
 
 #define ENEMIES_CAPACITY 2
 
-#define PARTICLES_CAPACITY 100
+#define PARTICLES_CAPACITY (32 * 32)
 
 typedef struct
 {
@@ -1931,28 +1931,38 @@ Level3 level3HandleParticleSystem(Level3 _this)
 
 		for (int i = 0; i < PARTICLES_CAPACITY; i++)
 		{
-			URColor color = _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP].imageData[i + 300];
-			UR_PUT_PIXEL(
-				(int)_this.particlesX[i],
-				(int)_this.particlesY[i],
-				color.r,
-				color.g,
-				color.b);
+			URColor color = _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP].imageData[i];
+			if (color.r != 0xff && color.g != 0 && color.b != 0xff)
+				UR_PUT_PIXEL(
+					(int)_this.particlesX[i],
+					(int)_this.particlesY[i],
+					color.r,
+					color.g,
+					color.b);
 		}
 	}
 	else if (glfwGetMouseButton(_this.gameState->graphics.window, GLFW_MOUSE_BUTTON_1))
 	{
 		_this.elapsedParticleTime = 0;
+		URSprite sprite = _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP];
+
 		for (int i = 0; i < PARTICLES_CAPACITY; i++)
 		{
-			_this.particlesColor[i] =
-				_this.gameState->sprites[ASSET_LEVEL3_HERO_IDLE].imageData[i];
-			_this.particlesX[i] = _this.mousePos.x +
-								  i % _this.gameState->sprites[ASSET_LEVEL3_HERO_IDLE].size.x;
-			_this.particlesY[i] = _this.mousePos.y + i;
-			_this.particlesSpeedY[i] = -150 - random() % 100;
-			_this.particlesSpeedX[i] = -50 + random() % 100;
+			_this.particlesColor[i] = sprite.imageData[i];
 		}
+
+		for (int j = 0; j < sprite.size.y; j++)
+			for (int i = 0; i < sprite.size.x; i++)
+			{
+				int index = i + j * sprite.size.x;
+				_this.particlesX[index] = _this.mousePos.x + i;
+				_this.particlesY[index] = _this.mousePos.y + j;
+				_this.particlesSpeedY[index] = -500;
+
+				float normalizedX = (float)i / (float)sprite.size.x - .5;
+
+				_this.particlesSpeedX[index] = normalizedX * 100.;
+			}
 	}
 
 	return _this;
