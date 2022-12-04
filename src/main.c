@@ -20,9 +20,12 @@ unsigned char *imageData;
 #define urPutPixelM(x, y, r, g, b)                   \
 	{                                                \
 		int index = ((x) + (y)*UR_SCREEN_WIDTH) * 3; \
-		imageData[index] = (r);                      \
-		imageData[index + 1] = (g);                  \
-		imageData[index + 2] = (b);                  \
+		if (index > -1)                              \
+		{                                            \
+			imageData[index] = (r);                  \
+			imageData[index + 1] = (g);              \
+			imageData[index + 2] = (b);              \
+		}                                            \
 	}
 
 #define UR_PUT_PIXEL urPutPixelM
@@ -291,6 +294,8 @@ typedef struct
 
 #define ENEMIES_CAPACITY 2
 
+#define PARTICLES_CAPACITY 100
+
 typedef struct
 {
 	struct GameState *gameState;
@@ -308,7 +313,7 @@ typedef struct
 	} newSquare;
 
 	Level3Enemy enemies[ENEMIES_CAPACITY];
-
+	float gravity;
 	struct
 	{
 		URRectI collisionRect;
@@ -317,7 +322,6 @@ typedef struct
 		PointF speed;
 		Level3HeroState state;
 		int spriteId;
-		float gravity;
 		float jumpSpeed;
 		bool isWalking;
 		bool isInFloor;
@@ -326,6 +330,13 @@ typedef struct
 
 	bool showCollisions;
 	URPointI mousePos;
+	// DOD for sprite to particle system
+	float particlesSpeedY[PARTICLES_CAPACITY];
+	float particlesSpeedX[PARTICLES_CAPACITY];
+	float particlesX[PARTICLES_CAPACITY];
+	float particlesY[PARTICLES_CAPACITY];
+	URColor particlesColor[PARTICLES_CAPACITY];
+	float elapsedParticleTime;
 } Level3;
 
 typedef struct
@@ -1409,7 +1420,7 @@ Level3 level3Create()
 	Level3 _this = {0};
 	_this.hero.collisionRect = (URRectI){-10, -10, 20, 10};
 	_this.hero.spriteId = ASSET_LEVEL3_HERO_IDLE;
-	_this.hero.gravity = 1000.;
+	_this.gravity = 1000.;
 	_this.hero.positionF.x = 120.;
 	_this.hero.positionF.y = 100.;
 	_this.hero.speed.x = 100.;
@@ -1616,7 +1627,7 @@ Level3 level3ProcessStatePlaying(Level3 _this)
 		break;
 	}
 
-	_this.hero.speed.y += _this.hero.gravity * _this.gameState->deltaTime;
+	_this.hero.speed.y += _this.gravity * _this.gameState->deltaTime;
 	_this.hero.positionF.y += _this.hero.speed.y * _this.gameState->deltaTime;
 
 	return _this;
@@ -1893,12 +1904,57 @@ Level3 level3EnemiesUpdate(Level3 _this)
 				_this.enemies[i].state = LEVEL3_ENEMY_STATE_DEAD;
 				break;
 			}
-			_this.enemies[i].speed.y += _this.hero.gravity * _this.gameState->deltaTime;
+			_this.enemies[i].speed.y += _this.gravity * _this.gameState->deltaTime;
 			_this.enemies[i].positionF.y += _this.enemies[i].speed.y * _this.gameState->deltaTime;
 		}
 		break;
 		}
 	}
+	return _this;
+}
+
+Level3 level3HandleParticleSystem(Level3 _this)
+{
+	_this.elapsedParticleTime += _this.gameState->deltaTime;
+	if (_this.elapsedParticleTime < 1.)
+	{
+		for (int i = 0; i < PARTICLES_CAPACITY; i++)
+		{
+			_this.particlesSpeedY[i] += _this.gravity * _this.gameState->deltaTime;
+			_this.particlesY[i] += _this.particlesSpeedY[i] * _this.gameState->deltaTime;
+		}
+
+		for (int i = 0; i < PARTICLES_CAPACITY; i++)
+		{
+			_this.particlesX[i] += _this.particlesSpeedX[i] * _this.gameState->deltaTime;
+		}
+
+		for (int i = 0; i < PARTICLES_CAPACITY; i++)
+		{
+			URColor color = _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP].imageData[i + 300];
+			UR_PUT_PIXEL(
+				(int)_this.particlesX[i],
+				(int)_this.particlesY[i],
+				color.r,
+				color.g,
+				color.b);
+		}
+	}
+	else if (glfwGetMouseButton(_this.gameState->graphics.window, GLFW_MOUSE_BUTTON_1))
+	{
+		_this.elapsedParticleTime = 0;
+		for (int i = 0; i < PARTICLES_CAPACITY; i++)
+		{
+			_this.particlesColor[i] =
+				_this.gameState->sprites[ASSET_LEVEL3_HERO_IDLE].imageData[i];
+			_this.particlesX[i] = _this.mousePos.x +
+								  i % _this.gameState->sprites[ASSET_LEVEL3_HERO_IDLE].size.x;
+			_this.particlesY[i] = _this.mousePos.y + i;
+			_this.particlesSpeedY[i] = -150 - random() % 100;
+			_this.particlesSpeedX[i] = -50 + random() % 100;
+		}
+	}
+
 	return _this;
 }
 
@@ -1915,6 +1971,8 @@ Level3 level3Update(Level3 _this)
 		glfwGetCursorPos(_this.gameState->graphics.window, &x, &y);
 		_this.mousePos = (URPointI){fmax(fmin(x, 319), 0.), fmax(fmin(y, 239), 0.)};
 	}
+
+	_this = level3HandleParticleSystem(_this);
 
 	// Level state handling
 	switch (_this.state)
