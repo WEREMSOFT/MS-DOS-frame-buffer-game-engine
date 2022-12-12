@@ -79,6 +79,11 @@ typedef struct
 
 typedef struct
 {
+	float x, y;
+} URPointF;
+
+typedef struct
+{
 	URPointI position;
 	URPointI size;
 } URRectI;
@@ -649,6 +654,11 @@ typedef struct
 	URPointI size;
 	URColor *imageData;
 } URSprite;
+
+URPointI urPointF2PointI(URPointF point)
+{
+	return (URPointI){point.x, point.y};
+}
 
 URSprite urSpriteCreate(char *file)
 {

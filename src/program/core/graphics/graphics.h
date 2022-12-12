@@ -6,40 +6,42 @@
 #ifndef Color
 typedef struct
 {
-    unsigned char r, g, b;
+	unsigned char r, g, b;
 } Color;
 #endif
 
 #ifndef PointI
 typedef struct
 {
-    int x;
-    int y;
+	int x;
+	int y;
 } PointI;
+#endif
+
+#ifndef PointF
+typedef struct
+{
+	double x;
+	double y;
+} PointF;
 #endif
 
 typedef struct
 {
-    double x;
-    double y;
-} PointF;
-
-typedef struct
-{
-    PointI size;
-    int bufferSize;
-    Color *data;
+	PointI size;
+	int bufferSize;
+	Color *data;
 } ImageData;
 
 typedef struct
 {
-    unsigned int textureId;
-    unsigned int VAO;
-    unsigned int shaderProgram;
-    PointI mousePosition;
-    bool mouseRightDown;
-    GLFWwindow *window;
-    ImageData imageData;
+	unsigned int textureId;
+	unsigned int VAO;
+	unsigned int shaderProgram;
+	PointI mousePosition;
+	bool mouseRightDown;
+	GLFWwindow *window;
+	ImageData imageData;
 } Graphics;
 
 Graphics graphicsCreate(int width, int height, bool fullScreen);

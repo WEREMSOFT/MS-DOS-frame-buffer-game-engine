@@ -32,6 +32,7 @@ unsigned char *imageData;
 #include "universal_renderer.h"
 #define Color URColor
 #define PointI URPointI
+#define PointF URPointF
 
 #include "program/core/utils/utils.h"
 #include "program/core/input/keyboard.h"
@@ -157,6 +158,7 @@ typedef enum
 	ASSET_LEVEL3_HERO_IDLE,
 	ASSET_LEVEL3_ENEMY_WALKING,
 	ASSET_LEVEL3_ENEMY_HIT,
+	ASSET_LEVEL3_ENEMY_SINGLE_FRAME,
 
 	ASSET_COUNT
 } Assets;
@@ -294,7 +296,7 @@ typedef struct
 
 #define ENEMIES_CAPACITY 2
 
-#define PARTICLES_CAPACITY (32 * 32)
+#define PARTICLES_CAPACITY (34 * 34)
 
 typedef struct
 {
@@ -337,6 +339,8 @@ typedef struct
 	float particlesY[PARTICLES_CAPACITY];
 	URColor particlesColor[PARTICLES_CAPACITY];
 	float elapsedParticleTime;
+	Assets spriteToExplode;
+	URPointI particlePosition;
 } Level3;
 
 typedef struct
@@ -588,6 +592,8 @@ void loadAssets(URSprite *_this)
 	_this[ASSET_LEVEL3_HERO_IDLE].animation.frameRate = 15;
 	_this[ASSET_LEVEL3_HERO_IDLE].center.x = -16;
 	_this[ASSET_LEVEL3_HERO_IDLE].center.y = -32;
+
+	_this[ASSET_LEVEL3_ENEMY_SINGLE_FRAME] = urSpriteCreate(ASSET_PATH "enemySingleFrame.bmp");
 
 	_this[ASSET_LEVEL3_ENEMY_WALKING] = urSpriteCreate(ASSET_PATH "enemyWalking.bmp");
 	_this[ASSET_LEVEL3_ENEMY_WALKING].position.x = 0;
@@ -1428,7 +1434,7 @@ Level3 level3Create()
 	_this.activeTile = 0;
 	_this.tiles.capacity = TILES_CAPACITY;
 	_this.state = LEVEL3_STATE_PLAYING;
-
+	_this.spriteToExplode = ASSET_NONE;
 	_this = level3CreateEnemies(_this);
 
 	return _this;
@@ -1535,6 +1541,32 @@ URRectI level3GetTranslatedCollisionRect(PointF position, URRectI collisionRect)
 	return collRect;
 }
 
+Level3 level3StartParticleSystem(Level3 _this)
+{
+	_this.elapsedParticleTime = 0;
+	URSprite sprite = _this.gameState->sprites[_this.spriteToExplode];
+
+	for (int i = 0; i < PARTICLES_CAPACITY; i++)
+	{
+		_this.particlesColor[i] = sprite.imageData[i];
+	}
+
+	for (int j = 0; j < sprite.size.y; j++)
+		for (int i = 0; i < sprite.size.x; i++)
+		{
+			int index = i + j * sprite.size.x;
+			_this.particlesX[index] = _this.particlePosition.x + i;
+			_this.particlesY[index] = _this.particlePosition.y + j;
+			_this.particlesSpeedY[index] = -300 + random() % 25;
+
+			float normalizedX = (float)i / (float)sprite.size.x - .5;
+
+			_this.particlesSpeedX[index] = normalizedX * 50.;
+		}
+
+	return _this;
+}
+
 Level3 level3HandleCombatCollisions(Level3 _this)
 {
 	URRectI heroColRect = level3GetTranslatedCollisionRect(
@@ -1557,12 +1589,19 @@ Level3 level3HandleCombatCollisions(Level3 _this)
 				_this.hero.speed.y = _this.hero.jumpSpeed * .5;
 				_this.enemies[i].state = LEVEL3_ENEMY_STATE_DYING;
 				_this.enemies[i].speed.y = _this.hero.jumpSpeed * .25;
+				_this.spriteToExplode = ASSET_LEVEL3_ENEMY_SINGLE_FRAME;
+				_this.particlePosition = (URPointI){_this.enemies[i].positionF.x - _this.gameState->sprites[ASSET_LEVEL3_ENEMY_SINGLE_FRAME].size.x / 2,
+													_this.enemies[i].positionF.y - _this.gameState->sprites[ASSET_LEVEL3_ENEMY_SINGLE_FRAME].size.y / 2};
 			}
 			else
 			{
 				_this.hero.speed.y = _this.hero.jumpSpeed;
 				_this.hero.state = LEVEL3_HERO_STATE_DYING;
+				_this.spriteToExplode = ASSET_LEVEL3_HERO_JUMP;
+				_this.particlePosition = (URPointI){_this.enemies[i].positionF.x, // - _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP].size.x / 2,
+													_this.enemies[i].positionF.y - _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP].size.y / 2};
 			}
+			_this = level3StartParticleSystem(_this);
 		}
 	}
 
@@ -1846,6 +1885,8 @@ Level3 level3SetHeroAnimation(Level3 _this)
 
 Level3 level3HeroDraw(Level3 _this)
 {
+	if (_this.hero.state == LEVEL3_HERO_STATE_DYING)
+		return;
 	_this.gameState->sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
 	_this.gameState->sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y;
 
@@ -1863,6 +1904,8 @@ Level3 level3EnemiesDraw(Level3 _this)
 {
 	for (int i = 0; i < ENEMIES_CAPACITY; i++)
 	{
+		if (_this.enemies[i].state == LEVEL3_ENEMY_STATE_DYING)
+			continue;
 		_this.gameState->sprites[_this.enemies[i].spriteId].position =
 			(URPointI){_this.enemies[i].positionF.x, _this.enemies[i].positionF.y};
 
@@ -1915,9 +1958,9 @@ Level3 level3EnemiesUpdate(Level3 _this)
 
 Level3 level3HandleParticleSystem(Level3 _this)
 {
-	_this.elapsedParticleTime += _this.gameState->deltaTime;
-	if (_this.elapsedParticleTime < 1.)
+	if (_this.elapsedParticleTime < 1. && _this.spriteToExplode != ASSET_NONE)
 	{
+		_this.elapsedParticleTime += _this.gameState->deltaTime;
 		for (int i = 0; i < PARTICLES_CAPACITY; i++)
 		{
 			_this.particlesSpeedY[i] += _this.gravity * _this.gameState->deltaTime;
@@ -1931,8 +1974,8 @@ Level3 level3HandleParticleSystem(Level3 _this)
 
 		for (int i = 0; i < PARTICLES_CAPACITY; i++)
 		{
-			URColor color = _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP].imageData[i];
-			if (color.r != 0xff && color.g != 0 && color.b != 0xff)
+			URColor color = _this.gameState->sprites[_this.spriteToExplode].imageData[i];
+			if (!(color.r == 0xff && color.g == 0 && color.b == 0xff))
 				UR_PUT_PIXEL(
 					(int)_this.particlesX[i],
 					(int)_this.particlesY[i],
@@ -1941,30 +1984,6 @@ Level3 level3HandleParticleSystem(Level3 _this)
 					color.b);
 		}
 	}
-	else if (glfwGetMouseButton(_this.gameState->graphics.window, GLFW_MOUSE_BUTTON_1))
-	{
-		_this.elapsedParticleTime = 0;
-		URSprite sprite = _this.gameState->sprites[ASSET_LEVEL3_HERO_JUMP];
-
-		for (int i = 0; i < PARTICLES_CAPACITY; i++)
-		{
-			_this.particlesColor[i] = sprite.imageData[i];
-		}
-
-		for (int j = 0; j < sprite.size.y; j++)
-			for (int i = 0; i < sprite.size.x; i++)
-			{
-				int index = i + j * sprite.size.x;
-				_this.particlesX[index] = _this.mousePos.x + i;
-				_this.particlesY[index] = _this.mousePos.y + j;
-				_this.particlesSpeedY[index] = -500;
-
-				float normalizedX = (float)i / (float)sprite.size.x - .5;
-
-				_this.particlesSpeedX[index] = normalizedX * 100.;
-			}
-	}
-
 	return _this;
 }
 
