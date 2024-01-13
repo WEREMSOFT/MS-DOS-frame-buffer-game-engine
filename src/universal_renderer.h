@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #ifndef UR_SCREEN_WIDTH
 #error UR_SCREEN_WITH not defined
@@ -838,6 +839,18 @@ void urSpriteDestroy(URSprite _this)
 	UR_FREE(_this.imageData);
 }
 
+URSprite urSpriteCreateEmpty(URPointI size, URColor color)
+{
+	URSprite _this = {0};
+	_this.imageData = UR_MALLOC(sizeof(URColor) * size.x * size.y);
+	_this.size = size;
+	for (int y = 0; y < _this.size.y; y++)
+		for (int x = 0; x < _this.size.x; x++)
+			_this.imageData[x + y * size.x] = color;
+
+	return _this;
+}
+
 URSprite urSpriteCreateCkeckerBoard(URPointI size, int checkerWidth, URColor color1, URColor color2)
 {
 	URSprite _this = {0};
@@ -930,6 +943,26 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 	}
 }
 
+URColor urSpriteGetPixel(URSprite _this, URPointI position)
+{
+	int x = (position.x % _this.size.x);
+	int y = (position.y % _this.size.y);
+	int index = x + (y * _this.size.x); 
+	if (index > -1)                          
+		return _this.imageData[index];
+
+	return (URColor){0};
+}
+
+void urSpritePutPixel(URSprite _this, URPointI position, URColor color)
+{
+	int x = (position.x % _this.size.x);
+	int y = (position.y % _this.size.y);
+	int index = x + (y * _this.size.x); 
+	if (index > -1)                          
+		_this.imageData[index] = color;
+}
+
 bool urHitTestRectRect(URRectI rectangleA, URRectI rectangleB)
 {
 	int a[4], b[4];
@@ -981,14 +1014,41 @@ void urPrintFPS(double deltaTime)
 	{
 		char text[1000] = {0};
 		snprintf(text, 1000, "fps: %d", (int)floor(avg));
-		urPrintString((URPointI){230, 220}, text, (URColor){0, 0xff, 0xff});
+		urPrintString((URPointI){0}, text, (URColor){0, 0xff, 0xff});
 	}
 
 	{
 		char text[1000] = {0};
 		snprintf(text, 1000, "ftime:%.4f", deltaTime);
-		urPrintString((URPointI){230, 230}, text, (URColor){0, 0xff, 0xff});
+		urPrintString((URPointI){0, 6}, text, (URColor){0, 0xff, 0xff});
 	}
+}
+
+uint32_t pcgHash(uint32_t input)
+{
+	uint32_t state = input * 747796405u + 2891336453u;
+	uint32_t word  = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+	return (word >> 22u) ^ word;
+}
+
+uint32_t wangHash(uint32_t seed)
+{
+	seed = (seed ^ 61) ^ (seed >> 16);
+	seed *= 9;
+	seed = seed ^ (seed >> 4);
+	seed *= 0x27d4eb2d;
+	seed = seed ^ (seed >> 15);
+	return seed;
+}
+
+float wangRandom(uint32_t seed)
+{
+	return (float)wangHash(seed) / (float)UINT32_MAX;
+}
+
+float pcgRandom(uint32_t seed)
+{
+	return (float)pcgHash(seed) / (float)UINT32_MAX;
 }
 
 #endif

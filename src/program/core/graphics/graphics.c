@@ -28,7 +28,7 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-Graphics graphicsCreate(int width, int height, bool fullScreen)
+Graphics graphicsCreate(int width, int height, bool fullScreen, int sizeMultiplier)
 {
     Graphics _this = {0};
     _this.imageData.size.x = width;
@@ -50,8 +50,8 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
 
     if (!fullScreen)
     {
-        screenWidth = width * 2;
-        screenHeight = height * 2;
+        screenWidth = width * sizeMultiplier;
+        screenHeight = height * sizeMultiplier;
         monitor = NULL;
     }
 
