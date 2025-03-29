@@ -16,26 +16,71 @@
 #define UR_MALLOC allocStatic
 #define UR_REALLOC reallocStatic
 #define UR_FREE freeStatic
-unsigned char *imageData;
-#define urPutPixelM(x, y, r, g, b)                   \
-	{                                                \
-		int index = ((x) + (y)*UR_SCREEN_WIDTH) * 3; \
-		if (index > -1)                              \
-		{                                            \
-			imageData[index] = (r);                  \
-			imageData[index + 1] = (g);              \
-			imageData[index + 2] = (b);              \
-		}                                            \
-	}
 
-#define UR_PUT_PIXEL urPutPixelM
+void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
+
+
+#define UR_PUT_PIXEL urPutPixel
 #include "universal_renderer.h"
+// unsigned char *imageData;
+
+
 #define Color URColor
 #define PointI URPointI
 #define PointF URPointF
 
 #include "program/core/utils/utils.h"
 #include "program/core/input/keyboard.h"
+
+ImageData globalImgData;
+
+/*
+
+#include "program/core/input/keyboard.h"
+
+#define S3L_RESOLUTION_X 320
+#define S3L_RESOLUTION_Y 240
+#define S3L_PIXEL_FUNCTION drawPixel
+#include <small3Dlib/small3dlib.h>
+
+void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
+{
+	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
+	globalImgData.data[position] = (URColor){r, g, b};
+}
+
+void drawPixel(S3L_PixelInfo *p)
+{
+	URColor color = {0};
+	switch (p->triangleID)
+	{
+	case 1:
+	case 0:
+		color.r = 0xff;
+		break;
+	case 2:
+	case 3:
+		color.b = 0xff;
+		break;
+	case 6:
+	case 7:
+		color.g = 0xff;
+		break;
+	default:
+		color.r = color.g = color.b = 0x66;
+	}
+
+	urPutPixel(p->x, p->y, color.r, color.g, color.b);
+}
+
+*/
+
+void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
+{
+	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
+	globalImgData.data[position] = (URColor){r, g, b};
+}
+
 
 #define S3L_RESOLUTION_X 320
 #define S3L_RESOLUTION_Y 240
@@ -63,7 +108,7 @@ void drawPixel(S3L_PixelInfo *p)
 		color.r = color.g = color.b = 0x66;
 	}
 
-	UR_PUT_PIXEL(p->x, p->y, color.r, color.g, color.b);
+	urPutPixel(p->x, p->y, color.r, color.g, color.b);
 }
 
 #define TILES_CAPACITY 100
@@ -1886,7 +1931,7 @@ Level3 level3SetHeroAnimation(Level3 _this)
 Level3 level3HeroDraw(Level3 _this)
 {
 	if (_this.hero.state == LEVEL3_HERO_STATE_DYING)
-		return;
+		return _this;
 	_this.gameState->sprites[_this.hero.spriteId].position.x = _this.hero.positionF.x;
 	_this.gameState->sprites[_this.hero.spriteId].position.y = _this.hero.positionF.y;
 
@@ -2169,7 +2214,7 @@ Level4 level4Update(Level4 _this)
 
 GameState gameMainLoop(GameState gameState)
 {
-	imageData = (char *)gameState.graphics.imageData.data;
+	globalImgData = gameState.graphics.imageData;
 	gameState.deltaTime = getDeltaTime();
 	gameState = gameStateCheckExitConditions(gameState);
 	switch (gameState.gameStateEnum)
@@ -2178,6 +2223,7 @@ GameState gameMainLoop(GameState gameState)
 		gameState = gameStateClickToStart(gameState);
 		break;
 	case GAME_STATE_LEVEL1_INIT:
+		gameState.sound = soundCreate();
 		Soloud_setGlobalVolume(gameState.sound.soloud, 1.);
 		soundPlaySpeech(gameState.sound, SPEECH_SHOOT_THE_BAD_GUYS);
 		gameState.level1 = level1Create();
@@ -2263,8 +2309,7 @@ int main(void)
 	gameState._self = &gameState;
 	gameState.graphics = graphicsCreate(320, 240, false);
 	loadAssets(gameState.sprites);
-
-	gameState.sound = soundCreate();
+	
 #ifdef INITIAL_LEVEL
 	gameState.gameStateEnum = INITIAL_LEVEL;
 #endif

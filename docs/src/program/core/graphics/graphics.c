@@ -7,7 +7,6 @@
 #include <memory.h>
 #include "../shader/shader.h"
 #include "../stackAllocator/staticAlloc.h"
-#include <stb_image.h>
 
 extern char fonts[][5];
 static void textureCreate(Graphics *_this)
@@ -20,39 +19,6 @@ static void textureCreate(Graphics *_this)
     _this->imageData.bufferSize = _this->imageData.size.x * _this->imageData.size.y * sizeof(Color);
     _this->imageData.data = allocStatic(_this->imageData.bufferSize);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _this->imageData.size.x, _this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, _this->imageData.data);
-}
-
-void textureCreateFromImage(Graphics *_this, char *fileName)
-{
-    int width, height, nrChannels;
-    glGenTextures(1, &_this->textureId);
-    glBindTexture(GL_TEXTURE_2D, _this->textureId);
-    // Set texture wrapping filtering options.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    stbi_set_flip_vertically_on_load(false);
-    _this->imageData.data = (Color *)stbi_load(fileName, &width, &height, &nrChannels, 0);
-
-    if (_this->imageData.data)
-    {
-        GLenum format = 0;
-
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, _this->imageData.data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-
-    else
-    {
-        printf("%s::%s - Error loading texture \n", __FILE__, __FUNCTION__);
-        printf("Error: %s\n", stbi_failure_reason());
-        exit(1);
-    }
 }
 
 static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -169,135 +135,15 @@ void graphicsDestroy(Graphics _this)
     glfwTerminate();
 }
 
-void graphicsPutPixel(ImageData _this, PointI point, Color color)
-{
-    int position = (point.x + point.y * _this.size.x) % _this.bufferSize;
-    _this.data[position] = color;
-}
-
 inline Color graphicsGetPixel(ImageData _this, PointI point)
 {
     int position = (point.x + point.y * _this.size.x) % _this.bufferSize;
     return _this.data[position];
 }
 
-void graphicsDrawCircle(ImageData _this, PointI center, double radious, Color color)
-{
-
-    for (int i = center.x - radious; i <= center.x + radious; i++)
-    {
-
-        for (int j = center.y - radious; j <= center.y + radious; j++)
-        {
-
-            if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-                graphicsPutPixel(_this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsDrawSquare(ImageData _this, PointI topLeftCorner, PointI size, Color color)
-{
-
-    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
-    {
-
-        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
-        {
-
-            if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
-                graphicsPutPixel(_this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsDrawCircleFill(ImageData _this, PointI center, double radious, Color color)
-{
-
-    for (int i = center.x - radious; i <= center.x + radious; i++)
-    {
-
-        for (int j = center.y - radious; j <= center.y + radious; j++)
-        {
-
-            if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
-                graphicsPutPixel(_this, (PointI){i, j}, color);
-        }
-    }
-}
-
-void graphicsDrawSquareFill(ImageData _this, PointI topLeftCorner, PointI size, Color color)
-{
-
-    for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
-    {
-
-        for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
-        {
-            graphicsPutPixel(_this, (PointI){i, j}, color);
-        }
-    }
-}
-
 void graphicsClear(ImageData _this)
 {
     memset(_this.data, 0, _this.bufferSize);
-}
-
-void graphicsDrawCharacter(ImageData _this, PointI topLeftCorner, unsigned int letter, Color color)
-{
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j <= 8; j++)
-        {
-            if (fonts[letter][i] & (0b1000000 >> j))
-                graphicsPutPixel(_this, (PointI){topLeftCorner.x + j, topLeftCorner.y + i}, color);
-        }
-    }
-}
-
-void graphicsPrintFontTest(ImageData _this)
-{
-
-    for (int i = 0; i < 38; i++)
-    {
-        graphicsDrawCharacter(_this, (PointI){i * 6, 100}, i, (Color){0xff, 0xff, 0xff});
-    }
-}
-
-void graphicsPrintString(ImageData _this, PointI topLeftCorner, char *string, Color color)
-{
-    size_t stringLen = strlen(string);
-
-    for (size_t i = 0; i < stringLen; i++)
-    {
-        if (string[i] == '.')
-        {
-            int charOffset = 'z' - 'a' + 12;
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-            continue;
-        }
-
-        if (string[i] == '%')
-        {
-            int charOffset = 'z' - 'a' + 11;
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-            continue;
-        }
-
-        if (string[i] >= '0' && string[i] <= '9')
-        {
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
-            continue;
-        }
-
-        if (string[i] >= 'a' && string[i] <= 'z')
-        {
-            int charOffset = string[i] - 'a' + 10;
-            graphicsDrawCharacter(_this, (PointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
-            continue;
-        }
-    }
 }
 
 void graphicsUpdateMouseCoordinates(Graphics *_this)
@@ -309,37 +155,4 @@ void graphicsUpdateMouseCoordinates(Graphics *_this)
     _this->mousePosition.x = mouseX + _this->imageData.size.x / (float)w;
     _this->mousePosition.y = mouseY + _this->imageData.size.y / (float)h;
     _this->mouseRightDown = glfwGetMouseButton(_this->window, GLFW_MOUSE_BUTTON_1);
-}
-
-void graphicsDrawLine(ImageData _this, PointI pointA, PointI pointB, Color color)
-{
-    int dx = abs(pointB.x - pointA.x), sx = pointA.x < pointB.x ? 1 : -1;
-    int dy = abs(pointB.y - pointA.y), sy = pointA.y < pointB.y ? 1 : -1;
-    int err = (dx > dy ? dx : -dy) / 2, e2;
-
-    for (;;)
-    {
-        graphicsPutPixel(_this, pointA, color);
-
-        if (pointA.x == pointB.x && pointA.y == pointB.y)
-            break;
-        e2 = err;
-
-        if (e2 > -dx)
-        {
-            err -= dy;
-            pointA.x += sx;
-        }
-
-        if (e2 < dy)
-        {
-            err += dx;
-            pointA.y += sy;
-        }
-    }
-}
-
-inline PointI pointFToPointI(PointF source)
-{
-    return (PointI){(int)source.x, (int)source.y};
 }
