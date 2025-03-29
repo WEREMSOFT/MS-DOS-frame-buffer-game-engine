@@ -32,6 +32,9 @@ run_main: all
 main.bin: clean src/mainNew.c
 	gcc -g -O0 src/mainNew.c -lm -o main.bin
 
+main_clean.bin:
+
+
 web:
 	rm -rf docs
 	mkdir docs
