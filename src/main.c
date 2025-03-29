@@ -22,8 +22,6 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 
 #define UR_PUT_PIXEL urPutPixel
 #include "universal_renderer.h"
-// unsigned char *imageData;
-
 
 #define Color URColor
 #define PointI URPointI
@@ -33,47 +31,6 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 #include "program/core/input/keyboard.h"
 
 ImageData globalImgData;
-
-/*
-
-#include "program/core/input/keyboard.h"
-
-#define S3L_RESOLUTION_X 320
-#define S3L_RESOLUTION_Y 240
-#define S3L_PIXEL_FUNCTION drawPixel
-#include <small3Dlib/small3dlib.h>
-
-void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
-{
-	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
-	globalImgData.data[position] = (URColor){r, g, b};
-}
-
-void drawPixel(S3L_PixelInfo *p)
-{
-	URColor color = {0};
-	switch (p->triangleID)
-	{
-	case 1:
-	case 0:
-		color.r = 0xff;
-		break;
-	case 2:
-	case 3:
-		color.b = 0xff;
-		break;
-	case 6:
-	case 7:
-		color.g = 0xff;
-		break;
-	default:
-		color.r = color.g = color.b = 0x66;
-	}
-
-	urPutPixel(p->x, p->y, color.r, color.g, color.b);
-}
-
-*/
 
 void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 {
