@@ -124,7 +124,6 @@ void graphicsSwapBuffers(Graphics _this)
     // render container
     glBindVertexArray(_this.VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glfwSwapBuffers(_this.window);
 }
 
 void graphicsDestroy(Graphics _this)

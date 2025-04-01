@@ -10,6 +10,11 @@
 #define UR_SCREEN_WIDTH 320
 #define UR_SCREEN_HEIGHT 240
 
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include <cimgui.h>
+#include <cimgui_impl.h>
+#define igGetIO igGetIO_Nil
+
 #define __STATIC_ALLOC_IMPLEMENTATION__
 #include "program/core/stackAllocator/staticAlloc.h"
 
@@ -18,7 +23,6 @@
 #define UR_FREE freeStatic
 
 void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
-
 
 #define UR_PUT_PIXEL urPutPixel
 #include "universal_renderer.h"
@@ -37,7 +41,6 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
 	globalImgData.data[position] = (URColor){r, g, b};
 }
-
 
 #define S3L_RESOLUTION_X 320
 #define S3L_RESOLUTION_Y 240
@@ -382,11 +385,13 @@ typedef struct GameState
 {
 	struct GameState *_self;
 	Graphics graphics;
+	ImGuiIO *ioptr;
 	URSprite sprites[ASSET_COUNT];
 	Sound sound;
 	float deltaTime;
 	bool shouldQuit;
 	bool shouldStop;
+	bool showDemoWindow;
 	GameStateEnum gameStateEnum;
 	Level1 level1;
 	Level2 level2;
@@ -2169,11 +2174,51 @@ Level4 level4Update(Level4 _this)
 	return _this;
 }
 
+GameState renderDearImgui(GameState gameState)
+{
+	// render
+	// start imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	igNewFrame();
+
+	if (igBeginMainMenuBar())
+    {
+        if (igBeginMenu("Edit", true))
+        {
+            if (igMenuItem_Bool("Undo", "CTRL+Z", true, true)) {}
+            if (igMenuItem_Bool("Redo", "CTRL+Y", false, false)) {} // Disabled item
+            igSeparator();
+            if (igMenuItem_Bool("Cut", "CTRL+X", true, true)) {}
+            if (igMenuItem_Bool("Copy", "CTRL+C", true, true)) {}
+            if (igMenuItem_Bool("Paste", "CTRL+V", true, true)) {}
+            igEndMenu();
+        }
+        igEndMainMenuBar();
+    }
+
+	
+
+	igRender();
+	ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
+#ifdef IMGUI_HAS_DOCK
+	if (ioptr->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		GLFWwindow *backup_current_window = glfwGetCurrentContext();
+		igUpdatePlatformWindows();
+		igRenderPlatformWindowsDefault(NULL, NULL);
+		glfwMakeContextCurrent(backup_current_window);
+	}
+#endif
+	return gameState;
+}
+
 GameState gameMainLoop(GameState gameState)
 {
 	globalImgData = gameState.graphics.imageData;
 	gameState.deltaTime = getDeltaTime();
 	gameState = gameStateCheckExitConditions(gameState);
+
 	switch (gameState.gameStateEnum)
 	{
 	case GAME_STATE_CLICK_TO_START:
@@ -2234,12 +2279,14 @@ GameState gameMainLoop(GameState gameState)
 	default:
 		gameState.shouldQuit = true;
 	}
-	swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
 	if (gameState.shouldStop)
 	{
 		gameState.shouldStop = false;
 		gameState.gameStateEnum++;
 	}
+	swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
+	gameState = renderDearImgui(gameState);
+	glfwSwapBuffers(gameState.graphics.window);
 
 	return gameState;
 }
@@ -2253,6 +2300,38 @@ void emscriptenLoopHandler()
 }
 #endif
 
+GameState initDearImgui(GameState gameState)
+{
+	// setup imgui
+	igCreateContext(NULL);
+
+	// set docking
+	gameState.ioptr = igGetIO();
+	gameState.ioptr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+																		// ioptr->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+#ifdef IMGUI_HAS_DOCK
+	ioptr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
+	ioptr->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+#endif
+
+// Shader version
+#ifndef __EMSCRIPTEN__
+	const char *glsl_version = "#version 130";
+#else
+	const char *glsl_version = "#version 300 es";
+#endif
+
+
+	ImGui_ImplGlfw_InitForOpenGL(gameState.graphics.window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	igStyleColorsDark(NULL);
+
+	gameState.showDemoWindow = true;
+	bool showAnotherWindow = false;
+	return gameState;
+}
+
 int main(void)
 {
 	// Init memory, load assets and general initialization
@@ -2265,8 +2344,11 @@ int main(void)
 
 	gameState._self = &gameState;
 	gameState.graphics = graphicsCreate(320, 240, false);
+
+	gameState = initDearImgui(gameState);
+
 	loadAssets(gameState.sprites);
-	
+
 #ifdef INITIAL_LEVEL
 	gameState.gameStateEnum = INITIAL_LEVEL;
 #endif
