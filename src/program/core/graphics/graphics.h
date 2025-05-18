@@ -49,5 +49,6 @@ void graphicsSwapBuffers(Graphics _this);
 void graphicsDestroy(Graphics _this);
 void graphicsUpdateMouseCoordinates(Graphics *_this);
 void graphicsClear(ImageData _this);
+void graphicsClearColor(ImageData _this, Color color);
 Color graphicsGetPixel(ImageData _this, PointI point);
 #endif

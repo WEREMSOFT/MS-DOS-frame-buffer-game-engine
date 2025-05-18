@@ -408,7 +408,74 @@ unsigned char urFonts[][5] =
 		 0b000000,
 		 0b000000,
 		 0b001100,
-		 0b001100}};
+		 0b001100},
+		// #
+		{0b010100,
+		 0b111110,
+		 0b010100,
+		 0b111110,
+		 0b010100},
+		// <
+		{0b000110,
+		 0b011000,
+		 0b100000,
+		 0b011000,
+		 0b000110},
+		// >
+		{0b011000,
+		 0b000110,
+		 0b000001,
+		 0b000110,
+		 0b011000},
+		// ,
+		{0b000000,
+		 0b000000,
+		 0b000000,
+		 0b011000,
+		 0b010000},
+		// (
+		{0b001100,
+		 0b010000,
+		 0b100000,
+		 0b010000,
+		 0b001100},
+		 // )
+		{0b011000,
+		 0b000100,
+		 0b000010,
+		 0b000100,
+		 0b011000},
+		// {
+		{0b001100,
+		 0b001000,
+		 0b110000,
+		 0b001000,
+		 0b001100},
+		 // }
+		{0b011000,
+		 0b001000,
+		 0b000100,
+		 0b001000,
+		 0b011000},
+		// *
+		{0b101010,
+		 0b011100,
+		 0b111110,
+		 0b011100,
+		 0b101010},
+		// "
+		{0b010100,
+		 0b010100,
+		 0b000000,
+		 0b000000,
+		 0b000000},
+		// ;
+		{0b000000,
+		 0b011000,
+		 0b000000,
+		 0b011000,
+		 0b010000},
+		};
 
 void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, URColor color)
 {
@@ -426,32 +493,131 @@ void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 {
 	size_t stringLen = strlen(string);
 
+	URPointI original_position = topLeftCorner;
+
+	URPointI current_position = topLeftCorner;
+
 	for (size_t i = 0; i < stringLen; i++)
 	{
+		if (string[i] == '\t')
+		{
+			current_position.x += 6 * 8;
+		} else if (string[i] == '\n')
+		{
+			current_position.x = original_position.x;
+			current_position.y += 6;
+		} else {
+			current_position.x += 6;
+		}
+
 		if (string[i] == '.')
 		{
 			int charOffset = 'z' - 'a' + 12;
-			urDrawCharacter((URPointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '%')
 		{
 			int charOffset = 'z' - 'a' + 11;
-			urDrawCharacter((URPointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+		
+		if (string[i] == '#')
+		{
+			int charOffset = 'z' - 'a' + 13;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '<')
+		{
+			int charOffset = 'z' - 'a' + 14;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '>')
+		{
+			int charOffset = 'z' - 'a' + 15;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == ',')
+		{
+			int charOffset = 'z' - 'a' + 16;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '(' )
+		{
+			int charOffset = 'z' - 'a' + 17;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == ')' )
+		{
+			int charOffset = 'z' - 'a' + 18;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '{' )
+		{
+			int charOffset = 'z' - 'a' + 19;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '}' )
+		{
+			int charOffset = 'z' - 'a' + 20;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '*' )
+		{
+			int charOffset = 'z' - 'a' + 21;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == '"' )
+		{
+			int charOffset = 'z' - 'a' + 22;
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] == ';' )
+		{
+			int charOffset = 'z' - 'a' + 23;
+			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] >= '0' && string[i] <= '9')
 		{
-			urDrawCharacter((URPointI){topLeftCorner.x + i * 6, topLeftCorner.y}, string[i] - '0', color);
+			urDrawCharacter(current_position, string[i] - '0', color);
 			continue;
 		}
 
 		if (string[i] >= 'a' && string[i] <= 'z')
 		{
 			int charOffset = string[i] - 'a' + 10;
-			urDrawCharacter((URPointI){topLeftCorner.x + i * 6, topLeftCorner.y}, charOffset, color);
+			urDrawCharacter(current_position, charOffset, color);
+			continue;
+		}
+
+		if (string[i] >= 'A' && string[i] <= 'Z')
+		{
+			int charOffset = string[i] + 32 - 'a' + 10;
+			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 	}

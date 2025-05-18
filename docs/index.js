@@ -31,7 +31,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpezou60om.js
+// include: /tmp/tmp56q9yn2c.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -142,9 +142,6 @@ var REMOTE_PACKAGE_SIZE = metadata['remote_package_size'];
         if (!check) throw msg + new Error().stack;
       }
 Module['FS_createPath']("/", "assets", true, true);
-Module['FS_createPath']("/assets", "base", true, true);
-Module['FS_createPath']("/assets", "level2", true, true);
-Module['FS_createPath']("/assets", "level3", true, true);
 Module['FS_createPath']("/assets", "shaders", true, true);
 
       /** @constructor */
@@ -212,25 +209,25 @@ Module['FS_createPath']("/assets", "shaders", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/assets/320x240Test.png", "start": 0, "end": 18808}, {"filename": "/assets/aimcross.bmp", "start": 18808, "end": 21590}, {"filename": "/assets/background.bmp", "start": 21590, "end": 252044}, {"filename": "/assets/base/base.png", "start": 252044, "end": 280426}, {"filename": "/assets/enemyGreenBig1.bmp", "start": 280426, "end": 298024}, {"filename": "/assets/enemyGreenBig2.bmp", "start": 298024, "end": 315622}, {"filename": "/assets/enemyGreenSmall1.bmp", "start": 315622, "end": 324948}, {"filename": "/assets/enemyGreenSmall2.bmp", "start": 324948, "end": 334274}, {"filename": "/assets/enemyGreenTiny1.bmp", "start": 334274, "end": 338540}, {"filename": "/assets/enemyGreenTiny2.bmp", "start": 338540, "end": 342806}, {"filename": "/assets/foreground.bmp", "start": 342806, "end": 516620}, {"filename": "/assets/howToPlay.bmp", "start": 516620, "end": 557330}, {"filename": "/assets/level2/DinoSprites - doux.png", "start": 557330, "end": 559229}, {"filename": "/assets/level2/DinoSprites - mort.png", "start": 559229, "end": 561135}, {"filename": "/assets/level2/DinoSprites - tard.png", "start": 561135, "end": 563055}, {"filename": "/assets/level2/DinoSprites - vita.png", "start": 563055, "end": 565012}, {"filename": "/assets/level2/background.bmp", "start": 565012, "end": 795466}, {"filename": "/assets/level2/cloud0.bmp", "start": 795466, "end": 1044352}, {"filename": "/assets/level2/cloud1.bmp", "start": 1044352, "end": 1293238}, {"filename": "/assets/level2/cloud2.bmp", "start": 1293238, "end": 1542124}, {"filename": "/assets/level2/cloud3.bmp", "start": 1542124, "end": 1791010}, {"filename": "/assets/level2/heroBlue.bmp", "start": 1791010, "end": 1801432}, {"filename": "/assets/level2/heroGreen.bmp", "start": 1801432, "end": 1811854}, {"filename": "/assets/level2/heroRed.bmp", "start": 1811854, "end": 1822276}, {"filename": "/assets/level2/heroYellow.bmp", "start": 1822276, "end": 1832698}, {"filename": "/assets/level2/howToPlay.bmp", "start": 1832698, "end": 1848988}, {"filename": "/assets/level2/tree1.bmp", "start": 1848988, "end": 1850302}, {"filename": "/assets/level2/tree2.bmp", "start": 1850302, "end": 1851124}, {"filename": "/assets/level2/tree3.bmp", "start": 1851124, "end": 1888762}, {"filename": "/assets/level3/Hit (44x30).png", "start": 1888762, "end": 1890075}, {"filename": "/assets/level3/Idle-Run (44x30).png", "start": 1890075, "end": 1892028}, {"filename": "/assets/level3/Particles (62x16).png", "start": 1892028, "end": 1892264}, {"filename": "/assets/level3/background-tiled.bmp", "start": 1892264, "end": 2242526}, {"filename": "/assets/level3/background-tiled.png", "start": 2242526, "end": 2254236}, {"filename": "/assets/level3/background-tiled2.bmp", "start": 2254236, "end": 3483106}, {"filename": "/assets/level3/background.bmp", "start": 3483106, "end": 3713560}, {"filename": "/assets/level3/enemyHit.bmp", "start": 3713560, "end": 3740030}, {"filename": "/assets/level3/enemySingleFrame.bmp", "start": 3740030, "end": 3743564}, {"filename": "/assets/level3/enemyWalking.bmp", "start": 3743564, "end": 3783218}, {"filename": "/assets/level3/playerFall.bmp", "start": 3783218, "end": 3786344}, {"filename": "/assets/level3/playerIdle.bmp", "start": 3786344, "end": 3823262}, {"filename": "/assets/level3/playerJump.bmp", "start": 3823262, "end": 3826388}, {"filename": "/assets/level3/playerRun.bmp", "start": 3826388, "end": 3863306}, {"filename": "/assets/shaders/default.fs", "start": 3863306, "end": 3863471}, {"filename": "/assets/shaders/default.vs", "start": 3863471, "end": 3863691}, {"filename": "/assets/shaders/defaultWeb.fs", "start": 3863691, "end": 3863880}, {"filename": "/assets/shaders/defaultWeb.vs", "start": 3863880, "end": 3864098}, {"filename": "/assets/shoot.bmp", "start": 3864098, "end": 3897152}, {"filename": "/assets/topScoreSquare.bmp", "start": 3897152, "end": 3935606}], "remote_package_size": 3935606});
+    loadPackage({"files": [{"filename": "/assets/shaders/default.fs", "start": 0, "end": 165}, {"filename": "/assets/shaders/default.vs", "start": 165, "end": 385}, {"filename": "/assets/shaders/defaultWeb.fs", "start": 385, "end": 574}, {"filename": "/assets/shaders/defaultWeb.vs", "start": 574, "end": 792}, {"filename": "/assets/test.c", "start": 792, "end": 882}, {"filename": "/assets/topScoreSquare.bmp", "start": 882, "end": 39336}], "remote_package_size": 39336});
 
   })();
 
-// end include: /tmp/tmpezou60om.js
-// include: /tmp/tmpcufknxd5.js
+// end include: /tmp/tmp56q9yn2c.js
+// include: /tmp/tmpghvrvt0j.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmpcufknxd5.js
-// include: /tmp/tmpmjoyzqu9.js
+  // end include: /tmp/tmpghvrvt0j.js
+// include: /tmp/tmpf7bi8n4r.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmpmjoyzqu9.js
+  // end include: /tmp/tmpf7bi8n4r.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -4043,48 +4040,6 @@ async function createWasm() {
   var __abort_js = () =>
       abort('native code called abort()');
 
-  var readEmAsmArgsArray = [];
-  var readEmAsmArgs = (sigPtr, buf) => {
-      // Nobody should have mutated _readEmAsmArgsArray underneath us to be something else than an array.
-      assert(Array.isArray(readEmAsmArgsArray));
-      // The input buffer is allocated on the stack, so it must be stack-aligned.
-      assert(buf % 16 == 0);
-      readEmAsmArgsArray.length = 0;
-      var ch;
-      // Most arguments are i32s, so shift the buffer pointer so it is a plain
-      // index into HEAP32.
-      while (ch = HEAPU8[sigPtr++]) {
-        var chr = String.fromCharCode(ch);
-        var validChars = ['d', 'f', 'i', 'p'];
-        // In WASM_BIGINT mode we support passing i64 values as bigint.
-        validChars.push('j');
-        assert(validChars.includes(chr), `Invalid character ${ch}("${chr}") in readEmAsmArgs! Use only [${validChars}], and do not specify "v" for void return argument.`);
-        // Floats are always passed as doubles, so all types except for 'i'
-        // are 8 bytes and require alignment.
-        var wide = (ch != 105);
-        wide &= (ch != 112);
-        buf += wide && (buf % 8) ? 4 : 0;
-        readEmAsmArgsArray.push(
-          // Special case for pointers under wasm64 or CAN_ADDRESS_2GB mode.
-          ch == 112 ? HEAPU32[((buf)>>2)] :
-          ch == 106 ? HEAP64[((buf)>>3)] :
-          ch == 105 ?
-            HEAP32[((buf)>>2)] :
-            HEAPF64[((buf)>>3)]
-        );
-        buf += wide ? 8 : 4;
-      }
-      return readEmAsmArgsArray;
-    };
-  var runEmAsmFunction = (code, sigPtr, argbuf) => {
-      var args = readEmAsmArgs(sigPtr, argbuf);
-      assert(ASM_CONSTS.hasOwnProperty(code), `No EM_ASM constant found at address ${code}.  The loaded WebAssembly file is likely out of sync with the generated JavaScript.`);
-      return ASM_CONSTS[code](...args);
-    };
-  var _emscripten_asm_const_int = (code, sigPtr, argbuf) => {
-      return runEmAsmFunction(code, sigPtr, argbuf);
-    };
-
   var _emscripten_err = (str) => err(UTF8ToString(str));
 
   var GLctx;
@@ -7655,47 +7610,6 @@ async function createWasm() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   
   
   
@@ -9350,70 +9264,6 @@ async function createWasm() {
 
   var _glfwGetClipboardString = (win) => 0;
 
-  var _glfwGetCursorPos = (winid, x, y) => GLFW.getCursorPos(winid, x, y);
-
-  var _glfwGetFramebufferSize = (winid, width, height) => {
-      var ww = 0;
-      var wh = 0;
-  
-      var win = GLFW.WindowFromId(winid);
-      if (win) {
-        ww = win.framebufferWidth;
-        wh = win.framebufferHeight;
-      }
-  
-      if (width) {
-        HEAP32[((width)>>2)] = ww;
-      }
-  
-      if (height) {
-        HEAP32[((height)>>2)] = wh;
-      }
-    };
-
-  var _glfwGetInputMode = (winid, mode) => {
-      var win = GLFW.WindowFromId(winid);
-      if (!win) return;
-  
-      switch (mode) {
-        case 0x00033001: { // GLFW_CURSOR
-          if (Browser.pointerLock) {
-            win.inputModes[mode] = 0x00034003; // GLFW_CURSOR_DISABLED
-          } else {
-            win.inputModes[mode] = 0x00034001; // GLFW_CURSOR_NORMAL
-          }
-        }
-      }
-  
-      return win.inputModes[mode];
-    };
-
-  var _glfwGetJoystickAxes = (joy, count) => {
-      GLFW.refreshJoysticks();
-  
-      var state = GLFW.joys[joy];
-      if (!state || !state.axes) {
-        HEAP32[((count)>>2)] = 0;
-        return;
-      }
-  
-      HEAP32[((count)>>2)] = state.axesCount;
-      return state.axes;
-    };
-
-  var _glfwGetJoystickButtons = (joy, count) => {
-      GLFW.refreshJoysticks();
-  
-      var state = GLFW.joys[joy];
-      if (!state || !state.buttons) {
-        HEAP32[((count)>>2)] = 0;
-        return;
-      }
-  
-      HEAP32[((count)>>2)] = state.buttonsCount;
-      return state.buttons;
-    };
-
   var _glfwGetKey = (winid, key) => GLFW.getKey(winid, key);
 
   var _glfwGetMouseButton = (winid, button) => GLFW.getMouseButton(winid, button);
@@ -9423,8 +9273,6 @@ async function createWasm() {
   var _glfwGetTime = () => GLFW.getTime() - GLFW.initialTime;
 
   var _glfwGetVideoMode = (monitor) => 0;
-
-  var _glfwGetWindowSize = (winid, width, height) => GLFW.getWindowSize(winid, width, height);
 
   var _glfwInit = () => {
       if (GLFW.windows) return 1; // GL_TRUE
@@ -9485,8 +9333,6 @@ async function createWasm() {
   var _glfwSetCharCallback = (winid, cbfun) => GLFW.setCharCallback(winid, cbfun);
 
   var _glfwSetClipboardString = (win, string) => 0;
-
-  var _glfwSetCursor = (winid, cursor) => 0;
 
   var _glfwSetCursorEnterCallback = (winid, cbfun) => {
       var win = GLFW.WindowFromId(winid);
@@ -9683,19 +9529,6 @@ for (let i = 0; i < 32; ++i) tempFixedLengthArray.push(new Array(i));;
 function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
-var ASM_CONSTS = {
-  1134064: () => { return (navigator.mediaDevices !== undefined && navigator.mediaDevices.getUserMedia !== undefined); },  
- 1134168: () => { try { var temp = new (window.AudioContext || window.webkitAudioContext)(); var sampleRate = temp.sampleRate; temp.close(); return sampleRate; } catch(e) { return 0; } },  
- 1134339: ($0) => { var device = miniaudio.get_device_by_index($0); if (device.scriptNode !== undefined) { device.scriptNode.onaudioprocess = function(e) {}; device.scriptNode.disconnect(); device.scriptNode = undefined; } if (device.streamNode !== undefined) { device.streamNode.disconnect(); device.streamNode = undefined; } device.webaudio.close(); device.webaudio = undefined; if (device.intermediaryBuffer !== undefined) { Module._free(device.intermediaryBuffer); device.intermediaryBuffer = undefined; device.intermediaryBufferView = undefined; device.intermediaryBufferSizeInBytes = undefined; } miniaudio.untrack_device_by_index($0); },  
- 1134965: ($0, $1, $2, $3, $4) => { var channels = $0; var sampleRate = $1; var bufferSize = $2; var isCapture = $3; var pDevice = $4; if (typeof(miniaudio) === 'undefined') { return -1; } var device = {}; device.webaudio = new (window.AudioContext || window.webkitAudioContext)({sampleRate:sampleRate}); device.webaudio.suspend(); device.intermediaryBufferSizeInBytes = channels * bufferSize * 4; device.intermediaryBuffer = Module._malloc(device.intermediaryBufferSizeInBytes); device.intermediaryBufferView = new Float32Array(Module.HEAPF32.buffer, device.intermediaryBuffer, device.intermediaryBufferSizeInBytes); device.scriptNode = device.webaudio.createScriptProcessor(bufferSize, channels, channels); if (isCapture) { device.scriptNode.onaudioprocess = function(e) { if (device.intermediaryBuffer === undefined) { return; } for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) { e.outputBuffer.getChannelData(iChannel).fill(0.0); } var sendSilence = false; if (device.streamNode === undefined) { sendSilence = true; } if (e.inputBuffer.numberOfChannels != channels) { console.log("Capture: Channel count mismatch. " + e.inputBufer.numberOfChannels + " != " + channels + ". Sending silence."); sendSilence = true; } var totalFramesProcessed = 0; while (totalFramesProcessed < e.inputBuffer.length) { var framesRemaining = e.inputBuffer.length - totalFramesProcessed; var framesToProcess = framesRemaining; if (framesToProcess > (device.intermediaryBufferSizeInBytes/channels/4)) { framesToProcess = (device.intermediaryBufferSizeInBytes/channels/4); } if (sendSilence) { device.intermediaryBufferView.fill(0.0); } else { for (var iFrame = 0; iFrame < framesToProcess; ++iFrame) { for (var iChannel = 0; iChannel < e.inputBuffer.numberOfChannels; ++iChannel) { device.intermediaryBufferView[iFrame*channels + iChannel] = e.inputBuffer.getChannelData(iChannel)[totalFramesProcessed + iFrame]; } } } ccall("ma_device_process_pcm_frames_capture__webaudio", "undefined", ["number", "number", "number"], [pDevice, framesToProcess, device.intermediaryBuffer]); totalFramesProcessed += framesToProcess; } }; navigator.mediaDevices.getUserMedia({audio:true, video:false}) .then(function(stream) { device.streamNode = device.webaudio.createMediaStreamSource(stream); device.streamNode.connect(device.scriptNode); device.scriptNode.connect(device.webaudio.destination); }) .catch(function(error) { device.scriptNode.connect(device.webaudio.destination); }); } else { device.scriptNode.onaudioprocess = function(e) { if (device.intermediaryBuffer === undefined) { return; } var outputSilence = false; if (e.outputBuffer.numberOfChannels != channels) { console.log("Playback: Channel count mismatch. " + e.outputBufer.numberOfChannels + " != " + channels + ". Outputting silence."); outputSilence = true; return; } var totalFramesProcessed = 0; while (totalFramesProcessed < e.outputBuffer.length) { var framesRemaining = e.outputBuffer.length - totalFramesProcessed; var framesToProcess = framesRemaining; if (framesToProcess > (device.intermediaryBufferSizeInBytes/channels/4)) { framesToProcess = (device.intermediaryBufferSizeInBytes/channels/4); } ccall("ma_device_process_pcm_frames_playback__webaudio", "undefined", ["number", "number", "number"], [pDevice, framesToProcess, device.intermediaryBuffer]); if (outputSilence) { for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) { e.outputBuffer.getChannelData(iChannel).fill(0.0); } } else { for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) { for (var iFrame = 0; iFrame < framesToProcess; ++iFrame) { e.outputBuffer.getChannelData(iChannel)[totalFramesProcessed + iFrame] = device.intermediaryBufferView[iFrame*channels + iChannel]; } } } totalFramesProcessed += framesToProcess; } }; device.scriptNode.connect(device.webaudio.destination); } return miniaudio.track_device(device); },  
- 1138849: ($0) => { return miniaudio.get_device_by_index($0).webaudio.sampleRate; },  
- 1138915: ($0) => { return miniaudio.get_device_by_index($0).webaudio.sampleRate; },  
- 1138981: ($0) => { miniaudio.get_device_by_index($0).webaudio.resume(); },  
- 1139038: ($0) => { miniaudio.get_device_by_index($0).webaudio.resume(); },  
- 1139095: ($0) => { miniaudio.get_device_by_index($0).webaudio.suspend(); },  
- 1139153: ($0) => { miniaudio.get_device_by_index($0).webaudio.suspend(); },  
- 1139211: () => { if ((window.AudioContext || window.webkitAudioContext) === undefined) { return 0; } if (typeof(miniaudio) === 'undefined') { miniaudio = {}; miniaudio.devices = []; miniaudio.track_device = function(device) { for (var iDevice = 0; iDevice < miniaudio.devices.length; ++iDevice) { if (miniaudio.devices[iDevice] == null) { miniaudio.devices[iDevice] = device; return iDevice; } } miniaudio.devices.push(device); return miniaudio.devices.length - 1; }; miniaudio.untrack_device_by_index = function(deviceIndex) { miniaudio.devices[deviceIndex] = null; while (miniaudio.devices.length > 0) { if (miniaudio.devices[miniaudio.devices.length-1] == null) { miniaudio.devices.pop(); } else { break; } } }; miniaudio.untrack_device = function(device) { for (var iDevice = 0; iDevice < miniaudio.devices.length; ++iDevice) { if (miniaudio.devices[iDevice] == device) { return miniaudio.untrack_device_by_index(iDevice); } } }; miniaudio.get_device_by_index = function(deviceIndex) { return miniaudio.devices[deviceIndex]; }; } return 1; }
-};
 function ImGui_ImplGlfw_EmscriptenOpenURL(url) { url = url ? UTF8ToString(url) : null; if (url) window.open(url, '_blank'); }
 var wasmImports = {
   /** @export */
@@ -9710,8 +9543,6 @@ var wasmImports = {
   __syscall_openat: ___syscall_openat,
   /** @export */
   _abort_js: __abort_js,
-  /** @export */
-  emscripten_asm_const_int: _emscripten_asm_const_int,
   /** @export */
   emscripten_err: _emscripten_err,
   /** @export */
@@ -10281,107 +10112,15 @@ var wasmImports = {
   /** @export */
   fd_write: _fd_write,
   /** @export */
-  glActiveTexture: _glActiveTexture,
-  /** @export */
-  glAttachShader: _glAttachShader,
-  /** @export */
-  glBindBuffer: _glBindBuffer,
-  /** @export */
-  glBindTexture: _glBindTexture,
-  /** @export */
-  glBindVertexArrayOES: _glBindVertexArrayOES,
-  /** @export */
-  glBlendEquation: _glBlendEquation,
-  /** @export */
-  glBlendEquationSeparate: _glBlendEquationSeparate,
-  /** @export */
-  glBlendFuncSeparate: _glBlendFuncSeparate,
-  /** @export */
-  glBufferData: _glBufferData,
-  /** @export */
-  glBufferSubData: _glBufferSubData,
-  /** @export */
-  glCompileShader: _glCompileShader,
-  /** @export */
-  glCreateProgram: _glCreateProgram,
-  /** @export */
-  glCreateShader: _glCreateShader,
-  /** @export */
-  glDeleteShader: _glDeleteShader,
-  /** @export */
-  glDeleteVertexArraysOES: _glDeleteVertexArraysOES,
-  /** @export */
-  glDetachShader: _glDetachShader,
-  /** @export */
-  glDisable: _glDisable,
-  /** @export */
-  glDrawElements: _glDrawElements,
-  /** @export */
-  glEnable: _glEnable,
-  /** @export */
-  glEnableVertexAttribArray: _glEnableVertexAttribArray,
-  /** @export */
-  glGenBuffers: _glGenBuffers,
-  /** @export */
-  glGenTextures: _glGenTextures,
-  /** @export */
-  glGenVertexArraysOES: _glGenVertexArraysOES,
-  /** @export */
-  glGetAttribLocation: _glGetAttribLocation,
-  /** @export */
   glGetIntegerv: _glGetIntegerv,
   /** @export */
-  glGetProgramInfoLog: _glGetProgramInfoLog,
-  /** @export */
-  glGetProgramiv: _glGetProgramiv,
-  /** @export */
-  glGetShaderInfoLog: _glGetShaderInfoLog,
-  /** @export */
-  glGetShaderiv: _glGetShaderiv,
-  /** @export */
   glGetString: _glGetString,
-  /** @export */
-  glGetUniformLocation: _glGetUniformLocation,
-  /** @export */
-  glIsEnabled: _glIsEnabled,
-  /** @export */
-  glIsProgram: _glIsProgram,
-  /** @export */
-  glLinkProgram: _glLinkProgram,
-  /** @export */
-  glScissor: _glScissor,
-  /** @export */
-  glShaderSource: _glShaderSource,
-  /** @export */
-  glTexImage2D: _glTexImage2D,
-  /** @export */
-  glTexParameteri: _glTexParameteri,
-  /** @export */
-  glUniform1i: _glUniform1i,
-  /** @export */
-  glUniformMatrix4fv: _glUniformMatrix4fv,
-  /** @export */
-  glUseProgram: _glUseProgram,
-  /** @export */
-  glVertexAttribPointer: _glVertexAttribPointer,
-  /** @export */
-  glViewport: _glViewport,
   /** @export */
   glfwCreateStandardCursor: _glfwCreateStandardCursor,
   /** @export */
   glfwCreateWindow: _glfwCreateWindow,
   /** @export */
   glfwGetClipboardString: _glfwGetClipboardString,
-  /** @export */
-  glfwGetCursorPos: _glfwGetCursorPos,
-  /** @export */
-  glfwGetFramebufferSize: _glfwGetFramebufferSize,
-  /** @export */
-  glfwGetInputMode: _glfwGetInputMode,
-  /** @export */
-  glfwGetJoystickAxes: _glfwGetJoystickAxes,
-  /** @export */
-  glfwGetJoystickButtons: _glfwGetJoystickButtons,
   /** @export */
   glfwGetKey: _glfwGetKey,
   /** @export */
@@ -10393,8 +10132,6 @@ var wasmImports = {
   /** @export */
   glfwGetVideoMode: _glfwGetVideoMode,
   /** @export */
-  glfwGetWindowSize: _glfwGetWindowSize,
-  /** @export */
   glfwInit: _glfwInit,
   /** @export */
   glfwMakeContextCurrent: _glfwMakeContextCurrent,
@@ -10404,8 +10141,6 @@ var wasmImports = {
   glfwSetCharCallback: _glfwSetCharCallback,
   /** @export */
   glfwSetClipboardString: _glfwSetClipboardString,
-  /** @export */
-  glfwSetCursor: _glfwSetCursor,
   /** @export */
   glfwSetCursorEnterCallback: _glfwSetCursorEnterCallback,
   /** @export */
@@ -10439,8 +10174,8 @@ var wasmExports;
 createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
 var _free = Module['_free'] = createExportWrapper('free', 1);
-var _main = Module['_main'] = createExportWrapper('main', 2);
 var _malloc = Module['_malloc'] = createExportWrapper('malloc', 1);
+var _main = Module['_main'] = createExportWrapper('main', 2);
 var _ma_device_process_pcm_frames_capture__webaudio = Module['_ma_device_process_pcm_frames_capture__webaudio'] = createExportWrapper('ma_device_process_pcm_frames_capture__webaudio', 3);
 var _ma_device_process_pcm_frames_playback__webaudio = Module['_ma_device_process_pcm_frames_playback__webaudio'] = createExportWrapper('ma_device_process_pcm_frames_playback__webaudio', 3);
 var _fflush = createExportWrapper('fflush', 1);
@@ -10485,7 +10220,7 @@ var missingLibrarySymbols = [
   'readSockaddr',
   'writeSockaddr',
   'emscriptenLog',
-  'runMainThreadEmAsm',
+  'readEmAsmArgs',
   'listenOnce',
   'autoResumeAudioContext',
   'getDynCaller',
@@ -10637,8 +10372,6 @@ var unexportedSymbols = [
   'timers',
   'warnOnce',
   'readEmAsmArgsArray',
-  'readEmAsmArgs',
-  'runEmAsmFunction',
   'jstoi_q',
   'jstoi_s',
   'getExecutableName',

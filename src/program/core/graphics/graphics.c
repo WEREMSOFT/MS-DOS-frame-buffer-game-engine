@@ -145,6 +145,14 @@ void graphicsClear(ImageData _this)
     memset(_this.data, 0, _this.bufferSize);
 }
 
+void graphicsClearColor(ImageData _this, Color color)
+{
+	for(size_t i = 0; i < _this.bufferSize; i++)
+	{
+		_this.data[i] = color;
+	}
+}
+
 void graphicsUpdateMouseCoordinates(Graphics *_this)
 {
     int w, h;
