@@ -479,21 +479,21 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 
 		if (string[i] == '.')
 		{
-			int charOffset = 'z' - 'a' + 12;
+			int charOffset = 63;
 			urDrawCharacter(current_position, charOffset, punctuation_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '%')
 		{
-			int charOffset = 'z' - 'a' + 11;
+			int charOffset = 62;
 			urDrawCharacter(current_position, charOffset, punctuation_color);
 			current_position.x += 6;
 		}
 		
 		if (string[i] == '#')
 		{
-			int charOffset = 'z' - 'a' + 13;
+			int charOffset = 64;
 			urDrawCharacter(current_position, charOffset, include_color);
 			current_color = include_color;
 			current_position.x += 6;
@@ -501,63 +501,63 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 
 		if (string[i] == '<')
 		{
-			int charOffset = 'z' - 'a' + 14;
+			int charOffset = 65;
 			urDrawCharacter(current_position, charOffset, bracket_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '>')
 		{
-			int charOffset = 'z' - 'a' + 15;
+			int charOffset = 66;
 			urDrawCharacter(current_position, charOffset, bracket_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == ',')
 		{
-			int charOffset = 'z' - 'a' + 16;
+			int charOffset = 67;
 			urDrawCharacter(current_position, charOffset, current_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '(' )
 		{
-			int charOffset = 'z' - 'a' + 17;
+			int charOffset = 68;
 			urDrawCharacter(current_position, charOffset, bracket_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == ')' )
 		{
-			int charOffset = 'z' - 'a' + 18;
+			int charOffset = 69;
 			urDrawCharacter(current_position, charOffset, bracket_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '{' )
 		{
-			int charOffset = 'z' - 'a' + 19;
+			int charOffset = 70;
 			urDrawCharacter(current_position, charOffset, bracket_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '}' )
 		{
-			int charOffset = 'z' - 'a' + 20;
+			int charOffset = 71;
 			urDrawCharacter(current_position, charOffset, bracket_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '*' )
 		{
-			int charOffset = 'z' - 'a' + 21;
+			int charOffset = 72;
 			urDrawCharacter(current_position, charOffset, current_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '"' )
 		{
-			int charOffset = 'z' - 'a' + 22;
+			int charOffset = 73;
 			current_color = string_color;
 			urDrawCharacter(current_position, charOffset, current_color);
 			if(string_in_progress)
@@ -573,7 +573,7 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 
 		if (string[i] == ';' )
 		{
-			int charOffset = 'z' - 'a' + 23;
+			int charOffset = 74;
 			urDrawCharacter(current_position, charOffset, punctuation_color);
 			current_position.x += 6;
 		}
@@ -586,7 +586,7 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 
 		if (string[i] >= 'a' && string[i] <= 'z')
 		{
-			int charOffset = string[i] - 'a' + 10;
+			int charOffset = string[i] - 'a' + 36;
 			urDrawCharacter(current_position, charOffset, current_color);
 			current_position.x += 6;
 		}
