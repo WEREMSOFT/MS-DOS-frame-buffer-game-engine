@@ -645,6 +645,13 @@ void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, URColor color)
 	}
 }
 
+void urDrawCharacterWithShadow(URPointI topLeftCorner, unsigned int letter, URColor color, URColor shadowColor)
+{
+	URPointI shadowPosition = {.x = topLeftCorner.x + 1, .y = topLeftCorner.y + 1};
+	urDrawCharacter(shadowPosition, letter, shadowColor);
+	urDrawCharacter(topLeftCorner, letter, color);
+}
+
 void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 {
 	size_t stringLen = strlen(string);

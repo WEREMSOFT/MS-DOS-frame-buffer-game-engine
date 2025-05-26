@@ -1,3 +1,4 @@
+#include "program/core/utils/memory.h"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -9,18 +10,14 @@
 #define INITIAL_LEVEL GAME_STATE_EDIT_TEXT
 #define UR_SCREEN_WIDTH 320
 #define UR_SCREEN_HEIGHT 240
-
 #define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
 #include <cimgui.h>
 #include <cimgui_impl.h>
 #define igGetIO igGetIO_Nil
 
-#define __STATIC_ALLOC_IMPLEMENTATION__
-#include "program/core/stackAllocator/staticAlloc.h"
-
-#define UR_MALLOC allocStatic
-#define UR_REALLOC reallocStatic
-#define UR_FREE freeStatic
+#define UR_MALLOC MALLOC
+#define UR_REALLOC REALLOC
+#define UR_FREE FREE
 
 void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 
@@ -78,14 +75,14 @@ void drawPixel(S3L_PixelInfo *p)
 #include <emscripten/html5.h>
 #endif
 
-#define ARRAY_MALLOC allocStatic
-#define ARRAY_REALLOC reallocStatic
+#define ARRAY_MALLOC MALLOC
+#define ARRAY_REALLOC REALLOC
 #define __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #include "program/core/array/array.h"
 
-#define STBI_MALLOC(sz) allocStatic(sz)
-#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
-#define STBI_FREE(p) freeStatic(p)
+#define STBI_MALLOC(sz) MALLOC(sz)
+#define STBI_REALLOC(p, newsz) REALLOC(p, newsz)
+#define STBI_FREE(p) FREE(p)
 
 #define ENEMY_DOWN_OFFSET 53
 #define ENEMY_UP_OFFSET 20
@@ -452,6 +449,7 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 	static URColor include_color = UR_RED;
 	static URColor bracket_color = {0, 200, 190};
 	static URColor punctuation_color = {200, 200, 0};
+	static URColor shadow_color = {0, 0, 0};
 	static URColor string_color = UR_GREEN;
 	static bool string_in_progress  = false;
 	static bool word_in_progress = false;
@@ -480,21 +478,21 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 		if (string[i] == '.')
 		{
 			int charOffset = 63;
-			urDrawCharacter(current_position, charOffset, punctuation_color);
+			urDrawCharacterWithShadow(current_position, charOffset, punctuation_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '%')
 		{
 			int charOffset = 62;
-			urDrawCharacter(current_position, charOffset, punctuation_color);
+			urDrawCharacterWithShadow(current_position, charOffset, punctuation_color, shadow_color);
 			current_position.x += 6;
 		}
 		
 		if (string[i] == '#')
 		{
 			int charOffset = 64;
-			urDrawCharacter(current_position, charOffset, include_color);
+			urDrawCharacterWithShadow(current_position, charOffset, include_color, shadow_color);
 			current_color = include_color;
 			current_position.x += 6;
 		}
@@ -502,56 +500,56 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 		if (string[i] == '<')
 		{
 			int charOffset = 65;
-			urDrawCharacter(current_position, charOffset, bracket_color);
+			urDrawCharacterWithShadow(current_position, charOffset, bracket_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '>')
 		{
 			int charOffset = 66;
-			urDrawCharacter(current_position, charOffset, bracket_color);
+			urDrawCharacterWithShadow(current_position, charOffset, bracket_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == ',')
 		{
 			int charOffset = 67;
-			urDrawCharacter(current_position, charOffset, current_color);
+			urDrawCharacterWithShadow(current_position, charOffset, current_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '(' )
 		{
 			int charOffset = 68;
-			urDrawCharacter(current_position, charOffset, bracket_color);
+			urDrawCharacterWithShadow(current_position, charOffset, bracket_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == ')' )
 		{
 			int charOffset = 69;
-			urDrawCharacter(current_position, charOffset, bracket_color);
+			urDrawCharacterWithShadow(current_position, charOffset, bracket_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '{' )
 		{
 			int charOffset = 70;
-			urDrawCharacter(current_position, charOffset, bracket_color);
+			urDrawCharacterWithShadow(current_position, charOffset, bracket_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '}' )
 		{
 			int charOffset = 71;
-			urDrawCharacter(current_position, charOffset, bracket_color);
+			urDrawCharacterWithShadow(current_position, charOffset, bracket_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] == '*' )
 		{
 			int charOffset = 72;
-			urDrawCharacter(current_position, charOffset, current_color);
+			urDrawCharacterWithShadow(current_position, charOffset, current_color, shadow_color);
 			current_position.x += 6;
 		}
 
@@ -559,7 +557,7 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 		{
 			int charOffset = 73;
 			current_color = string_color;
-			urDrawCharacter(current_position, charOffset, current_color);
+			urDrawCharacterWithShadow(current_position, charOffset, current_color, shadow_color);
 			if(string_in_progress)
 			{
 				string_in_progress = false;
@@ -574,27 +572,27 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 		if (string[i] == ';' )
 		{
 			int charOffset = 74;
-			urDrawCharacter(current_position, charOffset, punctuation_color);
+			urDrawCharacterWithShadow(current_position, charOffset, punctuation_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] >= '0' && string[i] <= '9')
 		{
-			urDrawCharacter(current_position, string[i] - '0', current_color);
+			urDrawCharacterWithShadow(current_position, string[i] - '0', current_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] >= 'a' && string[i] <= 'z')
 		{
 			int charOffset = string[i] - 'a' + 36;
-			urDrawCharacter(current_position, charOffset, current_color);
+			urDrawCharacterWithShadow(current_position, charOffset, current_color, shadow_color);
 			current_position.x += 6;
 		}
 
 		if (string[i] >= 'A' && string[i] <= 'Z')
 		{
 			int charOffset = string[i] + 32 - 'a' + 10;
-			urDrawCharacter(current_position, charOffset, current_color);
+			urDrawCharacterWithShadow(current_position, charOffset, current_color, shadow_color);
 			current_position.x += 6;
 		}
 	}
@@ -655,6 +653,7 @@ char last_key_pressed = 0;
 GameState process_state_edit_text(GameState _that)
 {
 	static URPointI cursor_position = {.x = 0, .y = 0};
+	URColor static background_color = {17, 70, 110};
 	URColor static textColor = {255, 255, 255};
 	static bool draw_cursor_b = false;
 	
@@ -676,7 +675,7 @@ GameState process_state_edit_text(GameState _that)
 	
 	handle_cursor_position(_that, &cursor_position, &draw_cursor_b);
 
-	graphicsClearColor(_that.graphics.imageData, (URColor) {17, 29, 53});
+	graphicsClearColor(_that.graphics.imageData, background_color);
 
 	urPrintStringWithSytaxHighlight((URPointI){1, 1}, _that.buffer, textColor);
 	if(draw_cursor_b)
@@ -767,8 +766,6 @@ void keyboard_callback(GLFWwindow* window, unsigned int key)
 
 int main(void)
 {
-	// Init memory, load assets and general initialization
-	staticAllocatorInit(2878340 * 2);
 	initDeltaTime();
 
 #ifndef __EMSCRIPTEN__
@@ -800,7 +797,6 @@ gameState.buffer = read_file("assets/test.c");
 
 Cleanup:
 	graphicsDestroy(gameState.graphics);
-	staticAllocatorDestroy();
 	return 0;
 #endif
 }

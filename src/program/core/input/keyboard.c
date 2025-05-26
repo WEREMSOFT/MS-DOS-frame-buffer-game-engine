@@ -1,7 +1,7 @@
 #include "keyboard.h"
 #include <GLFW/glfw3.h>
 
-static int keys[255] = {0};
+static int keys[512] = {0};
 
 bool isKeyJustPressed(GLFWwindow *window, int key)
 {

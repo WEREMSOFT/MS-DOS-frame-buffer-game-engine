@@ -1,3 +1,4 @@
+#include "../utils/memory.h"
 #include <glad/glad.h>
 #include "graphics.h"
 #include <stdlib.h>
@@ -6,7 +7,6 @@
 #include <math.h>
 #include <memory.h>
 #include "../shader/shader.h"
-#include "../stackAllocator/staticAlloc.h"
 
 extern char fonts[][5];
 static void textureCreate(Graphics *_this)
@@ -17,7 +17,7 @@ static void textureCreate(Graphics *_this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     _this->imageData.bufferSize = _this->imageData.size.x * _this->imageData.size.y * sizeof(Color);
-    _this->imageData.data = allocStatic(_this->imageData.bufferSize);
+    _this->imageData.data = MALLOC(_this->imageData.bufferSize);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _this->imageData.size.x, _this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, _this->imageData.data);
 }
 
@@ -129,7 +129,7 @@ void graphicsSwapBuffers(Graphics _this)
 void graphicsDestroy(Graphics _this)
 {
     glfwSetWindowShouldClose(_this.window, true);
-    freeStatic(_this.imageData.data);
+    FREE(_this.imageData.data);
     glfwDestroyWindow(_this.window);
     glfwTerminate();
 }
@@ -147,7 +147,8 @@ void graphicsClear(ImageData _this)
 
 void graphicsClearColor(ImageData _this, Color color)
 {
-	for(size_t i = 0; i < _this.bufferSize; i++)
+	int bufferSize = _this.bufferSize / sizeof(Color);
+	for(size_t i = 0; i < bufferSize; i++)
 	{
 		_this.data[i] = color;
 	}
