@@ -230,6 +230,9 @@ typedef struct GameState
 	GameStateEnum gameStateEnum;
 	char* buffer;
 	Array* text_lines;
+	URPointI cursor_position;
+	int highest_cursor_x;
+ 	bool should_draw_cursor;
 	int rows;
 	int cols;
 } GameState;
@@ -445,15 +448,15 @@ void *read_file(char* fileName)
 
 void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URColor color)
 {
-	static URColor current_color = UR_WHITE;
+	URColor current_color = UR_WHITE;
 	static URColor text_color = UR_WHITE;
 	static URColor include_color = UR_RED;
 	static URColor bracket_color = {0, 200, 190};
 	static URColor punctuation_color = {200, 200, 0};
 	static URColor shadow_color = {0, 0, 0};
 	static URColor string_color = UR_GREEN;
-	static bool string_in_progress  = false;
-	static bool word_in_progress = false;
+	bool string_in_progress  = false;
+	bool word_in_progress = false;
 
 	size_t stringLen = strlen(string);
 
@@ -609,10 +612,24 @@ void draw_cursor(URPointI cursor_position, URColor cursor_color)
 	urDrawLine(start, end, cursor_color);
 }
 
-void handle_cursor_position(GameState _that, URPointI* cursor_position, bool* should_draw_cursor)
+Array* get_current_line(GameState _that)
+{
+	Array* line = *(Array**)arrayGetElementAt(_that.text_lines, _that.cursor_position.y);
+	return line;
+}
+
+Array* get_line(GameState _that, int line_pos)
+{
+	Array* line = *(Array**)arrayGetElementAt(_that.text_lines, line_pos);
+	return line;
+}
+
+
+GameState handle_cursor_position(GameState _that)
 {
 	static float elapsed_time = 0;
 	elapsed_time += _that.deltaTime;
+	Array* line = get_current_line(_that);
 
 	if(elapsed_time < 0.1)
 	{
@@ -623,44 +640,51 @@ void handle_cursor_position(GameState _that, URPointI* cursor_position, bool* sh
 
 	if(glfwGetKey(_that.graphics.window, GLFW_KEY_RIGHT))
 	{
-		cursor_position->x++;
-		should_draw_cursor = true;
-		return;
+		_that.cursor_position.x++;
+		_that.should_draw_cursor = true;
+		if(_that.cursor_position.x > line->header.length)
+		{
+			_that.cursor_position.y++;
+			_that.cursor_position.x = 0;
+		}
+		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
 	if(glfwGetKey(_that.graphics.window, GLFW_KEY_LEFT))
 	{
-		cursor_position->x--;
-		should_draw_cursor = true;
-		return;
+		_that.cursor_position.x--;
+		_that.should_draw_cursor = true;
+		_that.highest_cursor_x = _that.cursor_position.x;
+		if(_that.cursor_position.x < 0 && _that.cursor_position.y > 0)
+		{
+			_that.cursor_position.y--;
+			line = get_current_line(_that);
+			_that.cursor_position.x = line->header.length;
+		}
+		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
 	if(glfwGetKey(_that.graphics.window, GLFW_KEY_DOWN) || glfwGetKey(_that.graphics.window, GLFW_KEY_ENTER))
 	{
-		cursor_position->y++;
-		should_draw_cursor = true;
-		return;
+		_that.cursor_position.y++;
+		_that.should_draw_cursor = true;
 	}
 
 	if(glfwGetKey(_that.graphics.window, GLFW_KEY_UP))
 	{
-		cursor_position->y--;
-		should_draw_cursor = true;
-		return;
+		_that.cursor_position.y--;
+		_that.should_draw_cursor = true;
 	}
+
+	line = get_current_line(_that);
+	_that.cursor_position.x = MIN(line->header.length, _that.cursor_position.x);
+	return _that;
 }
 char last_key_pressed = 0;
 
-Array* get_current_line(GameState _that, int line_num)
-{
-	Array* line = *(Array**)arrayGetElementAt(_that.text_lines, line_num);
-	return line;
-}
-
 GameState process_state_edit_text(GameState _that)
 {
-	static URPointI cursor_position = {.x = 0, .y = 0};
-	URColor static background_color = {17, 70, 110};
+	URColor static background_color = {50, 70, 110};
 	URColor static textColor = {255, 255, 255};
 	static bool draw_cursor_b = false;
 	
@@ -668,8 +692,16 @@ GameState process_state_edit_text(GameState _that)
 	{
 		soundPlaySfx(_that.sound, SFX_HERO_HURT);
 		printf("last key pressed %c\n", last_key_pressed);
-		_that.buffer[cursor_position.x + cursor_position.y] = last_key_pressed;
-		cursor_position.x++;
+		Array* line = get_current_line(_that);
+		
+		if(_that.cursor_position.x < line->header.length)
+		{
+			line->data[_that.cursor_position.x] = last_key_pressed;
+		} else {
+			arrayInsertElement(&line, &last_key_pressed);
+		}
+	
+		_that.cursor_position.x++;
 		last_key_pressed = 0;
 	}
 	
@@ -681,20 +713,19 @@ GameState process_state_edit_text(GameState _that)
 		elapsedTime = 0;
 	} 
 	
-	handle_cursor_position(_that, &cursor_position, &draw_cursor_b);
+	_that = handle_cursor_position(_that);
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
-
 	
 	for (int i = 0; i < _that.text_lines->header.length; i++) {
- 	    Array* line = get_current_line(_that, i);
+ 	    Array* line = get_line(_that, i);
 	    char* str = (char*)line->data;
 		urPrintStringWithSytaxHighlight((URPointI){1, i*6 + 1}, str, textColor);
 	}
 
 	if(draw_cursor_b)
 	{
-		draw_cursor(cursor_position, UR_WHITE);
+		draw_cursor(_that.cursor_position, UR_WHITE);
 	}
 	
 	return _that;
@@ -793,9 +824,6 @@ GameState game_state_create()
 		arrayInsertElement(&gameState.text_lines, &line);
 	}
 
-	// Verificación de inserción
-	Array *line2 = *(Array **)arrayGetElementAt(gameState.text_lines, 0);
-
 	gameState.sound = sound_create();
 
 	gameState.buffer = read_file("assets/test.c");
@@ -807,7 +835,10 @@ GameState game_state_create()
 		while (*cursor && *cursor != '\n')
 		{
 			Array* current_line = *(Array **)arrayGetElementAt(gameState.text_lines, row);
-			arrayInsertElement(&current_line, cursor);
+			if(*cursor != '\n')
+			{
+				arrayInsertElement(&current_line, cursor);
+			}
 			cursor++;
 		}
 		if (*cursor == '\n') cursor++;
