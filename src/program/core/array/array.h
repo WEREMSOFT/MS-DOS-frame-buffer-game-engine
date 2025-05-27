@@ -63,7 +63,7 @@ void arrayInsertElement(Array **this, void *element)
     {
         int size = (*this)->header.capacity * (*this)->header.elementSize * 2 + sizeof(ArrayHeader);
         Array *newPointer = ARRAY_REALLOC(*this, size);
-        if (*this == NULL)
+        if (newPointer == NULL)
         {
             printf("Error reallocating array\n");
             exit(-1);

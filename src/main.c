@@ -229,6 +229,9 @@ typedef struct GameState
 	bool showDemoWindow;
 	GameStateEnum gameStateEnum;
 	char* buffer;
+	Array* text_lines;
+	int rows;
+	int cols;
 } GameState;
 
 GameState gameStateCheckExitConditions(GameState _this)
@@ -240,8 +243,6 @@ GameState gameStateCheckExitConditions(GameState _this)
 	}
 
 	_this.shouldQuit = isKeyJustPressed(_this.graphics.window, GLFW_KEY_ESCAPE);
-	// if (isKeyJustPressed(_this.graphics.window, GLFW_KEY_ENTER))
-	// 	_this.shouldStop = true;
 
 	return _this;
 }
@@ -253,65 +254,65 @@ void swapBuffersPrintFPSPollEvents(Graphics graphics, float deltaTime)
 	glfwPollEvents();
 }
 
-Sound soundCreate()
+Sound sound_create()
 {
-	Sound this = {0};
+	Sound that = {0};
 
-	this.soloud = Soloud_create();
+	that.soloud = Soloud_create();
 	for (int i = 0; i < SPEECH_COUNT; i++)
 	{
-		this.speechs[i] = Speech_create();
+		that.speechs[i] = Speech_create();
 	}
 
 	for (int i = 0; i < SFX_COUNT; i++)
 	{
-		this.sfx[i] = Sfxr_create();
+		that.sfx[i] = Sfxr_create();
 	}
 
-	Speech_setText(this.speechs[SPEECH_JUMP_THE_ROCKS], "Jump the rocks!");
-	Speech_setText(this.speechs[SPEECH_SHOOT_THE_BAD_GUYS], "Shoot the bad guys!");
-	Speech_setText(this.speechs[SPEECH_NOOO], "O!");
-	Sfxr_loadPreset(this.sfx[SFX_BLIP], SFXR_BLIP, 3247);
-	Sfxr_loadPreset(this.sfx[SFX_SELECT], SFXR_POWERUP, 3247);
-	Sfxr_loadPreset(this.sfx[SFX_SHOOT_HERO], SFXR_EXPLOSION, 3247);
-	Sfxr_loadPreset(this.sfx[SFX_ENEMY_ESCAPED], SFXR_HURT, 3247);
-	Sfxr_loadPreset(this.sfx[SFX_HERO_JUMP], SFXR_JUMP, 3247);
-	Sfxr_loadPreset(this.sfx[SFX_HERO_HURT], SFXR_HURT, 3247);
+	Speech_setText(that.speechs[SPEECH_JUMP_THE_ROCKS], "Jump the rocks!");
+	Speech_setText(that.speechs[SPEECH_SHOOT_THE_BAD_GUYS], "Shoot the bad guys!");
+	Speech_setText(that.speechs[SPEECH_NOOO], "O!");
+	Sfxr_loadPreset(that.sfx[SFX_BLIP], SFXR_BLIP, 3247);
+	Sfxr_loadPreset(that.sfx[SFX_SELECT], SFXR_POWERUP, 3247);
+	Sfxr_loadPreset(that.sfx[SFX_SHOOT_HERO], SFXR_EXPLOSION, 3247);
+	Sfxr_loadPreset(that.sfx[SFX_ENEMY_ESCAPED], SFXR_HURT, 3247);
+	Sfxr_loadPreset(that.sfx[SFX_HERO_JUMP], SFXR_JUMP, 3247);
+	Sfxr_loadPreset(that.sfx[SFX_HERO_HURT], SFXR_HURT, 3247);
 
 	Soloud_initEx(
-		this.soloud,
+		that.soloud,
 		SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
 		SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
 
-	Soloud_setGlobalVolume(this.soloud, 4);
+	Soloud_setGlobalVolume(that.soloud, 4);
 
-	return this;
+	return that;
 }
 
-void soundPlaySfx(Sound this, GameSFX id)
+void soundPlaySfx(Sound that, GameSFX id)
 {
-	Soloud_play(this.soloud, this.sfx[id]);
+	Soloud_play(that.soloud, that.sfx[id]);
 }
 
-void soundPlaySpeech(Sound this, GameSpeech id)
+void soundPlaySpeech(Sound that, GameSpeech id)
 {
-	Soloud_play(this.soloud, this.speechs[id]);
+	Soloud_play(that.soloud, that.speechs[id]);
 }
 
-void soundDestroy(Sound this)
+void soundDestroy(Sound that)
 {
 	for (int i = 0; i < SPEECH_COUNT; i++)
 	{
-		Speech_destroy(this.speechs[i]);
+		Speech_destroy(that.speechs[i]);
 	}
 
 	for (int i = 0; i < SFX_COUNT; i++)
 	{
-		Sfxr_destroy(this.sfx[i]);
+		Sfxr_destroy(that.sfx[i]);
 	}
 
-	Soloud_deinit(this.soloud);
-	Soloud_destroy(this.soloud);
+	Soloud_deinit(that.soloud);
+	Soloud_destroy(that.soloud);
 }
 
 void loadAssets(URSprite *_this)
@@ -650,6 +651,12 @@ void handle_cursor_position(GameState _that, URPointI* cursor_position, bool* sh
 }
 char last_key_pressed = 0;
 
+Array* get_current_line(GameState _that, int line_num)
+{
+	Array* line = *(Array**)arrayGetElementAt(_that.text_lines, line_num);
+	return line;
+}
+
 GameState process_state_edit_text(GameState _that)
 {
 	static URPointI cursor_position = {.x = 0, .y = 0};
@@ -659,6 +666,7 @@ GameState process_state_edit_text(GameState _that)
 	
 	if(last_key_pressed != 0)
 	{
+		soundPlaySfx(_that.sound, SFX_HERO_HURT);
 		printf("last key pressed %c\n", last_key_pressed);
 		_that.buffer[cursor_position.x + cursor_position.y] = last_key_pressed;
 		cursor_position.x++;
@@ -677,7 +685,13 @@ GameState process_state_edit_text(GameState _that)
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
 
-	urPrintStringWithSytaxHighlight((URPointI){1, 1}, _that.buffer, textColor);
+	
+	for (int i = 0; i < _that.text_lines->header.length; i++) {
+ 	    Array* line = get_current_line(_that, i);
+	    char* str = (char*)line->data;
+		urPrintStringWithSytaxHighlight((URPointI){1, i*6 + 1}, str, textColor);
+	}
+
 	if(draw_cursor_b)
 	{
 		draw_cursor(cursor_position, UR_WHITE);
@@ -686,7 +700,7 @@ GameState process_state_edit_text(GameState _that)
 	return _that;
 }
 
-GameState gameMainLoop(GameState gameState)
+GameState game_main_loop(GameState gameState)
 {
 	globalImgData = gameState.graphics.imageData;
 	gameState.deltaTime = getDeltaTime();
@@ -720,7 +734,7 @@ GameState gameState = {0};
 
 void emscriptenLoopHandler()
 {
-	gameState = gameMainLoop(gameState);
+	gameState = game_main_loop(gameState);
 }
 #endif
 
@@ -764,28 +778,59 @@ void keyboard_callback(GLFWwindow* window, unsigned int key)
 	}
 }
 
+GameState game_state_create()
+{
+	GameState gameState = {0};
+	gameState.graphics = graphicsCreate(320, 240, false);
+	gameState.rows = UR_SCREEN_HEIGHT / 7;
+	gameState.cols = UR_SCREEN_WIDTH / 7;
+
+	gameState.text_lines = arrayCreate(gameState.cols, sizeof(gameState.text_lines));
+	
+	for (int i = 0; i < gameState.cols; i++)
+	{
+		Array* line = arrayCreate(gameState.rows, sizeof(char));
+		arrayInsertElement(&gameState.text_lines, &line);
+	}
+
+	// Verificación de inserción
+	Array *line2 = *(Array **)arrayGetElementAt(gameState.text_lines, 0);
+
+	gameState.sound = sound_create();
+
+	gameState.buffer = read_file("assets/test.c");
+	char* cursor = gameState.buffer;
+
+	int row = 0;
+	while (*cursor)
+	{
+		while (*cursor && *cursor != '\n')
+		{
+			Array* current_line = *(Array **)arrayGetElementAt(gameState.text_lines, row);
+			arrayInsertElement(&current_line, cursor);
+			cursor++;
+		}
+		if (*cursor == '\n') cursor++;
+		row++;
+	}
+
+	return gameState;
+}
+
 int main(void)
 {
 	initDeltaTime();
 
-#ifndef __EMSCRIPTEN__
-	GameState gameState = {0};
-#endif
-
+	GameState gameState = game_state_create();
 	gameState._self = &gameState;
-	gameState.graphics = graphicsCreate(320, 240, false);
 
 	glfwSetCharCallback(gameState.graphics.window, keyboard_callback);
 
 	gameState = initDearImgui(gameState);
 
-	// loadAssets(gameState.sprites);
-
 #ifdef INITIAL_LEVEL
 	gameState.gameStateEnum = INITIAL_LEVEL;
 #endif
-
-gameState.buffer = read_file("assets/test.c");
 
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(emscriptenLoopHandler, 0, false);
@@ -793,7 +838,7 @@ gameState.buffer = read_file("assets/test.c");
 
 
 	while (!gameState.shouldStop && !gameState.shouldQuit)
-		gameState = gameMainLoop(gameState);
+		gameState = game_main_loop(gameState);
 
 Cleanup:
 	graphicsDestroy(gameState.graphics);
