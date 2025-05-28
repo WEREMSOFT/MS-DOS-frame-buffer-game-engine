@@ -614,13 +614,13 @@ void draw_cursor(URPointI cursor_position, URColor cursor_color)
 
 Array* get_current_line(GameState _that)
 {
-	Array* line = *(Array**)arrayGetElementAt(_that.text_lines, _that.cursor_position.y);
+	Array* line = *(Array**)array_get_element_at(_that.text_lines, _that.cursor_position.y);
 	return line;
 }
 
 Array* get_line(GameState _that, int line_pos)
 {
-	Array* line = *(Array**)arrayGetElementAt(_that.text_lines, line_pos);
+	Array* line = *(Array**)array_get_element_at(_that.text_lines, line_pos);
 	return line;
 }
 
@@ -696,9 +696,10 @@ GameState process_state_edit_text(GameState _that)
 		
 		if(_that.cursor_position.x < line->header.length)
 		{
-			line->data[_that.cursor_position.x] = last_key_pressed;
+			// line->data[_that.cursor_position.x] = last_key_pressed;
+			array_insert_element_at(&line, &last_key_pressed, _that.cursor_position.x);
 		} else {
-			arrayInsertElement(&line, &last_key_pressed);
+			array_append_element(&line, &last_key_pressed);
 		}
 	
 		_that.cursor_position.x++;
@@ -816,12 +817,12 @@ GameState game_state_create()
 	gameState.rows = UR_SCREEN_HEIGHT / 7;
 	gameState.cols = UR_SCREEN_WIDTH / 7;
 
-	gameState.text_lines = arrayCreate(gameState.cols, sizeof(gameState.text_lines));
+	gameState.text_lines = array_create(gameState.cols, sizeof(gameState.text_lines));
 	
 	for (int i = 0; i < gameState.cols; i++)
 	{
-		Array* line = arrayCreate(gameState.rows, sizeof(char));
-		arrayInsertElement(&gameState.text_lines, &line);
+		Array* line = array_create(gameState.rows, sizeof(char));
+		array_append_element(&gameState.text_lines, &line);
 	}
 
 	gameState.sound = sound_create();
@@ -834,10 +835,10 @@ GameState game_state_create()
 	{
 		while (*cursor && *cursor != '\n')
 		{
-			Array* current_line = *(Array **)arrayGetElementAt(gameState.text_lines, row);
+			Array* current_line = *(Array **)array_get_element_at(gameState.text_lines, row);
 			if(*cursor != '\n')
 			{
-				arrayInsertElement(&current_line, cursor);
+				array_append_element(&current_line, cursor);
 			}
 			cursor++;
 		}

@@ -12,11 +12,12 @@ typedef struct Array
     char data[1];
 } Array;
 
-Array *arrayCreate(int initialCapacity, size_t elementSize);
-Array *arrayCreateFromCArray(void *c_array, size_t elementSize, int length);
-void arrayInsertElement(Array **this, void *element);
-void arrayConcatenate(Array **this, Array *source);
-void *arrayGetElementAt(Array *this, int index);
+Array *array_create(int initialCapacity, size_t elementSize);
+Array *array_create_from_c_array(void *c_array, size_t elementSize, int length);
+void array_append_element(Array **this, void *element);
+void array_insert_element_at(Array **this, void *element, int index);
+void array_concatenate(Array **this, Array *source);
+void *array_get_element_at(Array *this, int index);
 #endif
 
 #ifndef ARRAY_MALLOC
@@ -30,7 +31,7 @@ void *arrayGetElementAt(Array *this, int index);
 #ifdef __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #undef __UNIVERSAL_ARRAY_IMPLEMENTATION__
 // recomended initial capacity 10
-Array *arrayCreate(int initialCapacity, size_t elementSize)
+Array *array_create(int initialCapacity, size_t elementSize)
 {
     size_t size = elementSize * initialCapacity + sizeof(ArrayHeader);
     Array *array = (Array *)ARRAY_MALLOC(size);
@@ -49,15 +50,15 @@ Array *arrayCreate(int initialCapacity, size_t elementSize)
     return array;
 }
 
-Array *arrayCreateFromCArray(void *c_array, size_t elementSize, int length)
+Array *array_create_from_c_array(void *c_array, size_t elementSize, int length)
 {
-    Array *array = arrayCreate(length, elementSize);
+    Array *array = array_create(length, elementSize);
     array->header.length = length;
     memcpy(array->data, c_array, length * elementSize);
     return array;
 }
 
-void arrayInsertElement(Array **this, void *element)
+void array_append_element(Array **this, void *element)
 {
     if ((*this)->header.length + 1 == (*this)->header.capacity)
     {
@@ -79,7 +80,31 @@ void arrayInsertElement(Array **this, void *element)
     (*this)->header.length++;
 }
 
-void arrayConcatenate(Array **this, Array *source)
+void array_insert_element_at(Array **that, void *element, int index)
+{
+    if ((*that)->header.length + 1 == (*that)->header.capacity)
+    {
+        int size = (*that)->header.capacity * (*that)->header.elementSize * 2 + sizeof(ArrayHeader);
+        Array *newPointer = ARRAY_REALLOC(*that, size);
+        if (newPointer == NULL)
+        {
+            printf("Error reallocating array\n");
+            exit(-1);
+        }
+
+		*that = newPointer;
+		(*that)->header.capacity *= 2;
+    }
+
+    memmove(&(**that).data[(*that)->header.elementSize * index + 1], 
+	&(**that).data[(*that)->header.elementSize * index]
+	, (**that).header.elementSize * ((**that).header.length) - index);
+
+    memmove(&(**that).data[(*that)->header.elementSize * index], element, (**that).header.elementSize);
+    (*that)->header.length++;
+}
+
+void array_concatenate(Array **this, Array *source)
 {
     if ((*this)->header.elementSize != source->header.elementSize)
     {
@@ -88,11 +113,11 @@ void arrayConcatenate(Array **this, Array *source)
     }
     for (int i = 0; i < source->header.length; i++)
     {
-        arrayInsertElement(this, &source->data[i]);
+        array_append_element(this, &source->data[i]);
     }
 }
 
-void *arrayGetElementAt(Array *this, int index)
+void *array_get_element_at(Array *this, int index)
 {
     if (index < this->header.length)
     {
