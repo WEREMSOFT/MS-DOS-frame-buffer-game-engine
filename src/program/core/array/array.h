@@ -60,20 +60,19 @@ Array *array_create_from_c_array(void *c_array, size_t elementSize, int length)
 
 void array_append_element(Array **this, void *element)
 {
-    if ((*this)->header.length + 1 == (*this)->header.capacity)
+    if ((*this)->header.length + 2 >= (*this)->header.capacity)
     {
         int size = (*this)->header.capacity * (*this)->header.elementSize * 2 + sizeof(ArrayHeader);
-        Array *newPointer = ARRAY_REALLOC(*this, size);
-        if (newPointer == NULL)
+        Array *new_pointer = ARRAY_REALLOC(*this, size);
+        if (new_pointer == NULL)
         {
             printf("Error reallocating array\n");
             exit(-1);
         }
-        else
-        {
-            *this = newPointer;
-            (*this)->header.capacity *= 2;
-        }
+        		
+		*this = new_pointer;
+		memset(&new_pointer->data[new_pointer->header.elementSize * new_pointer->header.length], 0, (new_pointer->header.capacity - new_pointer->header.length - 1) * new_pointer->header.elementSize);
+		(*this)->header.capacity *= 2;
     }
 
     memcpy(&(**this).data[(*this)->header.elementSize * (*this)->header.length], element, (**this).header.elementSize);
@@ -82,18 +81,21 @@ void array_append_element(Array **this, void *element)
 
 void array_insert_element_at(Array **that, void *element, int index)
 {
-    if ((*that)->header.length + 1 == (*that)->header.capacity)
+    if ((*that)->header.length + 2 >= (*that)->header.capacity)
     {
         int size = (*that)->header.capacity * (*that)->header.elementSize * 2 + sizeof(ArrayHeader);
-        Array *newPointer = ARRAY_REALLOC(*that, size);
-        if (newPointer == NULL)
+        Array *new_pointer = ARRAY_REALLOC(*that, size);
+        if (new_pointer == NULL)
         {
             printf("Error reallocating array\n");
             exit(-1);
         }
+		
+		
+		new_pointer->header.capacity *= 2;
+		memset(&new_pointer->data[new_pointer->header.elementSize * new_pointer->header.length], 0, (new_pointer->header.capacity - new_pointer->header.length - 1) * new_pointer->header.elementSize);
 
-		*that = newPointer;
-		(*that)->header.capacity *= 2;
+		*that = new_pointer;
     }
 
     memmove(&(**that).data[(*that)->header.elementSize * index + 1], 

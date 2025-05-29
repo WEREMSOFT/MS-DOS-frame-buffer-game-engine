@@ -612,15 +612,15 @@ void draw_cursor(URPointI cursor_position, URColor cursor_color)
 	urDrawLine(start, end, cursor_color);
 }
 
-Array* get_current_line(GameState _that)
+Array** get_current_line(GameState _that)
 {
-	Array* line = *(Array**)array_get_element_at(_that.text_lines, _that.cursor_position.y);
+	Array** line = (Array**)array_get_element_at(_that.text_lines, _that.cursor_position.y);
 	return line;
 }
 
-Array* get_line(GameState _that, int line_pos)
+Array** get_line(GameState _that, int line_pos)
 {
-	Array* line = *(Array**)array_get_element_at(_that.text_lines, line_pos);
+	Array** line = (Array**)array_get_element_at(_that.text_lines, line_pos);
 	return line;
 }
 
@@ -629,7 +629,7 @@ GameState handle_cursor_position(GameState _that)
 {
 	static float elapsed_time = 0;
 	elapsed_time += _that.deltaTime;
-	Array* line = get_current_line(_that);
+	Array* line = *get_current_line(_that);
 
 	if(elapsed_time < 0.1)
 	{
@@ -658,7 +658,7 @@ GameState handle_cursor_position(GameState _that)
 		if(_that.cursor_position.x < 0 && _that.cursor_position.y > 0)
 		{
 			_that.cursor_position.y--;
-			line = get_current_line(_that);
+			line = *get_current_line(_that);
 			_that.cursor_position.x = line->header.length;
 		}
 		_that.highest_cursor_x = _that.cursor_position.x;
@@ -676,7 +676,7 @@ GameState handle_cursor_position(GameState _that)
 		_that.should_draw_cursor = true;
 	}
 
-	line = get_current_line(_that);
+	line = *get_current_line(_that);
 	_that.cursor_position.x = MIN(line->header.length, _that.cursor_position.x);
 	return _that;
 }
@@ -692,14 +692,14 @@ GameState process_state_edit_text(GameState _that)
 	{
 		soundPlaySfx(_that.sound, SFX_HERO_HURT);
 		printf("last key pressed %c\n", last_key_pressed);
-		Array* line = get_current_line(_that);
+		Array** line = get_current_line(_that);
 		
-		if(_that.cursor_position.x < line->header.length)
+		if(_that.cursor_position.x < (*line)->header.length)
 		{
 			// line->data[_that.cursor_position.x] = last_key_pressed;
-			array_insert_element_at(&line, &last_key_pressed, _that.cursor_position.x);
+			array_insert_element_at(line, &last_key_pressed, _that.cursor_position.x);
 		} else {
-			array_append_element(&line, &last_key_pressed);
+			array_append_element(line, &last_key_pressed);
 		}
 	
 		_that.cursor_position.x++;
@@ -719,7 +719,7 @@ GameState process_state_edit_text(GameState _that)
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
 	for (int i = 0; i < _that.text_lines->header.length; i++) {
- 	    Array* line = get_line(_that, i);
+ 	    Array* line = *get_line(_that, i);
 	    char* str = (char*)line->data;
 		urPrintStringWithSytaxHighlight((URPointI){1, i*6 + 1}, str, textColor);
 	}
