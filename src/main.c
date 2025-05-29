@@ -619,20 +619,13 @@ array_t* get_current_line(GameState _that)
 	return line;
 }
 
+int last_key_pressed = 0;
+
 GameState handle_cursor_position(GameState _that)
 {
-	static float elapsed_time = 0;
-	elapsed_time += _that.deltaTime;
 	array_t* line = get_current_line(_that);
-
-	if(elapsed_time < 0.1)
-	{
-		return;
-	}
-
-	elapsed_time = 0;
-
-	if(glfwGetKey(_that.graphics.window, GLFW_KEY_RIGHT))
+	
+	if(last_key_pressed == GLFW_KEY_RIGHT)
 	{
 		_that.cursor_position.x++;
 		_that.should_draw_cursor = true;
@@ -644,7 +637,7 @@ GameState handle_cursor_position(GameState _that)
 		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
-	if(glfwGetKey(_that.graphics.window, GLFW_KEY_LEFT))
+	if(last_key_pressed == GLFW_KEY_LEFT  || last_key_pressed == GLFW_KEY_BACKSPACE)
 	{
 		_that.cursor_position.x--;
 		_that.should_draw_cursor = true;
@@ -658,13 +651,13 @@ GameState handle_cursor_position(GameState _that)
 		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
-	if(glfwGetKey(_that.graphics.window, GLFW_KEY_DOWN) || glfwGetKey(_that.graphics.window, GLFW_KEY_ENTER))
+	if(last_key_pressed == GLFW_KEY_DOWN || last_key_pressed == GLFW_KEY_ENTER)
 	{
 		_that.cursor_position.y++;
 		_that.should_draw_cursor = true;
 	}
 
-	if(glfwGetKey(_that.graphics.window, GLFW_KEY_UP))
+	if(last_key_pressed == GLFW_KEY_UP)
 	{
 		_that.cursor_position.y--;
 		_that.should_draw_cursor = true;
@@ -674,7 +667,6 @@ GameState handle_cursor_position(GameState _that)
 	_that.cursor_position.x = MIN(line->length, _that.cursor_position.x);
 	return _that;
 }
-char last_key_pressed = 0;
 
 GameState process_state_edit_text(GameState _that)
 {
@@ -684,21 +676,23 @@ GameState process_state_edit_text(GameState _that)
 	
 	if(last_key_pressed != 0)
 	{
-		soundPlaySfx(_that.sound, SFX_HERO_HURT);
-		printf("last key pressed %c\n", last_key_pressed);
-		array_t* line = get_current_line(_that);
-		
-		if(_that.cursor_position.x < line->length)
+		if(last_key_pressed < 128)
 		{
-			line->insert_element_at(line, &last_key_pressed, _that.cursor_position.x);
-		} else {
-			line->append_element(line, &last_key_pressed);
+			soundPlaySfx(_that.sound, SFX_HERO_HURT);
+			printf("last key pressed %d\n", last_key_pressed);
+			array_t* line = get_current_line(_that);
+
+			if(_that.cursor_position.x < line->length)
+			{
+				line->insert_element_at(line, &last_key_pressed, _that.cursor_position.x);
+			} else {
+				line->append_element(line, &last_key_pressed);
+			}
+			_that.cursor_position.x++;
 		}
-	
-		_that.cursor_position.x++;
-		last_key_pressed = 0;
 	}
-	
+
+
 	static float elapsedTime = 0;
 	elapsedTime += _that.deltaTime;
 	if(elapsedTime > 0.3)
@@ -708,6 +702,15 @@ GameState process_state_edit_text(GameState _that)
 	} 
 	
 	_that = handle_cursor_position(_that);
+
+
+	if(last_key_pressed == GLFW_KEY_BACKSPACE)
+	{
+		array_t* line = get_current_line(_that);
+		line->delete_element_at(line, _that.cursor_position.x);			
+	}
+
+	last_key_pressed = 0;
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
@@ -795,9 +798,22 @@ GameState initDearImgui(GameState gameState)
 	return gameState;
 }
 
-void keyboard_callback(GLFWwindow* window, unsigned int key)
+void keyboard_char_callback(GLFWwindow* window, unsigned int key)
 {
 	if(key < 128)
+	{
+		last_key_pressed = key;
+	}
+}
+
+void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if((key == GLFW_KEY_UP ||
+		key == GLFW_KEY_DOWN ||
+		key == GLFW_KEY_LEFT ||
+		key == GLFW_KEY_RIGHT ||
+		key == GLFW_KEY_BACKSPACE)
+		&& action == GLFW_PRESS && key > 128)
 	{
 		last_key_pressed = key;
 	}
@@ -849,7 +865,8 @@ int main(void)
 	GameState gameState = game_state_create();
 	gameState._self = &gameState;
 
-	glfwSetCharCallback(gameState.graphics.window, keyboard_callback);
+	glfwSetCharCallback(gameState.graphics.window, keyboard_char_callback);
+	glfwSetKeyCallback(gameState.graphics.window, keyboard_callback);
 
 	gameState = initDearImgui(gameState);
 
