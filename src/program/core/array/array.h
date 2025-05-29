@@ -30,7 +30,7 @@ void *array_get_element_at(Array *this, int index);
 
 #ifdef __UNIVERSAL_ARRAY_IMPLEMENTATION__
 #undef __UNIVERSAL_ARRAY_IMPLEMENTATION__
-// recomended initial capacity 10
+
 Array *array_create(int initialCapacity, size_t elementSize)
 {
     size_t size = elementSize * initialCapacity + sizeof(ArrayHeader);
