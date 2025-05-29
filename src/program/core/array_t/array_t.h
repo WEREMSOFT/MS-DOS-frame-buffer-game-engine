@@ -13,14 +13,14 @@ typedef struct array_t
     void* data;
 	void (*append_element)(struct array_t* that, void *element);
 	void (*insert_element_at)(struct array_t* that, void *element, int index);
-	void* (*get_element_at)(struct array_t *that, int index);	
+	void* (*get_element_at)(struct array_t that, int index);	
 } array_t;
 
 
 array_t array_create(int initialCapacity, size_t elementSize);
-void array_append_element(struct array_t *that, void *element);
-void array_insert_element_at(struct array_t *that, void *element, int index);
-void *array_get_element_at(struct array_t *that, int index);
+void array_t_append_element(struct array_t *that, void *element);
+void array_t_insert_element_at(struct array_t *that, void *element, int index);
+void *array_t_get_element_at(array_t that, int index);
 
 #ifndef ARRAY_MALLOC
 #define ARRAY_MALLOC malloc
@@ -29,8 +29,6 @@ void *array_get_element_at(struct array_t *that, int index);
 #ifndef ARRAY_REALLOC
 #define ARRAY_REALLOC realloc
 #endif
-
-#define __ARRAY_T_IMPLEMENTATION__
 
 #ifdef __ARRAY_T_IMPLEMENTATION__
 #undef __ARRAY_T_IMPLEMENTATION__
@@ -53,13 +51,13 @@ array_t array_create(int initialCapacity, size_t elementSize)
     }
 
 	memset(array.data, 0, size);
-	array.append_element = array_append_element;
-	array.insert_element_at = array_insert_element_at;
-	array.get_element_at = array_get_element_at;
+	array.append_element = array_t_append_element;
+	array.insert_element_at = array_t_insert_element_at;
+	array.get_element_at = array_t_get_element_at;
     return array;
 }
 
-void array_append_element(array_t *that, void *element)
+void array_t_append_element(array_t *that, void *element)
 {
 	if (that->length + 1 >= that->capacity)
     {
@@ -80,7 +78,7 @@ void array_append_element(array_t *that, void *element)
     that->length++;
 }
 
-void array_insert_element_at(array_t *that, void *element, int index)
+void array_t_insert_element_at(array_t *that, void *element, int index)
 {
     if (that->length + 1 >= that->capacity)
     {
@@ -109,11 +107,11 @@ void array_insert_element_at(array_t *that, void *element, int index)
 			element, that->elementSize);
 }
 
-void *array_get_element_at(array_t *that, int index)
+void *array_t_get_element_at(array_t that, int index)
 {
-    if (index < that->length)
+    if (index < that.length)
     {
-        return &that->data[index * that->elementSize];
+        return &that.data[index * that.elementSize];
     }
     return NULL;
 }
