@@ -628,6 +628,16 @@ GameState handle_cursor_position(GameState _that)
 {
 	array_t* line = get_current_line(_that);
 	
+	if(last_key_pressed == GLFW_KEY_HOME)
+	{
+		_that.cursor_position.x = 0;
+	}
+
+	if(last_key_pressed == GLFW_KEY_END)
+	{
+		_that.cursor_position.x = line->length;
+	}
+
 	if(last_key_pressed == GLFW_KEY_RIGHT)
 	{
 		_that.cursor_position.x++;
@@ -671,18 +681,12 @@ GameState handle_cursor_position(GameState _that)
 	return _that;
 }
 
-GameState process_state_edit_text(GameState _that)
+GameState handle_editor_keyboard(GameState _that)
 {
-	URColor static background_color = {50, 70, 110};
-	URColor static textColor = {255, 255, 255};
-	static bool draw_cursor_b = false;
-	
 	if(last_key_pressed != 0)
 	{
 		if(last_key_pressed < 128)
 		{
-			soundPlaySfx(_that.sound, SFX_HERO_HURT);
-			printf("last key pressed %d\n", last_key_pressed);
 			array_t* line = get_current_line(_that);
 
 			if(_that.cursor_position.x < line->length)
@@ -695,7 +699,30 @@ GameState process_state_edit_text(GameState _that)
 		}
 	}
 
+	if(last_key_pressed == GLFW_KEY_BACKSPACE || last_key_pressed == GLFW_KEY_DELETE)
+	{
+		array_t* line = get_current_line(_that);
+		line->delete_element_at(line, _that.cursor_position.x);			
+	}
 
+	if(last_key_pressed == GLFW_KEY_ENTER)
+	{
+		array_t* line = get_current_line(_that);
+		((char *)line->data)[_that.cursor_position.x] = 0;			
+	}
+
+	_that = handle_cursor_position(_that);
+
+	last_key_pressed = 0;
+	return _that;
+}
+
+GameState process_state_edit_text(GameState _that)
+{
+	URColor static background_color = {50, 70, 110};
+	URColor static textColor = {255, 255, 255};
+	static bool draw_cursor_b = false;
+	
 	static float elapsedTime = 0;
 	elapsedTime += _that.deltaTime;
 	if(elapsedTime > 0.3)
@@ -704,16 +731,7 @@ GameState process_state_edit_text(GameState _that)
 		elapsedTime = 0;
 	} 
 	
-	_that = handle_cursor_position(_that);
-
-
-	if(last_key_pressed == GLFW_KEY_BACKSPACE || last_key_pressed == GLFW_KEY_DELETE)
-	{
-		array_t* line = get_current_line(_that);
-		line->delete_element_at(line, _that.cursor_position.x);			
-	}
-
-	last_key_pressed = 0;
+	_that = handle_editor_keyboard(_that);
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
@@ -816,6 +834,9 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		key == GLFW_KEY_LEFT ||
 		key == GLFW_KEY_RIGHT ||
 		key == GLFW_KEY_BACKSPACE ||
+		key == GLFW_KEY_ENTER ||
+		key == GLFW_KEY_HOME ||
+		key == GLFW_KEY_END ||
 		key == GLFW_KEY_DELETE)
 		&& action == GLFW_PRESS && key > 128)
 	{
