@@ -93,8 +93,7 @@ void array_insert_element_at(array_t *that, void *element, int index)
             printf("Error reallocating array\n");
             exit(-1);
         }
-		
-		
+				
 		that->capacity *= 2;
 		that->data = new_pointer;
 		memset(that->data + that->elementSize * that->length, 0, (that->capacity - that->length - 1) * that->elementSize);
@@ -103,9 +102,9 @@ void array_insert_element_at(array_t *that, void *element, int index)
 
 	that->length++;
 
-    memmove(that->data + that->elementSize * index + 1, 
+    memmove(that->data + that->elementSize * (index + 1), 
 			that->data + that->elementSize * index,
-			that->elementSize * that->length - index);
+			that->elementSize * (that->length - index));
 
     memmove(that->data + that->elementSize * index, 
 			element, that->elementSize);

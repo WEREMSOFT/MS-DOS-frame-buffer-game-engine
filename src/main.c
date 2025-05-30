@@ -664,9 +664,16 @@ GameState handle_cursor_position(GameState _that)
 		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
+	if(last_key_pressed == GLFW_KEY_DOWN)
+	{
+		_that.cursor_position.y++;
+		_that.should_draw_cursor = true;
+	}
+
 	if(last_key_pressed == GLFW_KEY_DOWN || last_key_pressed == GLFW_KEY_ENTER)
 	{
 		_that.cursor_position.y++;
+		_that.cursor_position.x = 0;
 		_that.should_draw_cursor = true;
 	}
 
@@ -708,7 +715,14 @@ GameState handle_editor_keyboard(GameState _that)
 	if(last_key_pressed == GLFW_KEY_ENTER)
 	{
 		array_t* line = get_current_line(_that);
-		((char *)line->data)[_that.cursor_position.x] = 0;			
+		array_t new_line = array_create(_that.rows, sizeof(char));
+		new_line.length = strlen(line->data + _that.cursor_position.x);
+		strcpy(new_line.data, line->data + _that.cursor_position.x);
+		_that.text_lines.insert_element_at(&_that.text_lines, &new_line, _that.cursor_position.y + 1);
+
+		memset(line->data + _that.cursor_position.x, 0, strlen(line->data + _that.cursor_position.x)); 
+
+		line->length = strlen(line->data);
 	}
 
 	_that = handle_cursor_position(_that);
