@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include <soloud_c.h>
 #define INITIAL_LEVEL GAME_STATE_EDIT_TEXT
-#define UR_SCREEN_WIDTH 320
-#define UR_SCREEN_HEIGHT 240
+#define UR_SCREEN_WIDTH 420
+#define UR_SCREEN_HEIGHT 340
 #define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
 #include <cimgui.h>
 #include <cimgui_impl.h>
@@ -35,6 +35,9 @@ ImageData globalImgData;
 
 void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 {
+	if(!(x >= 0 && y >= 0 && x < UR_SCREEN_WIDTH && y < UR_SCREEN_HEIGHT))
+		return;
+
 	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
 	globalImgData.data[position] = (URColor){r, g, b};
 }
@@ -704,7 +707,7 @@ GameState process_state_edit_text(GameState _that)
 	_that = handle_cursor_position(_that);
 
 
-	if(last_key_pressed == GLFW_KEY_BACKSPACE)
+	if(last_key_pressed == GLFW_KEY_BACKSPACE || last_key_pressed == GLFW_KEY_DELETE)
 	{
 		array_t* line = get_current_line(_that);
 		line->delete_element_at(line, _that.cursor_position.x);			
@@ -812,7 +815,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		key == GLFW_KEY_DOWN ||
 		key == GLFW_KEY_LEFT ||
 		key == GLFW_KEY_RIGHT ||
-		key == GLFW_KEY_BACKSPACE)
+		key == GLFW_KEY_BACKSPACE ||
+		key == GLFW_KEY_DELETE)
 		&& action == GLFW_PRESS && key > 128)
 	{
 		last_key_pressed = key;
@@ -822,7 +826,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 GameState game_state_create()
 {
 	GameState gameState = {0};
-	gameState.graphics = graphicsCreate(320, 240, false);
+	gameState.graphics = graphicsCreate(UR_SCREEN_WIDTH, UR_SCREEN_HEIGHT, false);
 	gameState.rows = UR_SCREEN_HEIGHT / 7;
 	gameState.cols = UR_SCREEN_WIDTH / 7;
 
