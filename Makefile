@@ -6,8 +6,8 @@ SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound -lcimgui
 
-FLAGS_DEBUG := -g -O0 -w
-FLAGS__DEBUG := -O3 -fsanitize=address
+FLAGS_DEBUG := -g -O3 -w
+FLAGS__DEBUG := -pg -O3 -fsanitize=address
 FLAGS := -Wpedantic  -Wall -Wextra -Ilibs/include -Ilibs/soloud/include -L./static_libs -Ilibs/cimgui
 
 # Vars for emscripten build
@@ -19,6 +19,10 @@ TARGET := bin/main.bin
 
 all: clean $(SRC_O) $(SRC_CPP_O) copy_assets
 	gcc $(FLAGS_DEBUG) $(FLAGS) $(SRC_O) $(SRC_CPP_O) -o $(TARGET) $(LIBS)
+
+run_perf: FLAGS_DEBUG := -pg -O0 -w
+run_perf: run_main
+	gprof ./bin/main.bin gmon.out > perf_report.txt
 
 run_main: all
 	$(TARGET)
@@ -47,7 +51,8 @@ clean:
 	rm -rf $(TARGET)
 	rm -rf bin/assets
 	rm -rf html/**/*.*
-	rm -rf ./main.bin
+	rm -rf ./gmon.out
+	rm -rf ./perf_report.txt
 
 deep_clean: clean
 	rm -rf $(SRC_CPP_O)
