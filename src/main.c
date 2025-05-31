@@ -650,7 +650,7 @@ GameState handle_cursor_position(GameState _that)
 		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
-	if(last_key_pressed == GLFW_KEY_LEFT  || last_key_pressed == GLFW_KEY_BACKSPACE)
+	if(last_key_pressed == GLFW_KEY_LEFT)
 	{
 		_that.cursor_position.x--;
 		_that.should_draw_cursor = true;
@@ -670,7 +670,7 @@ GameState handle_cursor_position(GameState _that)
 		_that.should_draw_cursor = true;
 	}
 
-	if(last_key_pressed == GLFW_KEY_DOWN || last_key_pressed == GLFW_KEY_ENTER)
+	if(last_key_pressed == GLFW_KEY_ENTER)
 	{
 		_that.cursor_position.y++;
 		_that.cursor_position.x = 0;
@@ -714,6 +714,7 @@ GameState handle_editor_keyboard_backspace(GameState _that)
 	}
 	
 	line->delete_element_at(line, _that.cursor_position.x - 1);
+	_that.cursor_position.x--;
 	return _that;
 }
 
