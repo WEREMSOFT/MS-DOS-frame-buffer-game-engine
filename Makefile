@@ -6,7 +6,7 @@ SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
 LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound -lcimgui
 
-FLAGS_DEBUG := -g -O3 -w
+FLAGS_DEBUG := -g -O0 -w
 FLAGS__DEBUG := -pg -O3 -fsanitize=address
 FLAGS := -Wpedantic  -Wall -Wextra -Ilibs/include -Ilibs/soloud/include -L./static_libs -Ilibs/cimgui
 

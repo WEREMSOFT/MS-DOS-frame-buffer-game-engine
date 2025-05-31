@@ -15,6 +15,7 @@ typedef struct array_t
 	void (*insert_element_at)(struct array_t* that, void *element, int index);
 	void* (*get_element_at)(struct array_t that, int index);
 	void* (*delete_element_at)(struct array_t *that, int index);
+	void* (*concatenate)(struct array_t* that, struct array_t from);
 } array_t;
 
 
@@ -23,7 +24,7 @@ void array_append_element(struct array_t *that, void *element);
 void array_insert_element_at(struct array_t *that, void *element, int index);
 void *array_get_element_at(array_t that, int index);
 void array_delete_element_at(struct array_t *that, int index);
-
+void array_concatenate(struct array_t *that, struct array_t src);
 
 #ifndef ARRAY_MALLOC
 #define ARRAY_MALLOC malloc
@@ -58,6 +59,7 @@ array_t array_create(int initialCapacity, size_t elementSize)
 	array.insert_element_at = array_insert_element_at;
 	array.get_element_at = array_get_element_at;
 	array.delete_element_at = array_delete_element_at;
+	array.concatenate = array_concatenate;
     return array;
 }
 
@@ -123,9 +125,17 @@ void array_delete_element_at(struct array_t* that, int index)
 {
 	for(int i = index; i < that->length; i++)
 	{
-		memmove(that->data + i, that->data + i+1, that->elementSize);
+		memmove(that->data + i * that->elementSize, that->data + (i + 1) * that->elementSize, that->elementSize);
 	}
 	that->length--;
+}
+
+void array_concatenate(struct array_t *that, struct array_t src)
+{
+	for(int i = 0; i < src.length; i++)
+	{
+		that->append_element(that, src.data + i);
+	}
 }
 
 #endif

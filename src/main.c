@@ -688,6 +688,35 @@ GameState handle_cursor_position(GameState _that)
 	return _that;
 }
 
+GameState handle_editor_keyboard_backspace(GameState _that)
+{
+	array_t* line = get_current_line(_that);
+	if(last_key_pressed != GLFW_KEY_BACKSPACE)
+	{
+		return _that;
+	}
+
+	if(_that.cursor_position.x == 0)
+	{
+		if(_that.cursor_position.y == 0)
+		{
+			return _that;
+		}
+
+		array_t* prev_line = _that.text_lines.get_element_at(_that.text_lines, _that.cursor_position.y - 1);
+		int prev_line_length = prev_line->length;
+		prev_line->concatenate(prev_line, *line);
+		_that.text_lines.delete_element_at(&_that.text_lines, _that.cursor_position.y);
+		_that.cursor_position.x = prev_line_length;
+		_that.cursor_position.y --;
+		last_key_pressed = 0;
+		return _that;
+	}
+	
+	line->delete_element_at(line, _that.cursor_position.x - 1);
+	return _that;
+}
+
 GameState handle_editor_keyboard(GameState _that)
 {
 	if(last_key_pressed != 0)
@@ -706,7 +735,9 @@ GameState handle_editor_keyboard(GameState _that)
 		}
 	}
 
-	if(last_key_pressed == GLFW_KEY_BACKSPACE || last_key_pressed == GLFW_KEY_DELETE)
+	_that = handle_editor_keyboard_backspace(_that);
+
+	if(last_key_pressed == GLFW_KEY_DELETE)
 	{
 		array_t* line = get_current_line(_that);
 		line->delete_element_at(line, _that.cursor_position.x);			
