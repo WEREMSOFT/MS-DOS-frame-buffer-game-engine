@@ -232,12 +232,13 @@ typedef struct GameState
 	bool showDemoWindow;
 	GameStateEnum gameStateEnum;
 	char* buffer;
-	array_t text_lines;
+	array_t document;
 	URPointI cursor_position;
 	int highest_cursor_x;
  	bool should_draw_cursor;
 	int rows;
 	int cols;
+	int tab_size;
 } GameState;
 
 GameState gameStateCheckExitConditions(GameState _this)
@@ -617,7 +618,7 @@ void draw_cursor(URPointI cursor_position, URColor cursor_color)
 
 array_t* get_current_line(GameState _that)
 {
-	array_t lines = _that.text_lines;
+	array_t lines = _that.document;
 	array_t* line = (array_t*)lines.get_element_at(lines, _that.cursor_position.y);
 	return line;
 }
@@ -652,6 +653,8 @@ GameState handle_cursor_position(GameState _that)
 
 	if(last_key_pressed == GLFW_KEY_LEFT)
 	{
+		if(_that.cursor_position.x == 0 && _that.cursor_position.y == 0) return;
+
 		_that.cursor_position.x--;
 		_that.should_draw_cursor = true;
 		_that.highest_cursor_x = _that.cursor_position.x;
@@ -679,12 +682,24 @@ GameState handle_cursor_position(GameState _that)
 
 	if(last_key_pressed == GLFW_KEY_UP)
 	{
-		_that.cursor_position.y--;
+		_that.cursor_position.y = MAX(0, _that.cursor_position.y - 1);
 		_that.should_draw_cursor = true;
 	}
 
 	line = get_current_line(_that);
-	_that.cursor_position.x = MIN(line->length, _that.cursor_position.x);
+	_that.highest_cursor_x = MAX(_that.cursor_position.x, _that.highest_cursor_x);
+	if(line->length < _that.cursor_position.x)
+	{
+		_that.cursor_position.x = MIN(line->length, _that.cursor_position.x);
+	} 
+	else 
+	{
+		if(line->length >= _that.highest_cursor_x)
+		{
+			_that.cursor_position.x = _that.highest_cursor_x;
+		}
+	}
+
 	return _that;
 }
 
@@ -703,10 +718,10 @@ GameState handle_editor_keyboard_backspace(GameState _that)
 			return _that;
 		}
 
-		array_t* prev_line = _that.text_lines.get_element_at(_that.text_lines, _that.cursor_position.y - 1);
+		array_t* prev_line = _that.document.get_element_at(_that.document, _that.cursor_position.y - 1);
 		int prev_line_length = prev_line->length;
 		prev_line->concatenate(prev_line, *line);
-		_that.text_lines.delete_element_at(&_that.text_lines, _that.cursor_position.y);
+		_that.document.delete_element_at(&_that.document, _that.cursor_position.y);
 		_that.cursor_position.x = prev_line_length;
 		_that.cursor_position.y --;
 		last_key_pressed = 0;
@@ -715,6 +730,7 @@ GameState handle_editor_keyboard_backspace(GameState _that)
 	
 	line->delete_element_at(line, _that.cursor_position.x - 1);
 	_that.cursor_position.x--;
+	_that.highest_cursor_x = _that.cursor_position.x;
 	return _that;
 }
 
@@ -750,11 +766,12 @@ GameState handle_editor_keyboard(GameState _that)
 		array_t new_line = array_create(_that.rows, sizeof(char));
 		new_line.length = strlen(line->data + _that.cursor_position.x);
 		strcpy(new_line.data, line->data + _that.cursor_position.x);
-		_that.text_lines.insert_element_at(&_that.text_lines, &new_line, _that.cursor_position.y + 1);
+		_that.document.insert_element_at(&_that.document, &new_line, _that.cursor_position.y + 1);
 
 		memset(line->data + _that.cursor_position.x, 0, strlen(line->data + _that.cursor_position.x)); 
 
 		line->length = strlen(line->data);
+		_that.highest_cursor_x = _that.cursor_position.x = 0;
 	}
 
 	_that = handle_cursor_position(_that);
@@ -781,8 +798,8 @@ GameState process_state_edit_text(GameState _that)
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
-	for (int i = 0; i < _that.text_lines.length; i++) {
- 	    array_t* line = _that.text_lines.get_element_at(_that.text_lines, i);
+	for (int i = 0; i < _that.document.length; i++) {
+ 	    array_t* line = _that.document.get_element_at(_that.document, i);
 	    char* str = (char*)line->data;
 		urPrintStringWithSytaxHighlight((URPointI){1, i*6 + 1}, str, textColor);
 	}
@@ -896,13 +913,14 @@ GameState game_state_create()
 	gameState.graphics = graphicsCreate(UR_SCREEN_WIDTH, UR_SCREEN_HEIGHT, false);
 	gameState.rows = UR_SCREEN_HEIGHT / 7;
 	gameState.cols = UR_SCREEN_WIDTH / 7;
+	gameState.tab_size = 4;
 
-	gameState.text_lines = array_create(gameState.cols, sizeof(gameState.text_lines));
+	gameState.document = array_create(gameState.cols, sizeof(gameState.document));
 	
 	for (int i = 0; i < gameState.cols; i++)
 	{
 		array_t line = array_create(gameState.rows, sizeof(char));
-		gameState.text_lines.append_element(&gameState.text_lines, &line);
+		gameState.document.append_element(&gameState.document, &line);
 	}
 
 	gameState.sound = sound_create();
@@ -915,8 +933,16 @@ GameState game_state_create()
 	{
 		while (*cursor && *cursor != '\n')
 		{
-			array_t* current_line = gameState.text_lines.get_element_at(gameState.text_lines, row);
-			if(*cursor != '\n')
+			array_t* current_line = gameState.document.get_element_at(gameState.document, row);
+			
+			if(*cursor == '\t')
+			{
+				for(int i = 0; i < gameState.tab_size; i++)
+				{
+					char space = ' ';
+					current_line->append_element(current_line, &space);	
+				}
+			} else if(*cursor != '\n')
 			{
 				current_line->append_element(current_line, cursor);
 			}

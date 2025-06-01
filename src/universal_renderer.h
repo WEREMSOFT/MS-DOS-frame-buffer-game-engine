@@ -675,91 +675,91 @@ void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 
 		if (string[i] == '.')
 		{
-			int charOffset = 'z' - 'a' + 12;
+			int charOffset = 63;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '%')
 		{
-			int charOffset = 'z' - 'a' + 11;
+			int charOffset = 62;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 		
 		if (string[i] == '#')
 		{
-			int charOffset = 'z' - 'a' + 13;
+			int charOffset = 64;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '<')
 		{
-			int charOffset = 'z' - 'a' + 14;
+			int charOffset = 65;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '>')
 		{
-			int charOffset = 'z' - 'a' + 15;
+			int charOffset = 66;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == ',')
 		{
-			int charOffset = 'z' - 'a' + 16;
+			int charOffset = 67;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '(' )
 		{
-			int charOffset = 'z' - 'a' + 17;
+			int charOffset = 68;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == ')' )
 		{
-			int charOffset = 'z' - 'a' + 18;
+			int charOffset = 69;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '{' )
 		{
-			int charOffset = 'z' - 'a' + 19;
+			int charOffset = 70;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '}' )
 		{
-			int charOffset = 'z' - 'a' + 20;
+			int charOffset = 71;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '*' )
 		{
-			int charOffset = 'z' - 'a' + 21;
+			int charOffset = 72;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == '"' )
 		{
-			int charOffset = 'z' - 'a' + 22;
+			int charOffset = 73;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
 
 		if (string[i] == ';' )
 		{
-			int charOffset = 'z' - 'a' + 23;
+			int charOffset = 74;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
@@ -772,7 +772,7 @@ void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 
 		if (string[i] >= 'a' && string[i] <= 'z')
 		{
-			int charOffset = string[i] - 'a' + 35;
+			int charOffset = string[i] - 'a' + 36;
 			urDrawCharacter(current_position, charOffset, color);
 			continue;
 		}
@@ -785,7 +785,144 @@ void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 		}
 	}
 }
+/*
+	for (size_t i = 0; i < stringLen; i++)
+	{
+		if (string[i] == '\t')
+		{
+			current_position.x += 6 * 4;
+		} else if (string[i] == '\n')
+		{
+			current_color = color;
+			current_position.x = original_position.x;
+			current_position.y += 6;
+		} else if (string[i] == ' ')
+		{
+			current_position.x += 6;
+		} 
 
+		if (string[i] == '.')
+		{
+			int charOffset = 63;
+			urDrawCharacter(current_position, charOffset, punctuation_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '%')
+		{
+			int charOffset = 62;
+			urDrawCharacter(current_position, charOffset, punctuation_color, shadow_color);
+			current_position.x += 6;
+		}
+		
+		if (string[i] == '#')
+		{
+			int charOffset = 64;
+			urDrawCharacter(current_position, charOffset, include_color, shadow_color);
+			current_color = include_color;
+			current_position.x += 6;
+		}
+
+		if (string[i] == '<')
+		{
+			int charOffset = 65;
+			urDrawCharacter(current_position, charOffset, bracket_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '>')
+		{
+			int charOffset = 66;
+			urDrawCharacter(current_position, charOffset, bracket_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == ',')
+		{
+			int charOffset = 67;
+			urDrawCharacter(current_position, charOffset, current_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '(' )
+		{
+			int charOffset = 68;
+			urDrawCharacter(current_position, charOffset, bracket_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == ')' )
+		{
+			int charOffset = 69;
+			urDrawCharacter(current_position, charOffset, bracket_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '{' )
+		{
+			int charOffset = 70;
+			urDrawCharacter(current_position, charOffset, bracket_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '}' )
+		{
+			int charOffset = 71;
+			urDrawCharacter(current_position, charOffset, bracket_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '*' )
+		{
+			int charOffset = 72;
+			urDrawCharacter(current_position, charOffset, current_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] == '"' )
+		{
+			int charOffset = 73;
+			current_color = string_color;
+			urDrawCharacter(current_position, charOffset, current_color, shadow_color);
+			if(string_in_progress)
+			{
+				string_in_progress = false;
+				current_color = text_color;
+				current_position.x += 6;
+				continue;
+			}
+			string_in_progress = true;
+			current_position.x += 6;
+		}
+
+		if (string[i] == ';' )
+		{
+			int charOffset = 74;
+			urDrawCharacter(current_position, charOffset, punctuation_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] >= '0' && string[i] <= '9')
+		{
+			urDrawCharacter(current_position, string[i] - '0', current_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] >= 'a' && string[i] <= 'z')
+		{
+			int charOffset = string[i] - 'a' + 36;
+			urDrawCharacter(current_position, charOffset, current_color, shadow_color);
+			current_position.x += 6;
+		}
+
+		if (string[i] >= 'A' && string[i] <= 'Z')
+		{
+			int charOffset = string[i] + 32 - 'a' + 10;
+			urDrawCharacter(current_position, charOffset, current_color, shadow_color);
+			current_position.x += 6;
+		}
+	}
+*/
 #include <stdbool.h>
 #include <stdint.h>
 #include <arpa/inet.h>
