@@ -6,14 +6,9 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
-#include <soloud_c.h>
 #define INITIAL_LEVEL GAME_STATE_EDIT_TEXT
 #define UR_SCREEN_WIDTH 420
 #define UR_SCREEN_HEIGHT 340
-#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
-#include <cimgui.h>
-#include <cimgui_impl.h>
-#define igGetIO igGetIO_Nil
 
 #define UR_MALLOC MALLOC
 #define UR_REALLOC REALLOC
@@ -42,37 +37,6 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 	globalImgData.data[position] = (URColor){r, g, b};
 }
 
-#define S3L_RESOLUTION_X 320
-#define S3L_RESOLUTION_Y 240
-#define S3L_PIXEL_FUNCTION drawPixel
-#include <small3Dlib/small3dlib.h>
-
-void drawPixel(S3L_PixelInfo *p)
-{
-	URColor color = {0};
-	switch (p->triangleID)
-	{
-	case 1:
-	case 0:
-		color.r = 0xff;
-		break;
-	case 2:
-	case 3:
-		color.b = 0xff;
-		break;
-	case 6:
-	case 7:
-		color.g = 0xff;
-		break;
-	default:
-		color.r = color.g = color.b = 0x66;
-	}
-
-	urPutPixel(p->x, p->y, color.r, color.g, color.b);
-}
-
-#define TILES_CAPACITY 100
-
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
@@ -87,123 +51,7 @@ void drawPixel(S3L_PixelInfo *p)
 #define STBI_REALLOC(p, newsz) REALLOC(p, newsz)
 #define STBI_FREE(p) FREE(p)
 
-#define ENEMY_DOWN_OFFSET 53
-#define ENEMY_UP_OFFSET 20
 
-#include <soloud_c.h>
-
-typedef enum
-{
-	SFX_SELECT,
-	SFX_SHOOT_HERO,
-	SFX_ENEMY_ESCAPED,
-	SFX_BLIP,
-	SFX_HERO_JUMP,
-	SFX_HERO_HURT,
-	SFX_COUNT
-} GameSFX;
-
-typedef enum
-{
-	SPEECH_JUMP_THE_ROCKS,
-	SPEECH_SHOOT_THE_BAD_GUYS,
-	SPEECH_NOOO,
-	SPEECH_GAME_OVER,
-	SPEECH_COUNT
-} GameSpeech;
-
-typedef struct
-{
-	Soloud *soloud;
-	Speech *speechs[SPEECH_COUNT];
-	Sfxr *sfx[SFX_COUNT];
-} Sound;
-
-typedef enum
-{
-	ASSET_NONE,
-	ASSET_BACKGROUND,
-	ASSET_FOREGROUND,
-	ASSET_TOP_SCORE_SQUARE,
-	ASSET_SIGHT,
-	ASSET_SHOOT,
-
-	ASSET_HOW_TO_PLAY,
-
-	ASSET_ENEMY_GREEN_BIG,
-	ASSET_ENEMY_GREEN_MEDIUM,
-	ASSET_ENEMY_GREEN_SMALL,
-
-	ASSET_ENEMY_GREEN_BIG_SHOOT,
-	ASSET_ENEMY_GREEN_MEDIUM_SHOOT,
-	ASSET_ENEMY_GREEN_SMALL_SHOOT,
-
-	ASSET_LEVEL2_HERO_GREEN,
-	ASSET_LEVEL2_HERO_BLUE,
-	ASSET_LEVEL2_HERO_RED,
-	ASSET_LEVEL2_HERO_YELLOW,
-	ASSET_LEVEL2_BACKGROUND,
-
-	ASSET_LEVEL2_CLOUD_1,
-	ASSET_LEVEL2_CLOUD_2,
-	ASSET_LEVEL2_CLOUD_3,
-	ASSET_LEVEL2_CLOUD_4,
-
-	ASSET_LEVEL2_OBSTACLE_1,
-	ASSET_LEVEL2_OBSTACLE_2,
-	ASSET_LEVEL2_OBSTACLE_3,
-
-	ASSET_LEVEL2_HOW_TO_PLAY,
-
-	ASSET_LEVEL3_BACKGROUND,
-	ASSET_LEVEL3_BACKGROUND_TILED,
-	ASSET_LEVEL3_HERO_RUN,
-	ASSET_LEVEL3_HERO_JUMP,
-	ASSET_LEVEL3_HERO_FALL,
-	ASSET_LEVEL3_HERO_IDLE,
-	ASSET_LEVEL3_ENEMY_WALKING,
-	ASSET_LEVEL3_ENEMY_HIT,
-	ASSET_LEVEL3_ENEMY_SINGLE_FRAME,
-
-	ASSET_COUNT
-} Assets;
-
-typedef enum
-{
-	ENEMY_STATE_HIDDEN,
-	ENEMY_STATE_GOING_UP,
-	ENEMY_STATE_GOING_DOWN,
-	ENEMY_STATE_DEAD,
-	ENEMY_STATE_COUNT
-} EnemyState;
-
-typedef struct
-{
-	EnemyState state;
-	int spriteId;
-	int lowerClippingPosition;
-	int topLimit;
-	int bottomOffset;
-	bool visible;
-	float elapsedStateTime;
-	float speedMultiplicator;
-	PointI basePosition;
-	PointF position;
-} Enemy;
-
-typedef enum
-{
-	QPOS_TOP_LEFT,
-	QPOS_TOP,
-	QPOS_TOP_RIGHT,
-	QPOS_LEFT,
-	QPOS_RIGHT,
-	QPOS_BOTTOM_LEFT,
-	QPOS_BOTTOM,
-	QPOS_BOTTOM_RIGHT,
-	QPOS_NONE,
-	QPOS_COUNT
-} QuadrantPosition;
 
 struct GameState;
 
@@ -223,9 +71,6 @@ typedef struct GameState
 {
 	struct GameState *_self;
 	Graphics graphics;
-	ImGuiIO *ioptr;
-	URSprite sprites[ASSET_COUNT];
-	Sound sound;
 	float deltaTime;
 	bool shouldQuit;
 	bool shouldStop;
@@ -259,72 +104,6 @@ void swapBuffersPrintFPSPollEvents(Graphics graphics, float deltaTime)
 	urPrintFPS(deltaTime);
 	graphicsSwapBuffers(graphics);
 	glfwPollEvents();
-}
-
-Sound sound_create()
-{
-	Sound that = {0};
-
-	that.soloud = Soloud_create();
-	for (int i = 0; i < SPEECH_COUNT; i++)
-	{
-		that.speechs[i] = Speech_create();
-	}
-
-	for (int i = 0; i < SFX_COUNT; i++)
-	{
-		that.sfx[i] = Sfxr_create();
-	}
-
-	Speech_setText(that.speechs[SPEECH_JUMP_THE_ROCKS], "Jump the rocks!");
-	Speech_setText(that.speechs[SPEECH_SHOOT_THE_BAD_GUYS], "Shoot the bad guys!");
-	Speech_setText(that.speechs[SPEECH_NOOO], "O!");
-	Sfxr_loadPreset(that.sfx[SFX_BLIP], SFXR_BLIP, 3247);
-	Sfxr_loadPreset(that.sfx[SFX_SELECT], SFXR_POWERUP, 3247);
-	Sfxr_loadPreset(that.sfx[SFX_SHOOT_HERO], SFXR_EXPLOSION, 3247);
-	Sfxr_loadPreset(that.sfx[SFX_ENEMY_ESCAPED], SFXR_HURT, 3247);
-	Sfxr_loadPreset(that.sfx[SFX_HERO_JUMP], SFXR_JUMP, 3247);
-	Sfxr_loadPreset(that.sfx[SFX_HERO_HURT], SFXR_HURT, 3247);
-
-	Soloud_initEx(
-		that.soloud,
-		SOLOUD_CLIP_ROUNDOFF | SOLOUD_ENABLE_VISUALIZATION,
-		SOLOUD_AUTO, SOLOUD_AUTO, SOLOUD_AUTO, 2);
-
-	Soloud_setGlobalVolume(that.soloud, 4);
-
-	return that;
-}
-
-void soundPlaySfx(Sound that, GameSFX id)
-{
-	Soloud_play(that.soloud, that.sfx[id]);
-}
-
-void soundPlaySpeech(Sound that, GameSpeech id)
-{
-	Soloud_play(that.soloud, that.speechs[id]);
-}
-
-void soundDestroy(Sound that)
-{
-	for (int i = 0; i < SPEECH_COUNT; i++)
-	{
-		Speech_destroy(that.speechs[i]);
-	}
-
-	for (int i = 0; i < SFX_COUNT; i++)
-	{
-		Sfxr_destroy(that.sfx[i]);
-	}
-
-	Soloud_deinit(that.soloud);
-	Soloud_destroy(that.soloud);
-}
-
-void loadAssets(URSprite *_this)
-{
-	_this[ASSET_BACKGROUND] = urSpriteCreate("assets/background.bmp");
 }
 
 GameState gameStateClickToStart(GameState _this)
@@ -366,42 +145,6 @@ GameState gameStateClickToStart(GameState _this)
 	if (glfwGetMouseButton(_this.graphics.window, GLFW_MOUSE_BUTTON_1))
 		_this.shouldStop = true;
 	return _this;
-}
-
-GameState renderDearImgui(GameState gameState)
-{
-	// render
-	// start imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	igNewFrame();
-
-	if (igBeginMainMenuBar())
-    {
-        if (igBeginMenu("Edit", true))
-        {
-            if (igMenuItem_Bool("Undo", "CTRL+Z", true, true)) {}
-            if (igMenuItem_Bool("Redo", "CTRL+Y", false, false)) {} // Disabled item
-            igSeparator();
-            if (igMenuItem_Bool("Cut", "CTRL+X", true, true)) {}
-            if (igMenuItem_Bool("Copy", "CTRL+C", true, true)) {}
-            if (igMenuItem_Bool("Paste", "CTRL+V", true, true)) {}
-            igEndMenu();
-        }
-        igEndMainMenuBar();
-    }
-	igRender();
-	ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
-#ifdef IMGUI_HAS_DOCK
-	if (ioptr->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		GLFWwindow *backup_current_window = glfwGetCurrentContext();
-		igUpdatePlatformWindows();
-		igRenderPlatformWindowsDefault(NULL, NULL);
-		glfwMakeContextCurrent(backup_current_window);
-	}
-#endif
-	return gameState;
 }
 
 void *read_file(char* fileName)
@@ -850,38 +593,6 @@ void emscriptenLoopHandler()
 }
 #endif
 
-GameState initDearImgui(GameState gameState)
-{
-	// setup imgui
-	igCreateContext(NULL);
-
-	// set docking
-	gameState.ioptr = igGetIO();
-	gameState.ioptr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-																		// ioptr->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-#ifdef IMGUI_HAS_DOCK
-	ioptr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
-	ioptr->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-#endif
-
-// Shader version
-#ifndef __EMSCRIPTEN__
-	const char *glsl_version = "#version 130";
-#else
-	const char *glsl_version = "#version 300 es";
-#endif
-
-
-	ImGui_ImplGlfw_InitForOpenGL(gameState.graphics.window, true);
-	ImGui_ImplOpenGL3_Init(glsl_version);
-
-	igStyleColorsDark(NULL);
-
-	gameState.showDemoWindow = true;
-	bool showAnotherWindow = false;
-	return gameState;
-}
-
 void keyboard_char_callback(GLFWwindow* window, unsigned int key)
 {
 	if(key < 128)
@@ -923,8 +634,6 @@ GameState game_state_create()
 		gameState.document.append_element(&gameState.document, &line);
 	}
 
-	gameState.sound = sound_create();
-
 	gameState.buffer = read_file("assets/test.c");
 	char* cursor = gameState.buffer;
 
@@ -964,8 +673,6 @@ int main(void)
 
 	glfwSetCharCallback(gameState.graphics.window, keyboard_char_callback);
 	glfwSetKeyCallback(gameState.graphics.window, keyboard_callback);
-
-	gameState = initDearImgui(gameState);
 
 #ifdef INITIAL_LEVEL
 	gameState.gameStateEnum = INITIAL_LEVEL;
