@@ -7,8 +7,8 @@
 #include <math.h>
 #include <stdbool.h>
 #define INITIAL_LEVEL GAME_STATE_EDIT_TEXT
-#define UR_SCREEN_WIDTH 420
-#define UR_SCREEN_HEIGHT 340
+#define UR_SCREEN_WIDTH 320
+#define UR_SCREEN_HEIGHT 240
 
 #define UR_MALLOC MALLOC
 #define UR_REALLOC REALLOC
