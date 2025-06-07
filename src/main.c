@@ -83,6 +83,7 @@ typedef struct GameState
  	bool should_draw_cursor;
 	int rows;
 	int cols;
+	int starting_row;
 	int tab_size;
 } GameState;
 
@@ -375,11 +376,13 @@ GameState handle_cursor_position(GameState _that)
 	if(last_key_pressed == GLFW_KEY_HOME)
 	{
 		_that.cursor_position.x = 0;
+		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
 	if(last_key_pressed == GLFW_KEY_END)
 	{
 		_that.cursor_position.x = line->length;
+		_that.highest_cursor_x = _that.cursor_position.x;
 	}
 
 	if(last_key_pressed == GLFW_KEY_RIGHT)
@@ -413,6 +416,24 @@ GameState handle_cursor_position(GameState _that)
 	if(last_key_pressed == GLFW_KEY_DOWN)
 	{
 		_that.cursor_position.y++;
+		
+		_that.cursor_position.y = MIN(_that.document.length - 1, _that.cursor_position.y);
+
+		if(_that.cursor_position.y - _that.starting_row >= _that.rows)
+		{
+			_that.starting_row++;
+		}
+		_that.should_draw_cursor = true;
+	}
+
+	if(last_key_pressed == GLFW_KEY_PAGE_DOWN)
+	{
+		_that.cursor_position.y += _that.rows;
+		_that.starting_row += _that.rows;
+
+		_that.cursor_position.y = MIN(_that.document.length - 1, _that.cursor_position.y);
+		_that.starting_row = MIN(_that.document.length - 1, _that.starting_row);
+		
 		_that.should_draw_cursor = true;
 	}
 
@@ -425,7 +446,23 @@ GameState handle_cursor_position(GameState _that)
 
 	if(last_key_pressed == GLFW_KEY_UP)
 	{
+		if(_that.cursor_position.y - _that.starting_row == 0)
+		{
+			_that.starting_row = MAX(0, _that.starting_row - 1);;
+		}
 		_that.cursor_position.y = MAX(0, _that.cursor_position.y - 1);
+
+		_that.should_draw_cursor = true;
+	}
+
+	if(last_key_pressed == GLFW_KEY_PAGE_UP)
+	{
+		_that.cursor_position.y -= _that.rows;
+		_that.starting_row -= _that.rows;
+
+		_that.starting_row = MAX(0, _that.starting_row);
+		_that.cursor_position.y = MAX(0, _that.cursor_position.y);
+
 		_that.should_draw_cursor = true;
 	}
 
@@ -520,6 +557,7 @@ GameState handle_editor_keyboard(GameState _that)
 	_that = handle_cursor_position(_that);
 
 	last_key_pressed = 0;
+	
 	return _that;
 }
 
@@ -541,15 +579,19 @@ GameState process_state_edit_text(GameState _that)
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
-	for (int i = 0; i < _that.document.length; i++) {
+	int line_number = 0;
+	for (int i = _that.starting_row; i < _that.document.length && i < _that.starting_row + _that.rows; i++) {
  	    array_t* line = _that.document.get_element_at(_that.document, i);
 	    char* str = (char*)line->data;
-		urPrintStringWithSytaxHighlight((URPointI){1, i*6 + 1}, str, textColor);
+		urPrintStringWithSytaxHighlight((URPointI){1, line_number*6 + 1}, str, textColor);
+		line_number++;
 	}
 
 	if(draw_cursor_b)
 	{
-		draw_cursor(_that.cursor_position, UR_WHITE);
+		URPointI local_cursor_position = _that.cursor_position;
+		local_cursor_position.y -= _that.starting_row;
+		draw_cursor(local_cursor_position, UR_WHITE);
 	}
 	
 	return _that;
@@ -611,6 +653,8 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 		key == GLFW_KEY_ENTER ||
 		key == GLFW_KEY_HOME ||
 		key == GLFW_KEY_END ||
+		key == GLFW_KEY_PAGE_DOWN ||
+		key == GLFW_KEY_PAGE_UP ||
 		key == GLFW_KEY_DELETE)
 		&& action == GLFW_PRESS && key > 128)
 	{
@@ -621,6 +665,7 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 GameState game_state_create()
 {
 	GameState gameState = {0};
+	gameState.starting_row = 0;
 	gameState.graphics = graphicsCreate(UR_SCREEN_WIDTH, UR_SCREEN_HEIGHT, false);
 	gameState.rows = UR_SCREEN_HEIGHT / 7;
 	gameState.cols = UR_SCREEN_WIDTH / 7;
@@ -643,7 +688,14 @@ GameState game_state_create()
 		while (*cursor && *cursor != '\n')
 		{
 			array_t* current_line = gameState.document.get_element_at(gameState.document, row);
-			
+
+			while(current_line == NULL)
+			{
+				array_t line = array_create(gameState.rows, sizeof(char));
+				gameState.document.append_element(&gameState.document, &line);
+				current_line = gameState.document.get_element_at(gameState.document, row);
+			}
+
 			if(*cursor == '\t')
 			{
 				for(int i = 0; i < gameState.tab_size; i++)
