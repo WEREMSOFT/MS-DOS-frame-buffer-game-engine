@@ -14,8 +14,8 @@ typedef struct array_t
 	void (*append_element)(struct array_t* that, void *element);
 	void (*insert_element_at)(struct array_t* that, void *element, int index);
 	void* (*get_element_at)(struct array_t that, int index);
-	void* (*delete_element_at)(struct array_t *that, int index);
-	void* (*concatenate)(struct array_t* that, struct array_t from);
+	void (*delete_element_at)(struct array_t *that, int index);
+	void (*concatenate)(struct array_t* that, struct array_t from);
 } array_t;
 
 

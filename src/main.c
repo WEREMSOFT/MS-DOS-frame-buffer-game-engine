@@ -6,7 +6,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
-#define INITIAL_LEVEL GAME_STATE_EDIT_TEXT
 #define UR_SCREEN_WIDTH 320
 #define UR_SCREEN_HEIGHT 240
 
@@ -40,9 +39,10 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 	globalImgData.data[position] = (URColor){r, g, b};
 }
 
+#define INITIAL_LEVEL GAME_STATE_CLICK_TO_START
 #ifdef __EMSCRIPTEN__
-#include <emscripten/emscripten.h>
-#include <emscripten/html5.h>
+	#include <emscripten/emscripten.h>
+	#include <emscripten/html5.h>
 #endif
 
 #define ARRAY_MALLOC MALLOC
@@ -400,7 +400,7 @@ game_state_t handle_cursor_position(game_state_t _that)
 
 	if(last_key_pressed == GLFW_KEY_LEFT)
 	{
-		if(_that.cursor_position.x == 0 && _that.cursor_position.y == 0) return;
+		if(_that.cursor_position.x == 0 && _that.cursor_position.y == 0) return _that;
 
 		_that.cursor_position.x--;
 		_that.should_draw_cursor = true;
@@ -649,7 +649,7 @@ game_state_t game_main_loop(game_state_t gameState)
 }
 
 #ifdef __EMSCRIPTEN__
-GameState gameState = {0};
+game_state_t gameState = {0};
 
 void emscriptenLoopHandler()
 {
@@ -686,7 +686,9 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 
 game_state_t game_state_create()
 {
+	#ifndef __EMSCRIPTEN__
 	game_state_t gameState = {0};
+	#endif
 	gameState.starting_row = 0;
 	gameState.graphics = graphicsCreate(UR_SCREEN_WIDTH, UR_SCREEN_HEIGHT, false);
 	gameState.rows = UR_SCREEN_HEIGHT / 7;
