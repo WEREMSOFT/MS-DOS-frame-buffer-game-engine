@@ -642,7 +642,6 @@ game_state_t game_main_loop(game_state_t gameState)
 		gameState.gameStateEnum++;
 	}
 	swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
-	// gameState = renderDearImgui(gameState);
 	glfwSwapBuffers(gameState.graphics.window);
 
 	return gameState;
