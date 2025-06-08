@@ -28,6 +28,9 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 
 ImageData globalImgData;
 
+double mouse_scroll_offset_x;
+double mouse_scroll_offset_y;
+
 void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 {
 	if(!(x >= 0 && y >= 0 && x < UR_SCREEN_WIDTH && y < UR_SCREEN_HEIGHT))
@@ -53,7 +56,7 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 
 
 
-struct GameState;
+struct game_state_t;
 
 #define ENEMIES_CAPACITY 2
 
@@ -67,9 +70,9 @@ typedef enum
 	GAME_STATE_COUNT
 } GameStateEnum;
 
-typedef struct GameState
+typedef struct game_state_t
 {
-	struct GameState *_self;
+	struct game_state_t *_self;
 	Graphics graphics;
 	float deltaTime;
 	bool shouldQuit;
@@ -85,9 +88,9 @@ typedef struct GameState
 	int cols;
 	int starting_row;
 	int tab_size;
-} GameState;
+} game_state_t;
 
-GameState gameStateCheckExitConditions(GameState _this)
+game_state_t gameStateCheckExitConditions(game_state_t _this)
 {
 	if (glfwWindowShouldClose(_this.graphics.window))
 	{
@@ -107,7 +110,7 @@ void swapBuffersPrintFPSPollEvents(Graphics graphics, float deltaTime)
 	glfwPollEvents();
 }
 
-GameState gameStateClickToStart(GameState _this)
+game_state_t gameStateClickToStart(game_state_t _this)
 {
 	graphicsClear(_this.graphics.imageData);
 	URColor static textColor = {255, 255, 255};
@@ -352,15 +355,13 @@ void urPrintStringWithSytaxHighlight(URPointI topLeftCorner, char *string, URCol
 
 void draw_cursor(URPointI cursor_position, URColor cursor_color)
 {
-	URPointI start, end;
+	URPointI start;
 	start.x = 2 + cursor_position.x * 6;
-	start.y = (cursor_position.y + 1) * 6;
-	end.x = start.x + 4;
-	end.y = start.y;
-	urDrawLine(start, end, cursor_color);
+	start.y = cursor_position.y * 6;
+	urDrawSquareFill(start, (URPointI){5, 6}, cursor_color);
 }
 
-array_t* get_current_line(GameState _that)
+array_t* get_current_line(game_state_t _that)
 {
 	array_t lines = _that.document;
 	array_t* line = (array_t*)lines.get_element_at(lines, _that.cursor_position.y);
@@ -369,7 +370,7 @@ array_t* get_current_line(GameState _that)
 
 int last_key_pressed = 0;
 
-GameState handle_cursor_position(GameState _that)
+game_state_t handle_cursor_position(game_state_t _that)
 {
 	array_t* line = get_current_line(_that);
 	
@@ -483,7 +484,7 @@ GameState handle_cursor_position(GameState _that)
 	return _that;
 }
 
-GameState handle_editor_keyboard_backspace(GameState _that)
+game_state_t handle_editor_keyboard_backspace(game_state_t _that)
 {
 	array_t* line = get_current_line(_that);
 	if(last_key_pressed != GLFW_KEY_BACKSPACE)
@@ -514,7 +515,7 @@ GameState handle_editor_keyboard_backspace(GameState _that)
 	return _that;
 }
 
-GameState handle_editor_keyboard(GameState _that)
+game_state_t handle_editor_keyboard(game_state_t _that)
 {
 	if(last_key_pressed != 0)
 	{
@@ -561,7 +562,27 @@ GameState handle_editor_keyboard(GameState _that)
 	return _that;
 }
 
-GameState process_state_edit_text(GameState _that)
+game_state_t handle_editor_mouse_scroll(game_state_t _that)
+{
+	_that.cursor_position.y -= mouse_scroll_offset_y;
+	
+	_that.cursor_position.y = MAX(0, MIN(_that.document.length - 1, _that.cursor_position.y));
+
+	if(_that.cursor_position.y - _that.starting_row >= _that.rows)
+	{
+		_that.starting_row++;
+	}
+
+	if(_that.cursor_position.y < _that.starting_row)
+	{
+		_that.starting_row = _that.cursor_position.y;
+	}
+	
+	mouse_scroll_offset_y = 0;
+	return _that;
+}
+
+game_state_t process_state_edit_text(game_state_t _that)
 {
 	URColor static background_color = {50, 70, 110};
 	URColor static textColor = {255, 255, 255};
@@ -576,6 +597,7 @@ GameState process_state_edit_text(GameState _that)
 	} 
 	
 	_that = handle_editor_keyboard(_that);
+	_that = handle_editor_mouse_scroll(_that);
 
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
@@ -597,7 +619,7 @@ GameState process_state_edit_text(GameState _that)
 	return _that;
 }
 
-GameState game_main_loop(GameState gameState)
+game_state_t game_main_loop(game_state_t gameState)
 {
 	globalImgData = gameState.graphics.imageData;
 	gameState.deltaTime = getDeltaTime();
@@ -662,9 +684,9 @@ void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 }
 
-GameState game_state_create()
+game_state_t game_state_create()
 {
-	GameState gameState = {0};
+	game_state_t gameState = {0};
 	gameState.starting_row = 0;
 	gameState.graphics = graphicsCreate(UR_SCREEN_WIDTH, UR_SCREEN_HEIGHT, false);
 	gameState.rows = UR_SCREEN_HEIGHT / 7;
@@ -716,15 +738,22 @@ GameState game_state_create()
 	return gameState;
 }
 
+void mouse_scroll_callback(GLFWwindow* window, double offset_x, double offset_y)
+{
+	mouse_scroll_offset_x = offset_x;
+	mouse_scroll_offset_y = offset_y;
+}
+
 int main(void)
 {
 	initDeltaTime();
 
-	GameState gameState = game_state_create();
+	game_state_t gameState = game_state_create();
 	gameState._self = &gameState;
 
 	glfwSetCharCallback(gameState.graphics.window, keyboard_char_callback);
 	glfwSetKeyCallback(gameState.graphics.window, keyboard_callback);
+	glfwSetScrollCallback(gameState.graphics.window, mouse_scroll_callback);
 
 #ifdef INITIAL_LEVEL
 	gameState.gameStateEnum = INITIAL_LEVEL;
