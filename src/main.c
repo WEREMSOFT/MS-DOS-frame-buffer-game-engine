@@ -15,12 +15,9 @@
 #include <cimgui_impl.h>
 #define igGetIO igGetIO_Nil
 
-#define __STATIC_ALLOC_IMPLEMENTATION__
-#include "program/core/stackAllocator/staticAlloc.h"
-
-#define UR_MALLOC allocStatic
-#define UR_REALLOC reallocStatic
-#define UR_FREE freeStatic
+#define UR_MALLOC malloc
+#define UR_REALLOC realloc
+#define UR_FREE free
 
 void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 
@@ -31,8 +28,8 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 #define PointI URPointI
 #define PointF URPointF
 
-#include "program/core/utils/utils.h"
-#include "program/core/input/keyboard.h"
+#include "core/utils/utils.h"
+#include "core/input/keyboard.h"
 
 ImageData globalImgData;
 
@@ -81,11 +78,11 @@ void drawPixel(S3L_PixelInfo *p)
 #define ARRAY_MALLOC allocStatic
 #define ARRAY_REALLOC reallocStatic
 #define __UNIVERSAL_ARRAY_IMPLEMENTATION__
-#include "program/core/array/array.h"
+#include "core/array_t/array_t.h"
 
-#define STBI_MALLOC(sz) allocStatic(sz)
-#define STBI_REALLOC(p, newsz) reallocStatic(p, newsz)
-#define STBI_FREE(p) freeStatic(p)
+#define STBI_MALLOC(sz) malloc(sz)
+#define STBI_REALLOC(p, newsz) realloc(p, newsz)
+#define STBI_FREE(p) freefree(p)
 
 #define ENEMY_DOWN_OFFSET 53
 #define ENEMY_UP_OFFSET 20
@@ -2334,8 +2331,6 @@ GameState initDearImgui(GameState gameState)
 
 int main(void)
 {
-	// Init memory, load assets and general initialization
-	staticAllocatorInit(2878340 * 2);
 	initDeltaTime();
 
 #ifndef __EMSCRIPTEN__
@@ -2362,7 +2357,6 @@ int main(void)
 
 Cleanup:
 	graphicsDestroy(gameState.graphics);
-	staticAllocatorDestroy();
 	return 0;
 #endif
 }

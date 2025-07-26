@@ -1,6 +1,6 @@
+#include "../utils/memory.h"
 #include <glad/glad.h>
 #include "shader.h"
-#include "../stackAllocator/staticAlloc.h"
 static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader, int shaderType)
 {
     int returnValue = 0;
@@ -25,7 +25,7 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
 
     fileSize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-    shaderCode = allocStatic(fileSize + 1 * sizeof(char));
+    shaderCode = MALLOC((fileSize + 1) * sizeof(char));
 
     if (shaderCode == NULL)
     {
@@ -61,7 +61,7 @@ static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader
 error_handler:
 
     if (shaderCode != NULL)
-        freeStatic(shaderCode);
+        FREE(shaderCode);
 
     if (fp != NULL)
         fclose(fp);

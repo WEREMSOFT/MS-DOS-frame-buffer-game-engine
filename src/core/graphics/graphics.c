@@ -1,3 +1,4 @@
+#include "../utils/memory.h"
 #include <glad/glad.h>
 #include "graphics.h"
 #include <stdlib.h>
@@ -6,7 +7,6 @@
 #include <math.h>
 #include <memory.h>
 #include "../shader/shader.h"
-#include "../stackAllocator/staticAlloc.h"
 
 extern char fonts[][5];
 static void textureCreate(Graphics *_this)
@@ -17,14 +17,14 @@ static void textureCreate(Graphics *_this)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     _this->imageData.bufferSize = _this->imageData.size.x * _this->imageData.size.y * sizeof(Color);
-    _this->imageData.data = allocStatic(_this->imageData.bufferSize);
+    _this->imageData.data = MALLOC(_this->imageData.bufferSize);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _this->imageData.size.x, _this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, _this->imageData.data);
 }
 
 static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
+    /* make sure the viewport matches the new window dimensions; note that width and
+     height will be significantly larger than specified on retina displays.*/
     glViewport(0, 0, width, height);
 }
 
@@ -58,29 +58,28 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     _this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(_this.window);
-    // loadOpenGLFunctions();
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
     glCreateShader(GL_VERTEX_SHADER);
 
-    // The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate.
-    // glfwSwapInterval(0);
+    /* The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate. */
+    /* glfwSwapInterval(0); */
     glfwSetFramebufferSizeCallback(_this.window, framebuffer_size_callback);
 
     double ratioX = ((float)_this.imageData.size.x / (float)_this.imageData.size.y) / ((float)screenWidth / (float)screenHeight);
     double ratioY = 1.0;
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
+    /* set up vertex data (and buffer(s)) and configure vertex attributes
+     ------------------------------------------------------------------*/
     float vertices[] = {
-        // positions       // texture coords
-        ratioX * 1.0f, ratioY * 1.0f, 0.0f, 1.0f, 0.0f,   // top right
-        ratioX * 1.0f, ratioY * -1.0f, 0.0f, 1.0f, 1.0f,  // bottom right
-        ratioX * -1.0f, ratioY * -1.0f, 0.0f, 0.0f, 1.0f, // bottom left
-        ratioX * -1.0f, ratioY * 1.0f, 0.0f, 0.0f, 0.0f   // top left
+        /* positions       /*texture coords */
+        ratioX * 1.0f, ratioY * 1.0f, 0.0f, 1.0f, 0.0f,   /* top right */
+        ratioX * 1.0f, ratioY * -1.0f, 0.0f, 1.0f, 1.0f,  /* bottom right */
+        ratioX * -1.0f, ratioY * -1.0f, 0.0f, 0.0f, 1.0f, /* bottom left */
+        ratioX * -1.0f, ratioY * 1.0f, 0.0f, 0.0f, 0.0f   /* top left */
     };
     unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
+        0, 1, 3, /* first triangle */
+        1, 2, 3  /* second triangle */
     };
     textureCreate(&_this);
 #ifdef __EMSCRIPTEN__
@@ -98,10 +97,10 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    // position attribute
+    /*  position attribute */
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-    // texture coord attribute
+    /* texture coord attribute */
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glfwSetInputMode(_this.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -118,10 +117,10 @@ void graphicsSwapBuffers(Graphics _this)
 
     glClearColor(0, 0, 0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-    // Update texture
+    /* Update texture */
     glBindTexture(GL_TEXTURE_2D, _this.textureId);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _this.imageData.size.x, _this.imageData.size.y, GL_RGB, GL_UNSIGNED_BYTE, _this.imageData.data);
-    // render container
+    /* render container */
     glBindVertexArray(_this.VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -129,12 +128,12 @@ void graphicsSwapBuffers(Graphics _this)
 void graphicsDestroy(Graphics _this)
 {
     glfwSetWindowShouldClose(_this.window, true);
-    freeStatic(_this.imageData.data);
+    FREE(_this.imageData.data);
     glfwDestroyWindow(_this.window);
     glfwTerminate();
 }
 
-inline Color graphicsGetPixel(ImageData _this, PointI point)
+Color graphicsGetPixel(ImageData _this, PointI point)
 {
     int position = (point.x + point.y * _this.size.x) % _this.bufferSize;
     return _this.data[position];
@@ -143,6 +142,16 @@ inline Color graphicsGetPixel(ImageData _this, PointI point)
 void graphicsClear(ImageData _this)
 {
     memset(_this.data, 0, _this.bufferSize);
+}
+
+void graphicsClearColor(ImageData _this, Color color)
+{
+	int bufferSize = _this.bufferSize / sizeof(Color);
+	size_t i = 0;
+	for(i = 0; i < bufferSize; i++)
+	{
+		_this.data[i] = color;
+	}
 }
 
 void graphicsUpdateMouseCoordinates(Graphics *_this)
