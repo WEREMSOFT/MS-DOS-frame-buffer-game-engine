@@ -130,7 +130,7 @@ GLint (*glGetUniformLocation)(GLuint program, const GLchar *uniformName);
 void (*glUniform1f)(GLuint id, GLfloat x);
 void (*glUniform2f)(GLuint id, GLfloat x, GLfloat y);
 void (*glUniform3f)(GLuint id, GLfloat x, GLfloat y, GLfloat z);
-// void (*glUniform4f)(GLuint id, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+/*void (*glUniform4f)(GLuint id, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 void (*glUniform2i)(GLuint id, GLuint x, GLuint y);
 void (*glUniform1i)(GLuint id, GLint x);
 void loadOpenGLFunctions(void)

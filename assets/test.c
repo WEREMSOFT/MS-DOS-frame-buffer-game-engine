@@ -578,7 +578,7 @@ game_state_t process_state_edit_text(game_state_t _that)
 	graphicsClearColor(_that.graphics.imageData, background_color);
 	
 	int line_number = 0;
-	for (int i = _that.starting_row; i < _that.document.length && i < _that.starting_row + _that.rows; i++) {
+	for(i = _that.starting_row; i < _that.document.length && i < _that.starting_row + _that.rows; i++) {
  	    array_t* line = _that.document.get_element_at(_that.document, i);
 	    char* str = (char*)line->data;
 		urPrintStringWithSytaxHighlight((URPointI){1, line_number*6 + 1}, str, textColor);
@@ -618,7 +618,7 @@ game_state_t game_main_loop(game_state_t gameState)
 		gameState.gameStateEnum++;
 	}
 	swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
-	// gameState = renderDearImgui(gameState);
+	/*gameState = renderDearImgui(gameState);
 	glfwSwapBuffers(gameState.graphics.window);
 
 	return gameState;
@@ -671,7 +671,7 @@ game_state_t game_state_create()
 
 	gameState.document = array_create(gameState.cols, sizeof(gameState.document));
 	
-	for (int i = 0; i < gameState.cols; i++)
+	for(i = 0; i < gameState.cols; i++)
 	{
 		array_t line = array_create(gameState.rows, sizeof(char));
 		gameState.document.append_element(&gameState.document, &line);
@@ -696,7 +696,7 @@ game_state_t game_state_create()
 
 			if(*cursor == '\t')
 			{
-				for(int i = 0; i < gameState.tab_size; i++)
+				for(i = 0; i < gameState.tab_size; i++)
 				{
 					char space = ' ';
 					current_line->append_element(current_line, &space);	

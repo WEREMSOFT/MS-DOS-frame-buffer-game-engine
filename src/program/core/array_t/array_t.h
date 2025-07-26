@@ -123,7 +123,8 @@ void *array_get_element_at(array_t that, int index)
 
 void array_delete_element_at(struct array_t* that, int index)
 {
-	for(int i = index; i < that->length; i++)
+	int i;
+	for(i = index; i < that->length; i++)
 	{
 		memmove(that->data + i * that->elementSize, that->data + (i + 1) * that->elementSize, that->elementSize);
 	}
@@ -132,7 +133,8 @@ void array_delete_element_at(struct array_t* that, int index)
 
 void array_concatenate(struct array_t *that, struct array_t src)
 {
-	for(int i = 0; i < src.length; i++)
+	int i;
+	for(i = 0; i < src.length; i++)
 	{
 		that->append_element(that, src.data + i);
 	}

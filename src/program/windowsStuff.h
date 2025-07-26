@@ -1,11 +1,11 @@
 #ifndef __WINDOWS_STUFF_H__
 #define __WINDOWS_STUFF_H__
 
-// disgusting windows stuff
+/*disgusting windows stuff
 
 #if defined(_WIN32) || defined(_WIN64) || defined(OS_WEB)
 
-// void (*glActiveTexture)(GLenum texture);
+/*void (*glActiveTexture)(GLenum texture);
 void (*glGenerateMipmap)(GLenum target);
 void (*glUniform4f)(GLint location,
 					GLfloat v0,
@@ -25,7 +25,7 @@ void (*glUniformMatrix3fv)(GLint location,
 
 #ifndef GLchar
 typedef char GLchar;
-// typedef size_t GLsizeiptr;
+/*typedef size_t GLsizeiptr;
 #define GL_COMPILE_STATUS 0x8B81
 #define GL_VERTEX_SHADER 0x8B31
 #define GL_FRAGMENT_SHADER 0x8B30

@@ -90,8 +90,9 @@ typedef struct
 
 void urClearScreen(URColor clearColor)
 {
-	for (int x = 0; x < UR_SCREEN_WIDTH; x++)
-		for (int y = 0; y < UR_SCREEN_HEIGHT; y++)
+	int x, y;
+	for (x = 0; x < UR_SCREEN_WIDTH; x++)
+		for (y = 0; y < UR_SCREEN_HEIGHT; y++)
 		{
 			URPointI p = (URPointI){x, y};
 			UR_PUT_PIXEL(p.x, p.y, clearColor.r, clearColor.g, clearColor.b);
@@ -100,9 +101,10 @@ void urClearScreen(URColor clearColor)
 
 void urDrawCircle(URPointI center, double radious, URColor color)
 {
-	for (int i = center.x - radious; i <= center.x + radious; i++)
+	int i, j;
+	for (i = center.x - radious; i <= center.x + radious; i++)
 	{
-		for (int j = center.y - radious; j <= center.y + radious; j++)
+		for (j = center.y - radious; j <= center.y + radious; j++)
 		{
 			URPointI p = (URPointI){i, j};
 			if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) == radious)
@@ -113,10 +115,10 @@ void urDrawCircle(URPointI center, double radious, URColor color)
 
 void urDrawCircleFill(URPointI center, double radious, URColor color)
 {
-
-	for (int i = center.x - radious; i <= center.x + radious; i++)
+	int i, j;
+	for (i = center.x - radious; i <= center.x + radious; i++)
 	{
-		for (int j = center.y - radious; j <= center.y + radious; j++)
+		for (j = center.y - radious; j <= center.y + radious; j++)
 		{
 			URPointI p = (URPointI){i, j};
 			if (floor(sqrt(pow(center.x - i, 2) + pow(center.y - j, 2))) <= radious)
@@ -127,9 +129,10 @@ void urDrawCircleFill(URPointI center, double radious, URColor color)
 
 void urDrawSquare(URPointI topLeftCorner, URPointI size, URColor color)
 {
-	for (int i = fmax(topLeftCorner.x, 0); i <= topLeftCorner.x + size.x; i++)
+	int i, j;
+	for (i = fmax(topLeftCorner.x, 0); i <= topLeftCorner.x + size.x; i++)
 	{
-		for (int j = fmax(topLeftCorner.y, 0); j <= topLeftCorner.y + size.y; j++)
+		for (j = fmax(topLeftCorner.y, 0); j <= topLeftCorner.y + size.y; j++)
 		{
 			URPointI p = (URPointI){i, j};
 			if (j == topLeftCorner.y || j == topLeftCorner.y + size.y || i == topLeftCorner.x || i == topLeftCorner.x + size.x)
@@ -140,9 +143,10 @@ void urDrawSquare(URPointI topLeftCorner, URPointI size, URColor color)
 
 void urDrawSquareFill(URPointI topLeftCorner, URPointI size, URColor color)
 {
-	for (int i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
+	int i, j;
+	for (i = topLeftCorner.x; i <= topLeftCorner.x + size.x; i++)
 	{
-		for (int j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
+		for (j = topLeftCorner.y; j <= topLeftCorner.y + size.y; j++)
 		{
 			URPointI p = (URPointI){i, j};
 			if (j >= topLeftCorner.y || j <= topLeftCorner.y + size.y || i >= topLeftCorner.x || i <= topLeftCorner.x + size.x)
@@ -178,466 +182,92 @@ void urDrawLine(URPointI pointA, URPointI pointB, URColor color)
 		}
 	}
 }
+#define UR_FONT_COUNT 95
 
-unsigned char urFonts[][5] =
-	{
-		// 0
-		{0b011100,
-		 0b110010,
-		 0b101010,
-		 0b100110,
-		 0b011100},
-		// 1
-		{0b001000,
-		 0b011000,
-		 0b001000,
-		 0b001000,
-		 0b011100},
-		// 2
-		{0b011100,
-		 0b100010,
-		 0b001100,
-		 0b010000,
-		 0b111110},
-		// 3
-		{0b011100,
-		 0b100010,
-		 0b001100,
-		 0b100010,
-		 0b011100},
-		// 4
-		{0b001010,
-		 0b010010,
-		 0b100010,
-		 0b111110,
-		 0b000010},
-		// 5
-		{0b111110,
-		 0b100000,
-		 0b111100,
-		 0b000010,
-		 0b111100},
-		// 6
-		{0b011110,
-		 0b100000,
-		 0b111100,
-		 0b100010,
-		 0b011100},
-		// 7
-		{0b111110,
-		 0b000010,
-		 0b000100,
-		 0b001000,
-		 0b010000},
-		// 8
-		{0b011100,
-		 0b100010,
-		 0b011100,
-		 0b100010,
-		 0b011100},
-		// 9
-		{0b011100,
-		 0b100010,
-		 0b011110,
-		 0b000010,
-		 0b011100},
-		// A
-		{0b111100,
-		 0b100100,
-		 0b100100,
-		 0b111100,
-		 0b100100},
-		// B
-		{0b111000,
-		 0b100100,
-		 0b111000,
-		 0b100100,
-		 0b111000},
-		// C
-		{0b111100,
-		 0b100100,
-		 0b100000,
-		 0b100100,
-		 0b111100},
-		// D
-		{0b111000,
-		 0b100100,
-		 0b100100,
-		 0b100100,
-		 0b111000},
-		// E
-		{0b111100,
-		 0b100000,
-		 0b111100,
-		 0b100000,
-		 0b111100},
-		// F
-		{0b111100,
-		 0b100000,
-		 0b111000,
-		 0b100000,
-		 0b100000},
-		// G
-		{0b011000,
-		 0b100000,
-		 0b101100,
-		 0b100100,
-		 0b011000},
-		// H
-		{0b100100,
-		 0b100100,
-		 0b111100,
-		 0b100100,
-		 0b100100},
-		// I
-		{0b011100,
-		 0b001000,
-		 0b001000,
-		 0b001000,
-		 0b011100},
-		// J
-		{0b111100,
-		 0b000100,
-		 0b000100,
-		 0b100100,
-		 0b011000},
-		// K
-		{0b100100,
-		 0b101000,
-		 0b110000,
-		 0b101000,
-		 0b100100},
-		// L
-		{0b100000,
-		 0b100000,
-		 0b100000,
-		 0b100000,
-		 0b111000},
-		// M
-		{0b100010,
-		 0b110110,
-		 0b101010,
-		 0b100010,
-		 0b100010},
-		// N
-		{0b010010,
-		 0b011010,
-		 0b010110,
-		 0b010010,
-		 0b010010},
-		// O
-		{0b111100,
-		 0b100100,
-		 0b100100,
-		 0b100100,
-		 0b111100},
-		// P
-		{0b111000,
-		 0b100100,
-		 0b111000,
-		 0b100000,
-		 0b100000},
-		// Q
-		{0b111100,
-		 0b100100,
-		 0b100100,
-		 0b101100,
-		 0b111100},
-		// R
-		{0b111000,
-		 0b100100,
-		 0b111000,
-		 0b100100,
-		 0b100100},
-		// S
-		{0b011100,
-		 0b100000,
-		 0b011000,
-		 0b000100,
-		 0b111000},
-		// T
-		{0b111000,
-		 0b010000,
-		 0b010000,
-		 0b010000,
-		 0b010000},
-		// U
-		{0b100100,
-		 0b100100,
-		 0b100100,
-		 0b100100,
-		 0b011000},
-		// V
-		{0b100100,
-		 0b100100,
-		 0b100100,
-		 0b011000,
-		 0b010000},
-		// W
-		{0b100010,
-		 0b100010,
-		 0b101010,
-		 0b110110,
-		 0b100010},
-		// X
-		{0b100100,
-		 0b100100,
-		 0b011000,
-		 0b100100,
-		 0b100100},
-		// Y
-		{0b100010,
-		 0b100010,
-		 0b010100,
-		 0b001000,
-		 0b001000},
-		// Z
-		{0b111110,
-		 0b000100,
-		 0b001000,
-		 0b010000,
-		 0b111110},
-		// a
-		{0b000000,
-		 0b011100,
-		 0b000100,
-		 0b011100,
-		 0b011100},
-		// b
-		{0b100000,
-		 0b100000,
-		 0b111000,
-		 0b100100,
-		 0b111000},
-		// c
-		{0b000000,
-		 0b011000,
-		 0b100000,
-		 0b100000,
-		 0b011000},
-		// d
-		{0b000100,
-		 0b000100,
-		 0b011100,
-		 0b100100,
-		 0b011100},
-		// e
-		{0b000000,
-		 0b111000,
-		 0b111000,
-		 0b100000,
-		 0b111000},
-		// f
-		{0b011000,
-		 0b100000,
-		 0b110000,
-		 0b100000,
-		 0b100000},
-		// g
-		{0b011000,
-		 0b100100,
-		 0b011100,
-		 0b000100,
-		 0b011000},
-		// h
-		{0b100000,
-		 0b100000,
-		 0b111000,
-		 0b100100,
-		 0b100100},
-		// i
-		{0b001000,
-		 0b000000,
-		 0b001000,
-		 0b001000,
-		 0b001000},
-		// j
-		{0b000100,
-		 0b000000,
-		 0b000100,
-		 0b000100,
-		 0b011000},
-		// k
-		{0b100000,
-		 0b100100,
-		 0b101000,
-		 0b110000,
-		 0b100100},
-		// l
-		{0b100000,
-		 0b100000,
-		 0b100000,
-		 0b100000,
-		 0b011000},
-		// m
-		{0b000000,
-		 0b110100,
-		 0b101010,
-		 0b101010,
-		 0b101010},
-		// n
-		{0b000000,
-		 0b110000,
-		 0b101000,
-		 0b101000,
-		 0b101000},
-		// o
-		{0b000000,
-		 0b011000,
-		 0b100100,
-		 0b100100,
-		 0b011000},
-		// p
-		{0b000000,
-		 0b111000,
-		 0b101000,
-		 0b110000,
-		 0b100000},
-		// q
-		{0b000000,
-		 0b011000,
-		 0b100100,
-		 0b101100,
-		 0b011100},
-		// r
-		{0b000000,
-		 0b101000,
-		 0b110000,
-		 0b100000,
-		 0b100000},
-		// s
-		{0b000000,
-		 0b011000,
-		 0b110000,
-		 0b001000,
-		 0b111000},
-		// t
-		{0b010000,
-		 0b111000,
-		 0b010000,
-		 0b010000,
-		 0b001000},
-		// u
-		{0b000000,
-		 0b100100,
-		 0b100100,
-		 0b100100,
-		 0b011000},
-		// v
-		{0b000000,
-		 0b100100,
-		 0b100100,
-		 0b011000,
-		 0b010000},
-		// w
-		{0b000000,
-		 0b100010,
-		 0b101010,
-		 0b101010,
-		 0b110110},
-		// x
-		{0b000000,
-		 0b100100,
-		 0b011000,
-		 0b011000,
-		 0b100100},
-		// y
-		{0b000000,
-		 0b010100,
-		 0b010100,
-		 0b001000,
-		 0b001000},
-		// z
-		{0b000000,
-		 0b111100,
-		 0b001000,
-		 0b010000,
-		 0b111100},
-		// %
-		{0b110001,
-		 0b110010,
-		 0b001100,
-		 0b010011,
-		 0b100011},
-		// .
-		{0b000000,
-		 0b000000,
-		 0b000000,
-		 0b001100,
-		 0b001100},
-		// #
-		{0b010100,
-		 0b111110,
-		 0b010100,
-		 0b111110,
-		 0b010100},
-		// <
-		{0b000110,
-		 0b011000,
-		 0b100000,
-		 0b011000,
-		 0b000110},
-		// >
-		{0b011000,
-		 0b000110,
-		 0b000001,
-		 0b000110,
-		 0b011000},
-		// ,
-		{0b000000,
-		 0b000000,
-		 0b000000,
-		 0b011000,
-		 0b010000},
-		// (
-		{0b001100,
-		 0b010000,
-		 0b100000,
-		 0b010000,
-		 0b001100},
-		 // )
-		{0b011000,
-		 0b000100,
-		 0b000010,
-		 0b000100,
-		 0b011000},
-		// {
-		{0b001100,
-		 0b001000,
-		 0b110000,
-		 0b001000,
-		 0b001100},
-		 // }
-		{0b011000,
-		 0b001000,
-		 0b000100,
-		 0b001000,
-		 0b011000},
-		// *
-		{0b101010,
-		 0b011100,
-		 0b111110,
-		 0b011100,
-		 0b101010},
-		// "
-		{0b010100,
-		 0b010100,
-		 0b000000,
-		 0b000000,
-		 0b000000},
-		// ;
-		{0b000000,
-		 0b011000,
-		 0b000000,
-		 0b011000,
-		 0b010000},
-		};
+unsigned char urFonts[UR_FONT_COUNT][5] = {
+    /* 0 */ {28, 50, 42, 38, 28},
+    /* 1 */ {8, 24, 8, 8, 28},
+    /* 2 */ {28, 34, 12, 16, 62},
+    /* 3 */ {28, 34, 12, 34, 28},
+    /* 4 */ {10, 18, 34, 62, 2},
+    /* 5 */ {62, 32, 60, 2, 60},
+    /* 6 */ {30, 32, 60, 34, 28},
+    /* 7 */ {62, 2, 4, 8, 16},
+    /* 8 */ {28, 34, 28, 34, 28},
+    /* 9 */ {28, 34, 30, 2, 28},
+    /* A */ {60, 36, 36, 60, 36},
+    /* B */ {56, 36, 56, 36, 56},
+    /* C */ {60, 36, 32, 36, 60},
+    /* D */ {56, 36, 36, 36, 56},
+    /* E */ {60, 32, 60, 32, 60},
+    /* F */ {60, 32, 56, 32, 32},
+    /* G */ {24, 32, 44, 36, 24},
+    /* H */ {36, 36, 60, 36, 36},
+    /* I */ {28, 8, 8, 8, 28},
+    /* J */ {60, 4, 4, 36, 24},
+    /* K */ {36, 40, 48, 40, 36},
+    /* L */ {32, 32, 32, 32, 56},
+    /* M */ {34, 54, 42, 34, 34},
+    /* N */ {18, 26, 22, 18, 18},
+    /* O */ {60, 36, 36, 36, 60},
+    /* P */ {56, 36, 56, 32, 32},
+    /* Q */ {60, 36, 36, 44, 60},
+    /* R */ {56, 36, 56, 36, 36},
+    /* S */ {28, 32, 24, 4, 56},
+    /* T */ {56, 16, 16, 16, 16},
+    /* U */ {36, 36, 36, 36, 24},
+    /* V */ {36, 36, 36, 24, 16},
+    /* W */ {34, 34, 42, 54, 34},
+    /* X */ {36, 36, 24, 36, 36},
+    /* Y */ {34, 34, 20, 8, 8},
+    /* Z */ {62, 4, 8, 16, 62},
+    /* a */ {0, 28, 4, 28, 28},
+    /* b */ {32, 32, 56, 36, 56},
+    /* c */ {0, 24, 32, 32, 24},
+    /* d */ {4, 4, 28, 36, 28},
+    /* e */ {0, 56, 56, 32, 56},
+    /* f */ {24, 32, 48, 32, 32},
+    /* g */ {24, 36, 28, 4, 24},
+    /* h */ {32, 32, 56, 36, 36},
+    /* i */ {8, 0, 8, 8, 8},
+    /* j */ {4, 0, 4, 4, 24},
+    /* k */ {32, 36, 40, 48, 36},
+    /* l */ {32, 32, 32, 32, 24},
+    /* m */ {0, 52, 42, 42, 42},
+    /* n */ {0, 48, 40, 40, 40},
+    /* o */ {0, 24, 36, 36, 24},
+    /* p */ {0, 56, 40, 48, 32},
+    /* q */ {0, 24, 36, 44, 28},
+    /* r */ {0, 40, 48, 32, 32},
+    /* s */ {0, 24, 48, 8, 56},
+    /* t */ {16, 56, 16, 16, 8},
+    /* u */ {0, 36, 36, 36, 24},
+    /* v */ {0, 36, 36, 24, 16},
+    /* w */ {0, 34, 42, 42, 54},
+    /* x */ {0, 36, 24, 24, 36},
+    /* y */ {0, 20, 20, 8, 8},
+    /* z */ {0, 60, 8, 16, 60},
+    /* % */ {49, 50, 12, 19, 35},
+    /* . */ {0, 0, 0, 12, 12},
+    /* # */ {20, 62, 20, 62, 20},
+    /* < */ {6, 24, 32, 24, 6},
+    /* > */ {24, 6, 1, 6, 24},
+    /* , */ {0, 0, 0, 24, 16},
+    /* ( */ {12, 16, 32, 16, 12},
+    /* ) */ {24, 4, 2, 4, 24},
+    /* { */ {12, 8, 48, 8, 12},
+    /* } */ {24, 8, 4, 8, 24},
+    /* * */ {42, 28, 62, 28, 42},
+    /* " */ {20, 20, 0, 0, 0},
+    /* ; */ {0, 24, 0, 24, 16}
+};
 
 void urDrawCharacter(URPointI topLeftCorner, unsigned int letter, URColor color)
 {
-	for (int i = 0; i < 5; i++)
+	int i, j;
+	for (i = 0; i < 5; i++)
 	{
-		for (int j = 0; j <= 8; j++)
+		for (j = 0; j <= 8; j++)
 		{
 			if (urFonts[letter][i] & (0b1000000 >> j))
 				UR_PUT_PIXEL(topLeftCorner.x + j, topLeftCorner.y + i, color.r, color.g, color.b);
@@ -660,7 +290,8 @@ void urPrintString(URPointI topLeftCorner, char *string, URColor color)
 
 	URPointI current_position = topLeftCorner;
 
-	for (size_t i = 0; i < stringLen; i++)
+	size_t i;
+	for (i = 0; i < stringLen; i++)
 	{
 		if (string[i] == '\t')
 		{
@@ -946,11 +577,11 @@ unsigned char *urBMPLoad(char *fileName, int *imageWidth, int *imageHeight)
 
 		for (w = 0; w < width; w++)
 		{
-			target[w * pixSize] = lineData[w * pixSize + 2];	 // Red
-			target[w * pixSize + 1] = lineData[w * pixSize + 1]; // Green
-			target[w * pixSize + 2] = lineData[w * pixSize];	 // Blue
+			target[w * pixSize] = lineData[w * pixSize + 2];	 /* Red */
+			target[w * pixSize + 1] = lineData[w * pixSize + 1]; /* Greeb */
+			target[w * pixSize + 2] = lineData[w * pixSize];	 /* Blue */
 			if (pixSize == 4)
-				target[w * pixSize + 3] = lineData[w * pixSize + 3]; // Alpha
+				target[w * pixSize + 3] = lineData[w * pixSize + 3]; /* Alpha */
 		}
 	}
 
@@ -1005,9 +636,10 @@ URSprite urSpriteCreate(char *file)
 
 void urSpriteDraw(URSprite _this)
 {
-	for (int i = 0; i < _this.size.x; i++)
+	int i, j;
+	for(i = 0; i < _this.size.x; i++)
 	{
-		for (int j = 0; j < _this.size.y; j++)
+		for(j = 0; j < _this.size.y; j++)
 		{
 			URColor color = _this.imageData[j * _this.size.x + i];
 			UR_PUT_PIXEL(_this.position.x + i, _this.position.y + j, color.r, color.g, color.b);
@@ -1017,6 +649,7 @@ void urSpriteDraw(URSprite _this)
 
 void urSpriteDrawClipped(URSprite _this)
 {
+	int i, j;
 	if (_this.isFlipped)
 	{
 		URPointI adjustedPosition = {_this.position.x - _this.center.x, _this.position.y + _this.center.y};
@@ -1028,9 +661,10 @@ void urSpriteDrawClipped(URSprite _this)
 		int clippedX = 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-		for (int j = clippedY; j < clippedHeight; j++)
+
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				UR_PUT_PIXEL(adjustedPosition.x - i, adjustedPosition.y + j, color.r, color.g, color.b);
@@ -1049,9 +683,9 @@ void urSpriteDrawClipped(URSprite _this)
 		int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				UR_PUT_PIXEL(adjustedPosition.x + i, adjustedPosition.y + j, color.r, color.g, color.b);
@@ -1062,10 +696,12 @@ void urSpriteDrawClipped(URSprite _this)
 
 void urSpriteDrawTransparent(URSprite _this)
 {
+	int i, j;
+
 	if (_this.isFlipped)
-		for (int j = 0; j < _this.size.y; j++)
+		for(j = 0; j < _this.size.y; j++)
 		{
-			for (int i = 0; i < _this.size.x; i++)
+			for(i = 0; i < _this.size.x; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -1073,9 +709,9 @@ void urSpriteDrawTransparent(URSprite _this)
 			}
 		}
 	else
-		for (int j = 0; j < _this.size.y; j++)
+		for(j = 0; j < _this.size.y; j++)
 		{
-			for (int i = 0; i < _this.size.x; i++)
+			for(i = 0; i < _this.size.x; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -1086,6 +722,8 @@ void urSpriteDrawTransparent(URSprite _this)
 
 void urSpriteDrawTransparentClipped(URSprite _this)
 {
+	int i, j;
+
 	if (_this.isFlipped)
 	{
 		URPointI adjustedPosition = {_this.position.x - _this.center.x, _this.position.y + _this.center.y};
@@ -1097,9 +735,9 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 		int clippedX = 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -1119,9 +757,9 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 		int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -1133,6 +771,8 @@ void urSpriteDrawTransparentClipped(URSprite _this)
 
 void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight)
 {
+	int i, j;
+
 	int clippedWidth = fmin(_this.size.x,
 							fmax(0, _this.size.x - (_this.size.x + _this.position.x - UR_SCREEN_WIDTH)));
 	int clippedHeight = fmin(_this.size.y,
@@ -1141,9 +781,9 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight
 	int clippedY = _this.position.y < 0 ? -_this.position.y : 0;
 
 	if (_this.isFlipped)
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -1151,9 +791,9 @@ void urSpriteDrawTransparentClippedLowerLine(URSprite _this, int lowerLineHeight
 			}
 		}
 	else
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i];
 				if (!(color.r == 0xFF && color.b == 0xFF && color.g == 0))
@@ -1169,13 +809,15 @@ void urSpriteDestroy(URSprite _this)
 
 URSprite urSpriteCreateCkeckerBoard(URPointI size, int checkerWidth, URColor color1, URColor color2)
 {
+	int x, y;
+
 	URSprite _this = {0};
 	URColor currentColor = color1;
 	_this.imageData = UR_MALLOC(sizeof(URColor) * size.x * size.y);
 	_this.size = size;
-	for (int y = 0; y < _this.size.y; y++)
+	for(y = 0; y < _this.size.y; y++)
 	{
-		for (int x = 0; x < _this.size.x; x++)
+		for(x = 0; x < _this.size.x; x++)
 		{
 			if ((y / checkerWidth + x / checkerWidth) % 2)
 			{
@@ -1193,6 +835,8 @@ URSprite urSpriteCreateCkeckerBoard(URPointI size, int checkerWidth, URColor col
 
 URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime)
 {
+	int i, j;
+
 	if (!_this.animation.isPlaying)
 	{
 		_this.animation.isPlaying = true;
@@ -1219,9 +863,9 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 		int clippedX = 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i +
 												_this.animation.currentFrame * _this.animation.frameWidth];
@@ -1245,9 +889,9 @@ URSprite urSpriteDrawTransparentAnimatedClipped(URSprite _this, double deltaTime
 		int clippedX = adjustedPosition.x < 0 ? -adjustedPosition.x : 0;
 		int clippedY = adjustedPosition.y < 0 ? -adjustedPosition.y : 0;
 
-		for (int j = clippedY; j < clippedHeight; j++)
+		for(j = clippedY; j < clippedHeight; j++)
 		{
-			for (int i = clippedX; i < clippedWidth; i++)
+			for(i = clippedX; i < clippedWidth; i++)
 			{
 				URColor color = _this.imageData[j * _this.size.x + i +
 												_this.animation.currentFrame * _this.animation.frameWidth];
@@ -1293,6 +937,7 @@ void urPrintFPS(double deltaTime)
 {
 
 #define FPS_HISTORY 10
+	int i, j;
 	static double fpsHistory[FPS_HISTORY] = {0};
 	static int counter = 1;
 	counter++;
@@ -1300,7 +945,7 @@ void urPrintFPS(double deltaTime)
 	fpsHistory[counter] = (1 / deltaTime);
 
 	int sum = 0;
-	for (int i = 0; i < FPS_HISTORY; i++)
+	for(i = 0; i < FPS_HISTORY; i++)
 	{
 		sum += fpsHistory[i];
 	}
