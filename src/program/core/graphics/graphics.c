@@ -28,11 +28,19 @@ static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void glfw_error_callback(int error, const char* description)
+{
+    printf("Error loading opengl functions: %s\n", description);
+}
+
 Graphics graphicsCreate(int width, int height, bool fullScreen)
 {
     Graphics _this = {0};
     _this.imageData.size.x = width;
     _this.imageData.size.y = height;
+
+    glfwSetErrorCallback(glfw_error_callback);
+
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
@@ -42,7 +50,7 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     int screenWidth = mode->width;
@@ -58,7 +66,11 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     _this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(_this.window);
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        printf("Failed to initialize GLAD. None of the openGL functions will work.\n");
+        exit(-1);
+    }
 
     glCreateShader(GL_VERTEX_SHADER);
 
