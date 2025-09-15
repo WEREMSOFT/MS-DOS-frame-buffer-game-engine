@@ -1,5 +1,3 @@
-#define __OPENGL_ES__
-
 #include "program/core/utils/memory.h"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -24,6 +22,7 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 #define PointI URPointI
 #define PointF URPointF
 
+#include "program/core/graphics/graphics.h"
 #include "program/core/utils/utils.h"
 #include "program/core/input/keyboard.h"
 

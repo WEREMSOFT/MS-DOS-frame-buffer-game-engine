@@ -18,7 +18,7 @@
     Online:
         https://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gl%3D4.6&api=gles1%3D1.0&api=gles2%3D3.2&api=glsc2%3D2.0
 */
-#ifndef __OPENGL_ES__
+#ifndef __USE_OPENGL_ES__
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

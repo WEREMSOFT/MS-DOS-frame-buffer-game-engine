@@ -1,5 +1,6 @@
 #include "../utils/memory.h"
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "graphics.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -49,15 +50,16 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	#ifndef __OPENGL_ES__
-    	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	#else
+	#ifdef __USE_OPENGL_ES__
+		printf("Initializing openGL ES\n");
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
+	#else
+		printf("Initializing openGL 3.3\n");
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	#endif
 
     int screenWidth = mode->width;

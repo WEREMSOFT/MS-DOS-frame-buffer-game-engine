@@ -22,7 +22,7 @@
 #ifndef __glad_h_
 #define __glad_h_
 
-#ifndef __OPENGL_ES__
+#ifndef __USE_OPENGL_ES__
 
 #ifdef __gl_h_
 #error OpenGL header already included, remove this include, glad already provides it
