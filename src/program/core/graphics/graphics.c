@@ -1,6 +1,5 @@
 #include "../utils/memory.h"
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "graphics.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -75,11 +74,19 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     _this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(_this.window);
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        printf("Failed to initialize GLAD. None of the openGL functions will work.\n");
-        exit(-1);
-    }
+	#ifdef  __USE_OPENGL_ES__
+	if(!gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress))
+		{
+			printf("Failed to initialize GLAD. None of the openGL functions will work.\n");
+			exit(-1);
+		}
+	#else
+		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			printf("Failed to initialize GLAD. None of the openGL functions will work.\n");
+			exit(-1);
+		}
+	#endif
 
     glCreateShader(GL_VERTEX_SHADER);
 

@@ -24,6 +24,7 @@
 
 #ifndef __USE_OPENGL_ES__
 
+
 #ifdef __gl_h_
 #error OpenGL header already included, remove this include, glad already provides it
 #endif
@@ -4167,7 +4168,6 @@ GLAPI int GLAD_GL_SC_VERSION_2_0;
 #ifdef __cplusplus
 }
 #endif
-#endif
 
 #else
 /*
@@ -4190,10 +4190,6 @@ GLAPI int GLAD_GL_SC_VERSION_2_0;
     Online:
         https://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gles2%3D3.1
 */
-
-
-#ifndef __glad_h_
-#define __glad_h_
 
 #ifdef __gl2_h_
 #error OpenGL ES 2 header already included, remove this include, glad already provides it
