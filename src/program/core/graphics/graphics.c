@@ -52,7 +52,7 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
 	#ifdef __USE_OPENGL_ES__
 		printf("Initializing openGL ES\n");
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	#else
 		printf("Initializing openGL 3.3\n");
