@@ -50,8 +50,12 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#ifndef __OPENGL_ES__
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#else
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	#endif
 
     int screenWidth = mode->width;
     int screenHeight = mode->height;

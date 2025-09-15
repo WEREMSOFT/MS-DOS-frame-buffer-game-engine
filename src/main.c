@@ -1,3 +1,5 @@
+#define __OPENGL_ES__
+
 #include "program/core/utils/memory.h"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
