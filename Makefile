@@ -4,7 +4,7 @@ OBJ_FOR_CLEAN_F := $(shell find ./src -name *.o)
 SRC_O := $(patsubst %.c,%.o,$(SRC_F))
 SRC_CPP_O := $(patsubst %.cpp,%.o,$(SRC_CPP))
 
-LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound -lcimgui
+LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound
 
 FLAGS_DEBUG := -g -O0 -w
 FLAGS__DEBUG := -O3
@@ -36,7 +36,7 @@ main_clean.bin:
 
 
 web:
-	emcc -O0 -g -Ilibs/include -Ilibs/soloud/include -Ilibs/soloud/include -Ilibs/cimgui  -sSTACK_SIZE=1024000 -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" -sEXPORTED_FUNCTIONS=_malloc,_free,_main -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -DWITH_MINIAUDIO=1 -DCIMGUI_USE_GLFW=1 -DCIMGUI_USE_OPENGL3=1 -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 --preload-file assets -s MIN_WEBGL_VERSION=2 -gsource-map --source-map-base https://weremsoft.github.com.io/MS-DOS-frame-buffer-game-engine/ $(SRC_F) $(SRC_CPP) ./static_libs/cimgui.a -o docs/index.html
+	emcc -O0 -g -Ilibs/include -Ilibs/soloud/include -Ilibs/soloud/include  -sSTACK_SIZE=1024000 -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" -sEXPORTED_FUNCTIONS=_malloc,_free,_main -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -DWITH_MINIAUDIO=1 -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 --preload-file assets -s MIN_WEBGL_VERSION=2 -gsource-map --source-map-base https://weremsoft.github.com.io/MS-DOS-frame-buffer-game-engine/ $(SRC_F) $(SRC_CPP) -o docs/index.html
 
 clean:
 	rm -rf $(OBJ_FOR_CLEAN_F)
