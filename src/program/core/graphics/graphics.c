@@ -1,5 +1,4 @@
 #include "../utils/memory.h"
-#include <glad/glad.h>
 #include "graphics.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -58,7 +57,6 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     _this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(_this.window);
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
     glCreateShader(GL_VERTEX_SHADER);
 

@@ -1,5 +1,4 @@
 #include "../utils/memory.h"
-#include <glad/glad.h>
 #include "shader.h"
 static int shaderCreateFromFile(const char *fileName, unsigned int *vertexShader, int shaderType)
 {
