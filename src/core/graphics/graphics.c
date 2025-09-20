@@ -1,5 +1,4 @@
 #include "../utils/memory.h"
-#include <glad/glad.h>
 #include "graphics.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -37,14 +36,6 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
-    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     int screenWidth = mode->width;
     int screenHeight = mode->height;
 
@@ -58,7 +49,6 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     _this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(_this.window);
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
     glCreateShader(GL_VERTEX_SHADER);
 
@@ -82,12 +72,10 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
         1, 2, 3  /* second triangle */
     };
     textureCreate(&_this);
-#ifdef __EMSCRIPTEN__
-    _this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/defaultWeb.vs", "assets/shaders/defaultWeb.fs");
-#else
-    _this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/default.vs", "assets/shaders/default.fs");
-#endif
-    glUseProgram(_this.shaderProgram);
+
+	_this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/default.vs", "assets/shaders/default.fs");
+
+	glUseProgram(_this.shaderProgram);
     unsigned int VBO, EBO;
     glGenVertexArrays(1, &_this.VAO);
     glGenBuffers(1, &VBO);

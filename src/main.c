@@ -10,11 +10,6 @@
 #define UR_SCREEN_WIDTH 320
 #define UR_SCREEN_HEIGHT 240
 
-#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
-#include <cimgui.h>
-#include <cimgui_impl.h>
-#define igGetIO igGetIO_Nil
-
 #define UR_MALLOC malloc
 #define UR_REALLOC realloc
 #define UR_FREE free
@@ -37,35 +32,6 @@ void urPutPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b)
 {
 	int position = (x + y * UR_SCREEN_WIDTH) % globalImgData.bufferSize;
 	globalImgData.data[position] = (URColor){r, g, b};
-}
-
-#define S3L_RESOLUTION_X 320
-#define S3L_RESOLUTION_Y 240
-#define S3L_PIXEL_FUNCTION drawPixel
-#include <small3Dlib/small3dlib.h>
-
-void drawPixel(S3L_PixelInfo *p)
-{
-	URColor color = {0};
-	switch (p->triangleID)
-	{
-	case 1:
-	case 0:
-		color.r = 0xff;
-		break;
-	case 2:
-	case 3:
-		color.b = 0xff;
-		break;
-	case 6:
-	case 7:
-		color.g = 0xff;
-		break;
-	default:
-		color.r = color.g = color.b = 0x66;
-	}
-
-	urPutPixel(p->x, p->y, color.r, color.g, color.b);
 }
 
 #define TILES_CAPACITY 100
@@ -345,17 +311,6 @@ typedef struct
 	URPointI particlePosition;
 } Level3;
 
-typedef struct
-{
-	struct GameState *gameState;
-	S3L_Unit cubeVertices[S3L_CUBE_VERTEX_COUNT * 3];
-	S3L_Index cubeTriangles[S3L_CUBE_TRIANGLE_COUNT * 3];
-	S3L_Model3D cubeModel;
-	S3L_Scene scene;
-	float cubeRotation[3];
-	float cameraRotation[3];
-} Level4;
-
 typedef enum
 {
 	GAME_STATE_CLICK_TO_START,
@@ -372,9 +327,6 @@ typedef enum
 	GAME_STATE_LEVEL3_INIT,
 	GAME_STATE_LEVEL3_PLAY,
 
-	GAME_STATE_LEVEL4_INIT,
-	GAME_STATE_LEVEL4_PLAY,
-
 	GAME_STATE_COUNT
 } GameStateEnum;
 
@@ -382,7 +334,6 @@ typedef struct GameState
 {
 	struct GameState *_self;
 	Graphics graphics;
-	ImGuiIO *ioptr;
 	URSprite sprites[ASSET_COUNT];
 	Sound sound;
 	float deltaTime;
@@ -393,7 +344,6 @@ typedef struct GameState
 	Level1 level1;
 	Level2 level2;
 	Level3 level3;
-	Level4 level4;
 } GameState;
 
 GameState gameStateCheckExitConditions(GameState _this)
@@ -2105,111 +2055,6 @@ GameState gameStateClickToStart(GameState _this)
 	return _this;
 }
 
-Level4 level4Create(Level4 *_this)
-{
-	S3L_Unit cubeVertices[] = {S3L_CUBE_VERTICES(S3L_F)};
-	memcpy(_this->cubeVertices, cubeVertices, sizeof(cubeVertices) * sizeof(S3L_F));
-
-	S3L_Index cubeTriangles[] = {S3L_CUBE_TRIANGLES};
-	memcpy(_this->cubeTriangles, cubeTriangles, sizeof(cubeTriangles) * sizeof(S3L_Index));
-
-	S3L_model3DInit(_this->cubeVertices, S3L_CUBE_VERTEX_COUNT, _this->cubeTriangles, S3L_CUBE_TRIANGLE_COUNT, &_this->cubeModel);
-	S3L_sceneInit(&_this->cubeModel, 1, &_this->scene);
-
-	_this->scene.camera.transform.translation.y = S3L_F / 2;
-	_this->scene.camera.transform.translation.z = -2 * S3L_F;
-
-	return *_this;
-}
-
-Level4 level4Update(Level4 _this)
-{
-	graphicsClear(_this.gameState->graphics.imageData);
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_LEFT))
-	{
-		_this.cameraRotation[1] += 100. * _this.gameState->deltaTime;
-	}
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_RIGHT))
-	{
-		_this.cameraRotation[1] -= 100. * _this.gameState->deltaTime;
-	}
-	S3L_Vec4 camF, camR;
-	S3L_rotationToDirections(_this.scene.camera.transform.rotation, 10000. * _this.gameState->deltaTime, &camF, &camR, 0);
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_A))
-	{
-		S3L_vec3Sub(&_this.scene.camera.transform.translation, camR);
-	}
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_D))
-	{
-		S3L_vec3Add(&_this.scene.camera.transform.translation, camR);
-	}
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_W))
-	{
-		S3L_vec3Add(&_this.scene.camera.transform.translation, camF);
-	}
-
-	if (glfwGetKey(_this.gameState->graphics.window, GLFW_KEY_S))
-	{
-		S3L_vec3Sub(&_this.scene.camera.transform.translation, camF);
-	}
-
-	_this.scene.camera.transform.rotation.y = _this.cameraRotation[1];
-
-	_this.cubeRotation[0] += 100. * _this.gameState->deltaTime;
-
-	_this.cubeModel.transform.rotation.x = _this.cubeRotation[0];
-	_this.cubeModel.transform.rotation.y = _this.cubeRotation[1];
-	_this.cubeModel.transform.rotation.z = _this.cubeRotation[2];
-
-	S3L_newFrame();
-	S3L_drawScene(_this.scene);
-	return _this;
-}
-
-GameState renderDearImgui(GameState gameState)
-{
-	// render
-	// start imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	igNewFrame();
-
-	if (igBeginMainMenuBar())
-    {
-        if (igBeginMenu("Edit", true))
-        {
-            if (igMenuItem_Bool("Undo", "CTRL+Z", true, true)) {}
-            if (igMenuItem_Bool("Redo", "CTRL+Y", false, false)) {} // Disabled item
-            igSeparator();
-            if (igMenuItem_Bool("Cut", "CTRL+X", true, true)) {}
-            if (igMenuItem_Bool("Copy", "CTRL+C", true, true)) {}
-            if (igMenuItem_Bool("Paste", "CTRL+V", true, true)) {}
-            igEndMenu();
-        }
-        igEndMainMenuBar();
-    }
-
-	
-
-	igRender();
-	ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
-#ifdef IMGUI_HAS_DOCK
-	if (ioptr->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		GLFWwindow *backup_current_window = glfwGetCurrentContext();
-		igUpdatePlatformWindows();
-		igRenderPlatformWindowsDefault(NULL, NULL);
-		glfwMakeContextCurrent(backup_current_window);
-	}
-#endif
-	return gameState;
-}
-
 GameState gameMainLoop(GameState gameState)
 {
 	globalImgData = gameState.graphics.imageData;
@@ -2265,14 +2110,6 @@ GameState gameMainLoop(GameState gameState)
 	case GAME_STATE_LEVEL3_PLAY:
 		gameState.level3 = level3Update(gameState.level3);
 		break;
-	case GAME_STATE_LEVEL4_INIT:
-		gameState.level4 = level4Create(&gameState._self->level4);
-		gameState.level4.gameState = &gameState;
-		gameState.gameStateEnum++;
-		break;
-	case GAME_STATE_LEVEL4_PLAY:
-		gameState.level4 = level4Update(gameState.level4);
-		break;
 	default:
 		gameState.shouldQuit = true;
 	}
@@ -2282,7 +2119,6 @@ GameState gameMainLoop(GameState gameState)
 		gameState.gameStateEnum++;
 	}
 	swapBuffersPrintFPSPollEvents(gameState.graphics, gameState.deltaTime);
-	gameState = renderDearImgui(gameState);
 	glfwSwapBuffers(gameState.graphics.window);
 
 	return gameState;
@@ -2297,38 +2133,6 @@ void emscriptenLoopHandler()
 }
 #endif
 
-GameState initDearImgui(GameState gameState)
-{
-	// setup imgui
-	igCreateContext(NULL);
-
-	// set docking
-	gameState.ioptr = igGetIO();
-	gameState.ioptr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-																		// ioptr->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-#ifdef IMGUI_HAS_DOCK
-	ioptr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;	// Enable Docking
-	ioptr->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-#endif
-
-// Shader version
-#ifndef __EMSCRIPTEN__
-	const char *glsl_version = "#version 130";
-#else
-	const char *glsl_version = "#version 300 es";
-#endif
-
-
-	ImGui_ImplGlfw_InitForOpenGL(gameState.graphics.window, true);
-	ImGui_ImplOpenGL3_Init(glsl_version);
-
-	igStyleColorsDark(NULL);
-
-	gameState.showDemoWindow = true;
-	bool showAnotherWindow = false;
-	return gameState;
-}
-
 int main(void)
 {
 	initDeltaTime();
@@ -2339,8 +2143,6 @@ int main(void)
 
 	gameState._self = &gameState;
 	gameState.graphics = graphicsCreate(320, 240, false);
-
-	gameState = initDearImgui(gameState);
 
 	loadAssets(gameState.sprites);
 

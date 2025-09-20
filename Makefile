@@ -8,7 +8,7 @@ LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl -lasound -lcimgui
 
 FLAGS_DEBUG := -g -O0 -w
 FLAGS__DEBUG := -O3
-FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include -L./static_libs -Ilibs/cimgui
+FLAGS := -Wall -Wextra -Ilibs/include -Ilibs/soloud/include -L./static_libs
 
 # Vars for emscripten build
 EMSC_CFLAGS := -O2 -s -Wall -D_DEFAULT_SOURCE -DWITH_MINIAUDIO=1 -s MIN_WEBGL_VERSION=2 -Wno-missing-braces -s OFFSCREEN_FRAMEBUFFER=1 -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s USE_GLFW=3 -sFULL_ES3 -s TOTAL_MEMORY=67108864 --preload-file assets -v -D OS_WEB
@@ -36,11 +36,7 @@ main_clean.bin:
 
 
 web:
-	rm -rf docs
-	mkdir docs
 	emcc -O0 -g -Ilibs/include -Ilibs/soloud/include -Ilibs/soloud/include -Ilibs/cimgui  -sSTACK_SIZE=1024000 -sEXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" -sEXPORTED_FUNCTIONS=_malloc,_free,_main -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -DWITH_MINIAUDIO=1 -DCIMGUI_USE_GLFW=1 -DCIMGUI_USE_OPENGL3=1 -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s MAX_WEBGL_VERSION=2 --preload-file assets -s MIN_WEBGL_VERSION=2 -gsource-map --source-map-base https://weremsoft.github.com.io/MS-DOS-frame-buffer-game-engine/ $(SRC_F) $(SRC_CPP) ./static_libs/cimgui.a -o docs/index.html
-
-	cp -r src docs
 
 clean:
 	rm -rf $(OBJ_FOR_CLEAN_F)
