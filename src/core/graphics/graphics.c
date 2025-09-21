@@ -8,6 +8,7 @@
 #include "../shader/shader.h"
 
 extern char fonts[][5];
+static float _nativeAspectRatio = 320./240.;
 static void textureCreate(Graphics *_this)
 {
     glGenTextures(1, &_this->textureId);
@@ -20,11 +21,32 @@ static void textureCreate(Graphics *_this)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _this->imageData.size.x, _this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, _this->imageData.data);
 }
 
-static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+
+
+static void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
-    /* make sure the viewport matches the new window dimensions; note that width and
-     height will be significantly larger than specified on retina displays.*/
-    glViewport(0, 0, width, height);
+	float window_aspect_ratio = (float)width / (float)height;
+	int viewport_width = width;
+	int viewport_height = height;
+	int viewport_x = 0;
+	int viewport_y = 0;
+
+	if (window_aspect_ratio > _nativeAspectRatio)
+	{
+		viewport_width = (int)(height * _nativeAspectRatio);
+		viewport_height = height;
+		viewport_x = (width - viewport_width) / 2;
+		viewport_y = 0;
+	}
+	else
+	{
+		viewport_width = width;
+		viewport_height = (int)(width / _nativeAspectRatio);
+		viewport_x = 0;
+		viewport_y = (height - viewport_height) / 2;
+	}
+
+	glViewport(viewport_x, viewport_y, viewport_width, viewport_height);
 }
 
 Graphics graphicsCreate(int width, int height, bool fullScreen)
@@ -32,6 +54,7 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     Graphics _this = {0};
     _this.imageData.size.x = width;
     _this.imageData.size.y = height;
+	
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
@@ -52,9 +75,11 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
 
     glCreateShader(GL_VERTEX_SHADER);
 
+	framebufferSizeCallback(_this.window, screenWidth, screenHeight);
+
     /* The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate. */
     /* glfwSwapInterval(0); */
-    glfwSetFramebufferSizeCallback(_this.window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(_this.window, framebufferSizeCallback);
 
     double ratioX = ((float)_this.imageData.size.x / (float)_this.imageData.size.y) / ((float)screenWidth / (float)screenHeight);
     double ratioY = 1.0;

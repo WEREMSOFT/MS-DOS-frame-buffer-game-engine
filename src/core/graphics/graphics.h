@@ -33,11 +33,19 @@ typedef struct
 	Color *data;
 } ImageData;
 
+typedef struct ViewPort
+{
+	float aspectRatio;
+	PointI viewPortSize;
+	PointI viewPortPosition;
+} ViewPort;
+
 typedef struct
 {
 	unsigned int textureId;
 	unsigned int VAO;
 	unsigned int shaderProgram;
+	ViewPort viewPort;
 	PointI mousePosition;
 	bool mouseRightDown;
 	GLFWwindow *window;
