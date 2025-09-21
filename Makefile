@@ -8,7 +8,7 @@ LIBS := -lpthread -lm -lglfw -lGL -lstdc++ -ldl
 
 FLAGS_DEBUG := -g -O0 -w
 FLAGS__DEBUG := -pg -O3 -fsanitize=address
-FLAGS := -D__USE_OPENGL_ES__ -std=c89 -Wpedantic  -Wall -Wextra -Ilibs/include -Ilibs/soloud/include -L./static_libs -Ilibs/cimgui
+FLAGS := -std=c89 -Wpedantic  -Wall -Wextra -Ilibs/include -Ilibs/soloud/include -L./static_libs -Ilibs/cimgui
 
 # Vars for emscripten build
 EMSC_CFLAGS := -O2 -s -Wall -D_DEFAULT_SOURCE -s MIN_WEBGL_VERSION=2 -Wno-missing-braces -s OFFSCREEN_FRAMEBUFFER=1 -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s USE_GLFW=3 -sFULL_ES3 -s TOTAL_MEMORY=67108864 --preload-file assets -v -D OS_WEB

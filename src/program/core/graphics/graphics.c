@@ -1,5 +1,4 @@
 #include "../utils/memory.h"
-#include <glad/glad.h>
 #include "graphics.h"
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,6 +8,7 @@
 #include "../shader/shader.h"
 
 extern char fonts[][5];
+static float _nativeAspectRatio = 320./240.;
 static void textureCreate(Graphics *_this)
 {
     glGenTextures(1, &_this->textureId);
@@ -21,16 +21,32 @@ static void textureCreate(Graphics *_this)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _this->imageData.size.x, _this->imageData.size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, _this->imageData.data);
 }
 
-static void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-    /* make sure the viewport matches the new window dimensions; note that width and
-     height will be significantly larger than specified on retina displays.*/
-    glViewport(0, 0, width, height);
-}
 
-void glfw_error_callback(int error, const char* description)
+
+static void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
-    printf("Error loading opengl functions: %s\n", description);
+	float window_aspect_ratio = (float)width / (float)height;
+	int viewport_width = width;
+	int viewport_height = height;
+	int viewport_x = 0;
+	int viewport_y = 0;
+
+	if (window_aspect_ratio > _nativeAspectRatio)
+	{
+		viewport_width = (int)(height * _nativeAspectRatio);
+		viewport_height = height;
+		viewport_x = (width - viewport_width) / 2;
+		viewport_y = 0;
+	}
+	else
+	{
+		viewport_width = width;
+		viewport_height = (int)(width / _nativeAspectRatio);
+		viewport_x = 0;
+		viewport_y = (height - viewport_height) / 2;
+	}
+
+	glViewport(viewport_x, viewport_y, viewport_width, viewport_height);
 }
 
 Graphics graphicsCreate(int width, int height, bool fullScreen)
@@ -38,28 +54,10 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     Graphics _this = {0};
     _this.imageData.size.x = width;
     _this.imageData.size.y = height;
-
-    glfwSetErrorCallback(glfw_error_callback);
-
+	
     glfwInit();
     GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-
-    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	#ifdef __USE_OPENGL_ES__
-		printf("Initializing openGL ES\n");
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	#else
-		printf("Initializing openGL 3.3\n");
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	#endif
 
     int screenWidth = mode->width;
     int screenHeight = mode->height;
@@ -74,25 +72,14 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
     _this.window = glfwCreateWindow(screenWidth, screenHeight, "Frame Buffer", monitor, NULL);
 
     glfwMakeContextCurrent(_this.window);
-	#ifdef  __USE_OPENGL_ES__
-	if(!gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress))
-		{
-			printf("Failed to initialize GLAD. None of the openGL functions will work.\n");
-			exit(-1);
-		}
-	#else
-		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			printf("Failed to initialize GLAD. None of the openGL functions will work.\n");
-			exit(-1);
-		}
-	#endif
 
     glCreateShader(GL_VERTEX_SHADER);
 
+	framebufferSizeCallback(_this.window, screenWidth, screenHeight);
+
     /* The next line, when uncommented, removes the farmerrate cap that matchs the screen regresh rate. */
     /* glfwSwapInterval(0); */
-    glfwSetFramebufferSizeCallback(_this.window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(_this.window, framebufferSizeCallback);
 
     double ratioX = ((float)_this.imageData.size.x / (float)_this.imageData.size.y) / ((float)screenWidth / (float)screenHeight);
     double ratioY = 1.0;
@@ -110,12 +97,10 @@ Graphics graphicsCreate(int width, int height, bool fullScreen)
         1, 2, 3  /* second triangle */
     };
     textureCreate(&_this);
-#ifdef __EMSCRIPTEN__
-    _this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/defaultWeb.vs", "assets/shaders/defaultWeb.fs");
-#else
-    _this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/default.vs", "assets/shaders/default.fs");
-#endif
-    glUseProgram(_this.shaderProgram);
+
+	_this.shaderProgram = shaderProgramCreateFromFiles("assets/shaders/default.vs", "assets/shaders/default.fs");
+
+	glUseProgram(_this.shaderProgram);
     unsigned int VBO, EBO;
     glGenVertexArrays(1, &_this.VAO);
     glGenBuffers(1, &VBO);
