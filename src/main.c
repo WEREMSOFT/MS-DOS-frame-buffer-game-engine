@@ -5,7 +5,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
-#include <soloud_c.h>
 #define INITIAL_LEVEL GAME_STATE_CLICK_TO_START
 #define UR_SCREEN_WIDTH 320
 #define UR_SCREEN_HEIGHT 240
@@ -74,7 +73,6 @@ typedef struct GameState
 	float deltaTime;
 	bool shouldQuit;
 	bool shouldStop;
-	bool showDemoWindow;
 	GameStateEnum gameStateEnum;
 } GameState;
 
@@ -106,8 +104,8 @@ void loadAssets(URSprite *_this)
 
 GameState gameStateClickToStart(GameState _this)
 {
+	static URColor textColor = {255, 255, 255};
 	graphicsClear(_this.graphics.imageData);
-	URColor static textColor = {255, 255, 255};
 	char *clickToStart = "click to start";
 
 	static int gameColor = 0;
