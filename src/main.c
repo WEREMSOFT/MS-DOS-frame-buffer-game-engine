@@ -58,10 +58,7 @@ struct GameState;
 typedef enum
 {
 	GAME_STATE_CLICK_TO_START,
-	GAME_STATE_LEVEL1_INIT,
-	GAME_STATE_LEVEL1_TUTORIAL,
-	GAME_STATE_LEVEL1_PLAY,
-	GAME_STATE_LEVEL1_EXIT,
+	GAME_STATE_LEVEL1,
 	GAME_STATE_COUNT
 } GameStateEnum;
 
@@ -143,6 +140,13 @@ GameState gameStateClickToStart(GameState _this)
 	return _this;
 }
 
+void level1(GameState* gs)
+{
+	graphicsClear(gs->graphics.imageData);
+	urDrawCircleFill((URPointI){.x = 160, .y = 120}, 50., UR_RED);
+	urDrawLine((URPointI){0}, (URPointI){320, 0}, UR_BLUE);
+}
+
 GameState gameMainLoop(GameState gameState)
 {
 	globalImgData = gameState.graphics.imageData;
@@ -153,6 +157,9 @@ GameState gameMainLoop(GameState gameState)
 	{
 	case GAME_STATE_CLICK_TO_START:
 		gameState = gameStateClickToStart(gameState);
+		break;
+	case GAME_STATE_LEVEL1:
+		level1(&gameState);
 		break;
 	default:
 		gameState.shouldQuit = true;
